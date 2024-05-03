@@ -48,6 +48,7 @@ Add a package dependency to https://github.com/sbooth/CXXAudioUtilities in Xcode
 | [SFB::CAAudioFile](Sources/CXXAudioUtilities/include/SFBCAAudioFile.hpp) | A wrapper around `AudioFile` |
 | [SFB::CAExtAudioFile](Sources/CXXAudioUtilities/include/SFBCAExtAudioFile.hpp) | A wrapper around `ExtAudioFile` |
 | [SFB::CAAudioFormat](Sources/CXXAudioUtilities/include/SFBCAAudioFormat.hpp) | A wrapper around `AudioFormat` |
+| [SFB::CAAudioConverter](Sources/CXXAudioUtilities/include/SFBCAAudioConverter.hpp) | A wrapper around `AudioConverter` |
 
 ### Ring Buffers
 
