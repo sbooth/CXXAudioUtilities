@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2012 - 2024 Stephen F. Booth <me@sbooth.org>
-// Part of https://github.com/sbooth/SFBAudioUtilities
+// Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
 
