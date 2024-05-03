@@ -693,9 +693,9 @@ template <> struct is_error_code_enum<SFB::CAExtAudioFileErrorCode> : true_type 
 		throw std::system_error(err, ecat, what); \
 }
 
-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+#if TARGET_OS_OSX
 #define SFBThrowIfCAAudioObjectError(err, what) 		SFBThrowIfCAError(err, CAAudioObjectErrorCategory(), what)
-#endif /* TARGET_OS_OSX || TARGET_OS_MACCATALYST */
+#endif /* TARGET_OS_OSX */
 #define SFBThrowIfCAAudioUnitError(err, what) 			SFBThrowIfCAError(err, CAAudioUnitErrorCategory(), what)
 #define SFBThrowIfCAAUGraphError(err, what) 			SFBThrowIfCAError(err, CAAUGraphErrorCategory(), what)
 #define SFBThrowIfCAAudioFormatError(err, what) 		SFBThrowIfCAError(err, CAAudioFormatErrorCategory(), what)
