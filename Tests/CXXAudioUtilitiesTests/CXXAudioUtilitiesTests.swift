@@ -2,6 +2,7 @@ import XCTest
 @testable import CXXAudioUtilities
 
 final class CXXAudioUtilitiesTests: XCTestCase {
+#if swift(>=5.9)
 	func testByteStream() {
 		let bs = SFB.ByteStream()
 		XCTAssert(bs.Length() == 0)
@@ -24,4 +25,5 @@ final class CXXAudioUtilitiesTests: XCTestCase {
 		let stereo = SFB.CAChannelLayout.Stereo
 		XCTAssert(stereo.ChannelCount() == 2)
 	}
+#endif
 }
