@@ -64,8 +64,8 @@ Add a package dependency to https://github.com/sbooth/CXXAudioUtilities in Xcode
 | --- | --- |
 | [SFB::ByteStream](Sources/CXXAudioUtilities/include/SFBByteStream.hpp) | A `ByteStream` provides heterogeneous typed access to an untyped buffer |
 | [SFB::CFWrapper](Sources/CXXAudioUtilities/include/SFBCFWrapper.hpp) | A wrapper around a Core Foundation object |
-| [SFB::DeferredClosure](Sources/CXXAudioUtilities/include/SFBDeferredClosure.hpp) | A class that calls a closure upon destruction |
 | [SFB::DispatchSemaphore](Sources/CXXAudioUtilities/include/SFBDispatchSemaphore.hpp) | A wrapper around `dispatch_semaphore_t` |
+| [SFB::ScopeGuard](Sources/CXXAudioUtilities/include/SFBScopeGuard.hpp) | A class that calls a function upon destruction |
 | [SFB::UnfairLock](Sources/CXXAudioUtilities/include/SFBUnfairLock.hpp) | A wrapper around `os_unfair_lock` implementing C++ `Lockable` |
 
 | C++ Class | Description |
