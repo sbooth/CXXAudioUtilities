@@ -22,10 +22,10 @@ module CXXAudioUtilities {
 	header "SFBCAStreamBasicDescription.hpp"
 	header "SFBCATimeStamp.hpp"
 	header "SFBCFWrapper.hpp"
-	header "SFBDeferredClosure.hpp"
 	header "SFBDispatchSemaphore.hpp"
 	header "SFBExtAudioFileWrapper.hpp"
 	header "SFBRingBuffer.hpp"
+	header "SFBScopeGuard.hpp"
 	header "SFBUnfairLock.hpp"
 
 	export *
