@@ -6,9 +6,11 @@
 
 #pragma once
 
+#import <functional>
+
 namespace SFB {
 
-/// A class that calls a closure upon destruction.
+/// A class that calls a function upon destruction.
 ///
 /// This allows similar functionality to @c defer in Swift and Go.
 /// This is useful to limit the lifetime of non-C++ objects and provides an alternative to @c std::unique_ptr with a
@@ -22,41 +24,41 @@ namespace SFB {
 ///     auto result = ExtAudioFileDispose(eaf);
 ///     assert(result == noErr);
 /// };
-/// SFB::DeferredClosure<decltype(lambda)> cleanup(lambda);
+/// SFB::ScopeGuard cleanup(lambda);
 /// @endcode
-template <typename F>
-class DeferredClosure
+class ScopeGuard
 {
 
 public:
 
-	/// Creates a new @c DeferredClosure executing @c closure when the destructor is called
-	inline DeferredClosure(const F& closure) noexcept
-	: mClosure{closure}
+	/// Creates a new @c ScopeGuard executing @c cleanup when the destructor is called
+	template <typename F>
+	inline ScopeGuard(const F& cleanup) noexcept
+	: mCleanup{cleanup}
 	{}
 
 	// This class is non-copyable
-	DeferredClosure(const DeferredClosure& rhs) = delete;
+	ScopeGuard(const ScopeGuard& rhs) = delete;
 
 	// This class is non-assignable
-	DeferredClosure& operator=(const DeferredClosure& rhs) = delete;
+	ScopeGuard& operator=(const ScopeGuard& rhs) = delete;
 
-	/// Executes the closure
-	inline ~DeferredClosure()
+	/// Executes the cleanup function
+	inline ~ScopeGuard()
 	{
-		mClosure();
+		mCleanup();
 	}
 
 	// This class is non-movable
-	DeferredClosure(const DeferredClosure&& rhs) = delete;
+	ScopeGuard(const ScopeGuard&& rhs) = delete;
 
 	// This class is non-move assignable
-	DeferredClosure& operator=(const DeferredClosure&& rhs) = delete;
+	ScopeGuard& operator=(const ScopeGuard&& rhs) = delete;
 
 private:
 
-	/// The closure to invoke upon object destruction
-	const F& mClosure;
+	/// The function to invoke upon object destruction
+	std::function<void()> mCleanup;
 
 };
 
