@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 - 2023 Stephen F. Booth <me@sbooth.org>
+// Copyright (c) 2021 - 2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -62,7 +62,6 @@ public:
 		mSampleTime = sampleTime;
 		mHostTime = hostTime;
 		mFlags = kAudioTimeStampSampleTimeValid | kAudioTimeStampHostTimeValid;
-
 	}
 
 	/// Creates a new @c CATimeStamp with the specified sample and host times and rate scalar
