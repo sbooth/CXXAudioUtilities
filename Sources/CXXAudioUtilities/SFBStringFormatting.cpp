@@ -26,11 +26,11 @@ constexpr bool fourcc_isprint(uint32_t i) noexcept
 std::string fourcc_fourchar_string(uint32_t fourcc)
 {
 	fourcc = OSSwapHostToBigInt32(fourcc);
-	std::string s(6, '\0');
-	const auto n = std::snprintf(s.data(), 6 + 1, "'%.4s'", reinterpret_cast<const char *>(&fourcc));
+	char buf [6 + 1];
+	const auto n = std::snprintf(buf, sizeof buf, "'%.4s'", reinterpret_cast<const char *>(&fourcc));
 	if(n < 0)
 		return {};
-	return s;
+	return { buf, static_cast<std::string::size_type>(n) };
 }
 
 /// Creates a @c std::string containing @c fourcc formatted as hexadecimal and returns the result
