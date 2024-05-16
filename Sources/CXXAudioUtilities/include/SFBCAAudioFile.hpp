@@ -327,7 +327,6 @@ public:
 		auto streamDescriptions = std::vector<CAStreamBasicDescription>(count);
 		GetGlobalInfo(kAudioFileGlobalInfo_AvailableStreamDescriptionsForFormat, sizeof(spec), &spec, size, &streamDescriptions[0]);
 		return streamDescriptions;
-
 	}
 
 	/// Returns an array of format IDs that can be read.
