@@ -46,6 +46,8 @@ public:
 	CAAudioConverter& operator=(CAAudioConverter&& rhs) noexcept
 	{
 		if(this != &rhs) {
+			if(mConverter)
+				AudioConverterDispose(mConverter);
 			mConverter = rhs.mConverter;
 			rhs.mConverter = nullptr;
 		}
