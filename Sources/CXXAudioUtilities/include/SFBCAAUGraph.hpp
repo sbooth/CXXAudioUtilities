@@ -50,6 +50,8 @@ public:
 	CAAUGraph& operator=(CAAUGraph&& rhs) noexcept
 	{
 		if(this != &rhs) {
+			if(mAUGraph)
+				DisposeAUGraph(mAUGraph);
 			mAUGraph = rhs.mAUGraph;
 			rhs.mAUGraph = nullptr;
 		}
