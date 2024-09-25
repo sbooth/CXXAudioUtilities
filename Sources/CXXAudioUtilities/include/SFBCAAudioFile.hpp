@@ -13,6 +13,7 @@
 #import "SFBCAException.hpp"
 #import "SFBCAStreamBasicDescription.hpp"
 #import "SFBCFWrapper.hpp"
+#import "SFBStringFormatting.hpp"
 
 CF_ASSUME_NONNULL_BEGIN
 
@@ -191,7 +192,7 @@ public:
 	{
 		UInt32 size;
 		auto result = AudioFileGetUserDataSize(mAudioFileID, inUserDataID, inIndex, &size);
-		ThrowIfCAAudioFileError(result, "AudioFileGetUserDataSize");
+		SFBThrowIfCAAudioFileError(result, string_format("AudioFileGetUserDataSize(%s, %d)", fourcc_string(inUserDataID).c_str(), inIndex));
 		return size;
 	}
 
@@ -200,7 +201,7 @@ public:
 	void GetUserData(UInt32 inUserDataID, UInt32 inIndex, UInt32& ioUserDataSize, void *outUserData)
 	{
 		auto result = AudioFileGetUserData(mAudioFileID, inUserDataID, inIndex, &ioUserDataSize, outUserData);
-		ThrowIfCAAudioFileError(result, "AudioFileGetUserData");
+		SFBThrowIfCAAudioFileError(result, string_format("AudioFileGetUserData(%s, %d)", fourcc_string(inUserDataID).c_str(), inIndex));
 	}
 
 	/// Sets the data of a chunk in a file.
@@ -208,7 +209,7 @@ public:
 	void SetUserData(UInt32 inUserDataID, UInt32 inIndex, UInt32 inUserDataSize, const void *inUserData)
 	{
 		auto result = AudioFileSetUserData(mAudioFileID, inUserDataID, inIndex, inUserDataSize, inUserData);
-		ThrowIfCAAudioFileError(result, "AudioFileGetUserData");
+		SFBThrowIfCAAudioFileError(result, string_format("AudioFileSetUserData(%s, %d)", fourcc_string(inUserDataID).c_str(), inIndex));
 	}
 
 	/// Removes a user chunk in a file.
@@ -216,7 +217,7 @@ public:
 	void RemoveUserData(UInt32 inUserDataID, UInt32 inIndex)
 	{
 		auto result = AudioFileRemoveUserData(mAudioFileID, inUserDataID, inIndex);
-		ThrowIfCAAudioFileError(result, "AudioFileRemoveUserData");
+		SFBThrowIfCAAudioFileError(result, string_format("AudioFileRemoveUserData(%s, %d)", fourcc_string(inUserDataID).c_str(), inIndex));
 	}
 
 	/// Gets information about the size of a property of an AudioFile and whether it can be set.
@@ -225,7 +226,7 @@ public:
 	{
 		UInt32 size;
 		auto result = AudioFileGetPropertyInfo(mAudioFileID, inPropertyID, &size, isWritable);
-		ThrowIfCAAudioFileError(result, "AudioFileGetPropertyInfo");
+		SFBThrowIfCAAudioFileError(result, string_format("AudioFileGetPropertyInfo(%s)", fourcc_string(inPropertyID).c_str()));
 		return size;
 	}
 
@@ -234,7 +235,7 @@ public:
 	void GetProperty(AudioFilePropertyID inPropertyID, UInt32& ioDataSize, void *outPropertyData) const
 	{
 		auto result = AudioFileGetProperty(mAudioFileID, inPropertyID, &ioDataSize, outPropertyData);
-		ThrowIfCAAudioFileError(result, "AudioFileGetProperty");
+		SFBThrowIfCAAudioFileError(result, string_format("AudioFileGetProperty(%s)", fourcc_string(inPropertyID).c_str()));
 	}
 
 	/// Sets the value for a property of an AudioFile.
@@ -242,7 +243,7 @@ public:
 	void SetProperty(AudioFilePropertyID inPropertyID, UInt32 inDataSize, const void *inPropertyData)
 	{
 		auto result = AudioFileSetProperty(mAudioFileID, inPropertyID, inDataSize, inPropertyData);
-		ThrowIfCAAudioFileError(result, "AudioFileSetProperty");
+		SFBThrowIfCAAudioFileError(result, string_format("AudioFileSetProperty(%s)", fourcc_string(inPropertyID).c_str()));
 	}
 
 	/// Returns the file's format (@c kAudioFilePropertyFileFormat)
@@ -273,7 +274,7 @@ public:
 	{
 		UInt32 size;
 		auto result = AudioFileGetGlobalInfoSize(inPropertyID, inSpecifierSize, inSpecifier, &size);
-		ThrowIfCAAudioFileError(result, "AudioFileGetGlobalInfoSize");
+		SFBThrowIfCAAudioFileError(result, string_format("AudioFileGetGlobalInfoSize(%s)", fourcc_string(inPropertyID).c_str()));
 		return size;
 	}
 
@@ -282,7 +283,7 @@ public:
 	static void GetGlobalInfo(AudioFilePropertyID inPropertyID, UInt32 inSpecifierSize, void * _Nullable inSpecifier, UInt32& ioDataSize, void *outPropertyData)
 	{
 		auto result = AudioFileGetGlobalInfo(inPropertyID, inSpecifierSize, inSpecifier, &ioDataSize, outPropertyData);
-		ThrowIfCAAudioFileError(result, "AudioFileGetGlobalInfo");
+		SFBThrowIfCAAudioFileError(result, string_format("AudioFileGetGlobalInfo(%s)", fourcc_string(inPropertyID).c_str()));
 	}
 
 
