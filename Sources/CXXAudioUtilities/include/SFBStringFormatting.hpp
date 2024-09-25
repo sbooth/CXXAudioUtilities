@@ -18,7 +18,7 @@ namespace SFB {
 /// @throw @c std::bad_array_new_length
 /// @param str A @c CFString containing the characters to copy
 /// @return A @c std::string containing the contents of @c str in UTF-8
-std::string string_from_cfstring(CFStringRef str) noexcept;
+std::string string_from_cfstring(CFStringRef str);
 
 /// Creates a @c std::string using a @c std::printf format string and returns the result
 /// @throw @c std::length_error

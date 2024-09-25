@@ -48,7 +48,7 @@ std::string fourcc_hex_string(uint32_t fourcc)
 
 } // namespace
 
-std::string SFB::string_from_cfstring(CFStringRef str) noexcept
+std::string SFB::string_from_cfstring(CFStringRef str)
 {
 	if(!str)
 		return {};
