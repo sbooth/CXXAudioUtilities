@@ -62,6 +62,8 @@ public:
 	CAExtAudioFile& operator=(CAExtAudioFile&& rhs) noexcept
 	{
 		if(this != &rhs) {
+			if(mExtAudioFile)
+				ExtAudioFileDispose(mExtAudioFile);
 			mExtAudioFile = rhs.mExtAudioFile;
 			rhs.mExtAudioFile = nullptr;
 		}

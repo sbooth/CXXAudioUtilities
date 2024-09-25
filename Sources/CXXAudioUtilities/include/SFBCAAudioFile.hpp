@@ -51,6 +51,8 @@ public:
 	CAAudioFile& operator=(CAAudioFile&& rhs) noexcept
 	{
 		if(this != &rhs) {
+			if(mAudioFileID)
+				AudioFileClose(mAudioFileID);
 			mAudioFileID = rhs.mAudioFileID;
 			rhs.mAudioFileID = nullptr;
 		}
