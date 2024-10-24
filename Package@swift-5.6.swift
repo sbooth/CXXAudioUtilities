@@ -6,14 +6,13 @@ import PackageDescription
 let package = Package(
 	name: "CXXAudioUtilities",
 	products: [
-		// Products define the executables and libraries a package produces, making them visible to other packages.
 		.library(
 			name: "CXXAudioUtilities",
-			targets: ["CXXAudioUtilities"]),
+			targets: [
+				"CXXAudioUtilities",
+			]),
 	],
 	targets: [
-		// Targets are the basic building blocks of a package, defining a module or a test suite.
-		// Targets can depend on other targets in this package and products from dependencies.
 		.target(
 			name: "CXXAudioUtilities",
 			linkerSettings: [
@@ -22,7 +21,9 @@ let package = Package(
 			]),
 		.testTarget(
 			name: "CXXAudioUtilitiesTests",
-			dependencies: ["CXXAudioUtilities"]),
+			dependencies: [
+				"CXXAudioUtilities",
+			]),
 	],
 	cxxLanguageStandard: .cxx17
 )
