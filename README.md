@@ -28,7 +28,7 @@ Add a package dependency to https://github.com/sbooth/CXXAudioUtilities in Xcode
 | [SFB::CATimeStamp](Sources/CXXAudioUtilities/include/SFBCATimeStamp.hpp) | A class extending the functionality of a Core Audio `AudioTimeStamp` |
 | [SFB::CAException](Sources/CXXAudioUtilities/include/SFBCAException.hpp) | `std::error_category` for handling Core Audio errors as exceptions |
 
-#### AudioHardware Wrappers
+### AudioHardware Wrappers
 
 | C++ Class | Description |
 | --- | --- |
