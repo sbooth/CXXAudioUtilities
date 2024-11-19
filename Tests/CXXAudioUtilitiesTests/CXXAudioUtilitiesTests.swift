@@ -7,25 +7,25 @@ final class CXXAudioUtilitiesTests: XCTestCase {
 #if swift(>=5.9)
 	func testByteStream() {
 		let bs = SFB.ByteStream()
-		XCTAssert(bs.Length() == 0)
-		XCTAssert(bs.Remaining() == 0)
-		XCTAssert(bs.Position() == 0)
+		XCTAssertEqual(bs.Length(), 0)
+		XCTAssertEqual(bs.Remaining(), 0)
+		XCTAssertEqual(bs.Position(), 0)
 	}
 
 	func testStreamDescription() {
 		let asbd = SFB.CAStreamBasicDescription(.float32, 44100, 2, false)
-		XCTAssert(asbd.IsPCM() == true)
-		XCTAssert(asbd.IsFloat() == true)
-		XCTAssert(asbd.IsInteger() == false)
-		XCTAssert(asbd.mSampleRate == 44100)
-		XCTAssert(asbd.ChannelCount() == 2)
-		XCTAssert(asbd.IsInterleaved() == false)
-		XCTAssert(asbd.IsNonInterleaved() == true)
+		XCTAssertTrue(asbd.IsPCM())
+		XCTAssertTrue(asbd.IsFloat())
+		XCTAssertFalse(asbd.IsInteger())
+		XCTAssertEqual(asbd.mSampleRate, 44100)
+		XCTAssertEqual(asbd.ChannelCount(), 2)
+		XCTAssertFalse(asbd.IsInterleaved())
+		XCTAssertTrue(asbd.IsNonInterleaved())
 	}
 
 	func testChannelLayout() {
 		let stereo = SFB.CAChannelLayout.Stereo
-		XCTAssert(stereo.ChannelCount() == 2)
+		XCTAssertEqual(stereo.ChannelCount(), 2)
 	}
 #endif
 }
