@@ -56,6 +56,18 @@ std::string to_hex_string(T val, std::string::size_type len = sizeof(T) << 1)
 
 } // namespace
 
+std::string SFB::concat(std::initializer_list<std::string_view> il)
+{
+	std::string::size_type len = 0;
+	for(auto s : il)
+		len += s.size();
+	std::string result;
+	result.reserve(len);
+	for(auto s : il)
+		result.append(s);
+	return result;
+}
+
 std::string SFB::string_from_cfstring(CFStringRef str)
 {
 	if(!str)
@@ -97,16 +109,4 @@ std::string SFB::osstatus_string(int32_t code)
 		return std::to_string(code);
 	else
 		return to_hex_string(static_cast<uint32_t>(code));
-}
-
-std::string concat(std::initializer_list<std::string_view> il)
-{
-	std::string::size_type len = 0;
-	for(auto s : il)
-		len += s.size();
-	std::string result;
-	result.reserve(len);
-	for(auto s : il)
-		result.append(s);
-	return result;
 }
