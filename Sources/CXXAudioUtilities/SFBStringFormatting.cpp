@@ -24,7 +24,6 @@ constexpr bool fourcc_isprint(uint32_t i) noexcept
 std::string fourcc_fourchar_string(uint32_t fourcc)
 {
 	return {
-		'\'',
 #if __BIG_ENDIAN__
 		static_cast<char>(fourcc),
 		static_cast<char>(fourcc >> 8),
@@ -38,22 +37,21 @@ std::string fourcc_fourchar_string(uint32_t fourcc)
 #else
 	#error "Unknown endianness"
 #endif
-		'\'',
-		0x00
 	};
 }
 
-/// Creates a @c std::string containing @c fourcc formatted as hexadecimal and returns the result
+/// Creates a @c std::string containing @c val formatted as hexadecimal and returns the result
 /// @throw @c std::length_error
 /// @throw @c std::bad_alloc
 /// @throw @c std::bad_array_new_length
-std::string fourcc_hex_string(uint32_t fourcc)
+template <typename T, typename = std::enable_if_t<std::is_unsigned_v<T>>>
+std::string to_hex_string(T val, std::string::size_type len = sizeof(T) << 1)
 {
-	char buf [10 + 1];
-	const auto n = std::snprintf(buf, sizeof buf, "0x%0.8X", static_cast<int>(fourcc));
-	if(n < 0)
-		return {};
-	return { buf, static_cast<std::string::size_type>(n) };
+	static const char *digits = "0123456789ABCDEF";
+	std::string result(len, '0');
+	for(std::string::size_type i = 0, j = (len - 1) * 4; i < len; ++i, j -= 4)
+		result[i] = digits[(val >> j) & 0x0f];
+	return result;
 }
 
 } // namespace
@@ -82,53 +80,33 @@ std::string SFB::string_from_cfstring(CFStringRef str)
 	return result;
 }
 
-std::string SFB::string_format(const char *format, ...)
-{
-	char buf [256];
-
-	// Attempt to format to `buf`
-	std::va_list args;
-	va_start(args, format);
-	const auto n = std::vsnprintf(buf, sizeof buf, format, args);
-	va_end(args);
-
-	// An error occurred
-	if(n < 0)
-		return {};
-
-	// The formatted string fit within `buf`
-	const auto len = static_cast<std::string::size_type>(n);
-	if(len < sizeof buf)
-		return { buf, len };
-
-	// Allocate a new buffer and re-run the formatting
-	std::string s(len, '\0');
-	va_start(args, format);
-	std::vsnprintf(s.data(), len + 1, format, args);
-	va_end(args);
-
-	return s;
-}
-
 std::string SFB::fourcc_string(uint32_t fourcc)
 {
-	if(fourcc_isprint(fourcc))
-		return fourcc_fourchar_string(fourcc);
+	if(fourcc_isprint(fourcc)) {
+		return concat({"'", fourcc_fourchar_string(fourcc), "'"});
+	}
 	else
-		return fourcc_hex_string(fourcc);
+		return concat({"0x", to_hex_string(fourcc)});
 }
 
 std::string SFB::osstatus_string(int32_t code)
 {
 	if(fourcc_isprint(static_cast<uint32_t>(code))) 
 		return fourcc_fourchar_string(static_cast<uint32_t>(code));
-	else if(code > -200000 && code < 200000) {
-		char buf [7 + 1];
-		const auto n = std::snprintf(buf, sizeof buf, "%d", static_cast<int>(code));
-		if(n < 0)
-			return {};
-		return { buf, static_cast<std::string::size_type>(n) };
-	}
-	else 
-		return fourcc_hex_string(static_cast<uint32_t>(code));
+	else if(code > -200000 && code < 200000)
+		return std::to_string(code);
+	else
+		return to_hex_string(static_cast<uint32_t>(code));
+}
+
+std::string concat(std::initializer_list<std::string_view> il)
+{
+	std::string::size_type len = 0;
+	for(auto s : il)
+		len += s.size();
+	std::string result;
+	result.reserve(len);
+	for(auto s : il)
+		result.append(s);
+	return result;
 }

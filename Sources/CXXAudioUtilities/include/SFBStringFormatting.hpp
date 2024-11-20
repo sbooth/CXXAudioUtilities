@@ -7,6 +7,7 @@
 #pragma once
 
 #import <string>
+#import <string_view>
 
 #import <CoreFoundation/CoreFoundation.h>
 
@@ -19,14 +20,6 @@ namespace SFB {
 /// @param str A @c CFString containing the characters to copy
 /// @return A @c std::string containing the contents of @c str in UTF-8
 std::string string_from_cfstring(CFStringRef str);
-
-/// Creates a @c std::string using a @c std::printf format string and returns the result
-/// @throw @c std::length_error
-/// @throw @c std::bad_alloc
-/// @throw @c std::bad_array_new_length
-/// @param format A null-terminated @c std::printf format string specifying how to interpret the variable arguments
-/// @return A @c std::string containing the formatted result or an empty string if a parse error occurred
-std::string string_format(const char *format, ...) __attribute__((format (printf, 1, 2)));
 
 /// Creates a string representation of a four-character code and returns the result
 /// @throw @c std::length_error
@@ -43,5 +36,13 @@ std::string fourcc_string(uint32_t fourcc);
 /// @param code An @c OSStatus result code
 /// @return A @c std::string containing a string representation of @c code
 std::string osstatus_string(int32_t code);
+
+/// Creates a @c std::string by concatenating the contents of an initializer list and returns the result
+/// @throw @c std::length_error
+/// @throw @c std::bad_alloc
+/// @throw @c std::bad_array_new_length
+/// @param il An initializer list containing the string views to concatenate
+/// @return A @c std::string containing the concatenated result
+std::string concat(std::initializer_list<std::string_view> il);
 
 } // namespace SFB

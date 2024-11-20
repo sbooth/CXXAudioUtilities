@@ -192,7 +192,7 @@ public:
 	{
 		UInt32 size;
 		auto result = AudioFileGetUserDataSize(mAudioFileID, inUserDataID, inIndex, &size);
-		SFBThrowIfCAAudioFileError(result, string_format("AudioFileGetUserDataSize(%s, %d)", fourcc_string(inUserDataID).c_str(), inIndex));
+		SFBThrowIfCAAudioFileError(result, concat({"AudioFileGetUserDataSize(", fourcc_string(inUserDataID), ", ", std::to_string(inIndex), ")"}));
 		return size;
 	}
 
@@ -201,7 +201,7 @@ public:
 	void GetUserData(UInt32 inUserDataID, UInt32 inIndex, UInt32& ioUserDataSize, void *outUserData)
 	{
 		auto result = AudioFileGetUserData(mAudioFileID, inUserDataID, inIndex, &ioUserDataSize, outUserData);
-		SFBThrowIfCAAudioFileError(result, string_format("AudioFileGetUserData(%s, %d)", fourcc_string(inUserDataID).c_str(), inIndex));
+		SFBThrowIfCAAudioFileError(result, concat({"AudioFileGetUserData(", fourcc_string(inUserDataID), ", ", std::to_string(inIndex), ")"}));
 	}
 
 	/// Sets the data of a chunk in a file.
@@ -209,7 +209,7 @@ public:
 	void SetUserData(UInt32 inUserDataID, UInt32 inIndex, UInt32 inUserDataSize, const void *inUserData)
 	{
 		auto result = AudioFileSetUserData(mAudioFileID, inUserDataID, inIndex, inUserDataSize, inUserData);
-		SFBThrowIfCAAudioFileError(result, string_format("AudioFileSetUserData(%s, %d)", fourcc_string(inUserDataID).c_str(), inIndex));
+		SFBThrowIfCAAudioFileError(result, concat({"AudioFileSetUserData(", fourcc_string(inUserDataID), ", ", std::to_string(inIndex), ")"}));
 	}
 
 	/// Removes a user chunk in a file.
@@ -217,7 +217,7 @@ public:
 	void RemoveUserData(UInt32 inUserDataID, UInt32 inIndex)
 	{
 		auto result = AudioFileRemoveUserData(mAudioFileID, inUserDataID, inIndex);
-		SFBThrowIfCAAudioFileError(result, string_format("AudioFileRemoveUserData(%s, %d)", fourcc_string(inUserDataID).c_str(), inIndex));
+		SFBThrowIfCAAudioFileError(result, concat({"AudioFileRemoveUserData(", fourcc_string(inUserDataID), ", ", std::to_string(inIndex), ")"}));
 	}
 
 	/// Gets information about the size of a property of an AudioFile and whether it can be set.
@@ -226,7 +226,7 @@ public:
 	{
 		UInt32 size;
 		auto result = AudioFileGetPropertyInfo(mAudioFileID, inPropertyID, &size, isWritable);
-		SFBThrowIfCAAudioFileError(result, string_format("AudioFileGetPropertyInfo(%s)", fourcc_string(inPropertyID).c_str()));
+		SFBThrowIfCAAudioFileError(result, concat({"AudioFileGetPropertyInfo(", fourcc_string(inPropertyID), ")"}));
 		return size;
 	}
 
@@ -235,7 +235,7 @@ public:
 	void GetProperty(AudioFilePropertyID inPropertyID, UInt32& ioDataSize, void *outPropertyData) const
 	{
 		auto result = AudioFileGetProperty(mAudioFileID, inPropertyID, &ioDataSize, outPropertyData);
-		SFBThrowIfCAAudioFileError(result, string_format("AudioFileGetProperty(%s)", fourcc_string(inPropertyID).c_str()));
+		SFBThrowIfCAAudioFileError(result, concat({"AudioFileGetProperty(", fourcc_string(inPropertyID), ")"}));
 	}
 
 	/// Sets the value for a property of an AudioFile.
@@ -243,7 +243,7 @@ public:
 	void SetProperty(AudioFilePropertyID inPropertyID, UInt32 inDataSize, const void *inPropertyData)
 	{
 		auto result = AudioFileSetProperty(mAudioFileID, inPropertyID, inDataSize, inPropertyData);
-		SFBThrowIfCAAudioFileError(result, string_format("AudioFileSetProperty(%s)", fourcc_string(inPropertyID).c_str()));
+		SFBThrowIfCAAudioFileError(result, concat({"AudioFileSetProperty(", fourcc_string(inPropertyID), ")"}));
 	}
 
 	/// Returns the file's format (@c kAudioFilePropertyFileFormat)
@@ -274,7 +274,7 @@ public:
 	{
 		UInt32 size;
 		auto result = AudioFileGetGlobalInfoSize(inPropertyID, inSpecifierSize, inSpecifier, &size);
-		SFBThrowIfCAAudioFileError(result, string_format("AudioFileGetGlobalInfoSize(%s)", fourcc_string(inPropertyID).c_str()));
+		SFBThrowIfCAAudioFileError(result, concat({"AudioFileGetGlobalInfoSize(", fourcc_string(inPropertyID), ")"}));
 		return size;
 	}
 
@@ -283,7 +283,7 @@ public:
 	static void GetGlobalInfo(AudioFilePropertyID inPropertyID, UInt32 inSpecifierSize, void * _Nullable inSpecifier, UInt32& ioDataSize, void *outPropertyData)
 	{
 		auto result = AudioFileGetGlobalInfo(inPropertyID, inSpecifierSize, inSpecifier, &ioDataSize, outPropertyData);
-		SFBThrowIfCAAudioFileError(result, string_format("AudioFileGetGlobalInfo(%s)", fourcc_string(inPropertyID).c_str()));
+		SFBThrowIfCAAudioFileError(result, concat({"AudioFileGetGlobalInfo(", fourcc_string(inPropertyID), ")"}));
 	}
 
 
