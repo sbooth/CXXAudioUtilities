@@ -7,8 +7,6 @@
 #import <cctype>
 #import <cstdarg>
 
-#include <libkern/OSByteOrder.h>
-
 #import "SFBStringFormatting.hpp"
 
 namespace {
@@ -25,12 +23,24 @@ constexpr bool fourcc_isprint(uint32_t i) noexcept
 /// @throw @c std::bad_array_new_length
 std::string fourcc_fourchar_string(uint32_t fourcc)
 {
-	fourcc = OSSwapHostToBigInt32(fourcc);
-	char buf [6 + 1];
-	const auto n = std::snprintf(buf, sizeof buf, "'%.4s'", reinterpret_cast<const char *>(&fourcc));
-	if(n < 0)
-		return {};
-	return { buf, static_cast<std::string::size_type>(n) };
+	return {
+		'\'',
+#if __BIG_ENDIAN__
+		static_cast<char>(fourcc),
+		static_cast<char>(fourcc >> 8),
+		static_cast<char>(fourcc >> 16),
+		static_cast<char>(fourcc >> 24),
+#elif __LITTLE_ENDIAN__
+		static_cast<char>(fourcc >> 24),
+		static_cast<char>(fourcc >> 16),
+		static_cast<char>(fourcc >> 8),
+		static_cast<char>(fourcc),
+#else
+	#error "Unknown endianness"
+#endif
+		'\'',
+		0x00
+	};
 }
 
 /// Creates a @c std::string containing @c fourcc formatted as hexadecimal and returns the result
@@ -40,7 +50,7 @@ std::string fourcc_fourchar_string(uint32_t fourcc)
 std::string fourcc_hex_string(uint32_t fourcc)
 {
 	char buf [10 + 1];
-	const auto n = std::snprintf(buf, sizeof buf, "0x%0.8x", static_cast<int>(fourcc));
+	const auto n = std::snprintf(buf, sizeof buf, "0x%0.8X", static_cast<int>(fourcc));
 	if(n < 0)
 		return {};
 	return { buf, static_cast<std::string::size_type>(n) };
