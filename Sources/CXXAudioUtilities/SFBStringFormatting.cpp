@@ -5,7 +5,6 @@
 //
 
 #import <cctype>
-#import <cstdarg>
 
 #import "SFBStringFormatting.hpp"
 
