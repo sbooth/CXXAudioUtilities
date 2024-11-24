@@ -93,19 +93,18 @@ std::string SFB::string_from_cfstring(CFStringRef str)
 
 std::string SFB::fourcc_string(uint32_t fourcc)
 {
-	if(fourcc_isprint(fourcc)) {
+	if(fourcc_isprint(fourcc))
 		return concat({"'", fourcc_fourchar_string(fourcc), "'"});
-	}
 	else
 		return concat({"0x", to_hex_string(fourcc)});
 }
 
 std::string SFB::osstatus_string(int32_t code)
 {
-	if(fourcc_isprint(static_cast<uint32_t>(code))) 
-		return fourcc_fourchar_string(static_cast<uint32_t>(code));
+	if(fourcc_isprint(static_cast<uint32_t>(code)))
+		return concat({"'", fourcc_fourchar_string(static_cast<uint32_t>(code)), "'"});
 	else if(code > -200000 && code < 200000)
 		return std::to_string(code);
 	else
-		return to_hex_string(static_cast<uint32_t>(code));
+		return concat({"0x", to_hex_string(static_cast<uint32_t>(code))});
 }

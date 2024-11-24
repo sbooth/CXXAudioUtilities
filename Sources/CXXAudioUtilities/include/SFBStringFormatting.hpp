@@ -6,6 +6,7 @@
 
 #pragma once
 
+#import <initializer_list>
 #import <string>
 #import <string_view>
 
