@@ -58,7 +58,7 @@ public:
 	: AudioStreamBasicDescription{}
 	{
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wanon-enum-enum-conversion"
+#pragma clang diagnostic ignored "-Wdeprecated-anon-enum-enum-conversion"
 		switch(commonPCMFormat) {
 			case CommonPCMFormat::float32:
 				FillOutASBDForLPCM(*this, sampleRate, channelsPerFrame, 32, 32, true, kAudioFormatFlagIsBigEndian == kAudioFormatFlagsNativeEndian, !isInterleaved);
@@ -271,7 +271,7 @@ public:
 		if(!IsPCM())
 			return false;
 #pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wanon-enum-enum-conversion"
+#pragma clang diagnostic ignored "-Wdeprecated-anon-enum-enum-conversion"
 		FillOutASBDForLPCM(format, mSampleRate, mChannelsPerFrame, 32, 32, true, kAudioFormatFlagIsBigEndian == kAudioFormatFlagsNativeEndian, true);
 #pragma clang diagnostic pop
 		return true;
