@@ -54,7 +54,7 @@ public:
 	/// @return @c true on success, @c false on error
 	bool Allocate(uint32_t byteCount) noexcept;
 
-	/// Frees the resources used by this @c RingBuffer
+	/// Frees the resources used by this @c RingBuffer.
 	/// @attention This method is not thread safe.
 	void Deallocate() noexcept;
 
@@ -65,35 +65,35 @@ public:
 
 #pragma mark Buffer Information
 
-	/// Returns the capacity of this RingBuffer in bytes
-	inline uint32_t CapacityBytes() const noexcept
+	/// Returns the capacity of this RingBuffer in bytes.
+	inline constexpr uint32_t CapacityBytes() const noexcept
 	{
 		return mCapacityBytes;
 	}
 
-	/// Returns the number of bytes available for reading
+	/// Returns the number of bytes available for reading.
 	uint32_t BytesAvailableToRead() const noexcept;
 
-	/// Returns the free space available for writing in bytes
+	/// Returns the free space available for writing in bytes.
 	uint32_t BytesAvailableToWrite() const noexcept;
 
 #pragma mark Reading and Writing Data
 
-	/// Read data from the @c RingBuffer, advancing the read pointer.
+	/// Reads data from the @c RingBuffer and advances the read pointer.
 	/// @param destinationBuffer An address to receive the data
 	/// @param byteCount The desired number of bytes to read
 	/// @param allowPartial Whether any bytes should be read if the number of bytes available for reading is less than @c byteCount
 	/// @return The number of bytes actually read
 	uint32_t Read(void * const _Nonnull destinationBuffer, uint32_t byteCount, bool allowPartial = true) noexcept;
 
-	/// Read data from the @c RingBuffer without advancing the read pointer.
+	/// Reads data from the @c RingBuffer without advancing the read pointer.
 	/// @param destinationBuffer An address to receive the data
 	/// @param byteCount The desired number of bytes to read
 	/// @param allowPartial Whether any bytes should be read if the number of bytes available for reading is less than @c byteCount
 	/// @return The number of bytes actually read
 	uint32_t Peek(void * const _Nonnull destinationBuffer, uint32_t byteCount, bool allowPartial = true) const noexcept;
 
-	/// Write data to the @c RingBuffer, advancing the write pointer.
+	/// Writes data to the @c RingBuffer and advances the write pointer.
 	/// @param sourceBuffer An address containing the data to copy
 	/// @param byteCount The desired number of bytes to write
 	/// @param allowPartial Whether any bytes should be written if the free space available for writing is less than @c byteCount
@@ -102,8 +102,8 @@ public:
 
 #pragma mark Reading and Writing Types
 
-	/// Read a type from the @c RingBuffer, advancing the read pointer.
-	/// @tparam T A trivially copyable type to read
+	/// Reads a value from the @c RingBuffer and advances the read pointer.
+	/// @tparam T The type to read
 	/// @param value The destination value
 	/// @return @c true on success, @c false otherwise
 	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
@@ -116,10 +116,10 @@ public:
 		return true;
 	}
 
-	/// Read a type from the @c RingBuffer, advancing the read pointer.
-	/// @tparam T A trivially copyable and trivially default constructible type to read
+	/// Reads a value from the @c RingBuffer and advances the read pointer.
+	/// @tparam T The type to read
 	/// @return A @c std::optional containing an instance of @c T if sufficient bytes were available for reading
-	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T> && std::is_trivially_default_constructible_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
 	std::optional<T> ReadValue() noexcept
 	{
 		T value{};
@@ -128,8 +128,8 @@ public:
 		return value;
 	}
 
-	/// Read a type from the @c RingBuffer without advancing the read pointer.
-	/// @tparam T A trivially copyable type to read
+	/// Reads a value from the @c RingBuffer without advancing the read pointer.
+	/// @tparam T The type to read
 	/// @param value The destination value
 	/// @return @c true on success, @c false otherwise
 	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
@@ -142,10 +142,10 @@ public:
 		return true;
 	}
 
-	/// Read a type from the @c RingBuffer without advancing the read pointer.
-	/// @tparam T A trivially copyable and trivially default constructible type to read
+	/// Reads a value from the @c RingBuffer without advancing the read pointer.
+	/// @tparam T The type to read
 	/// @return A @c std::optional containing an instance of @c T if sufficient bytes were available for reading
-	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T> && std::is_trivially_default_constructible_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
 	std::optional<T> PeekValue() const noexcept
 	{
 		T value{};
@@ -154,8 +154,8 @@ public:
 		return value;
 	}
 
-	/// Write a type to the @c RingBuffer, advancing the write pointer.
-	/// @tparam T A trivially copyable type to write
+	/// Writes a value to the @c RingBuffer and advances the write pointer.
+	/// @tparam T The type to read
 	/// @param value The value to write
 	/// @return @c true if @c value was successfully written
 	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
@@ -170,10 +170,10 @@ public:
 
 #pragma mark Advanced Reading and Writing
 
-	/// Advance the read position by the specified number of bytes
+	/// Advances the read position by the specified number of bytes.
 	void AdvanceReadPosition(uint32_t byteCount) noexcept;
 
-	/// Advance the write position by the specified number of bytes
+	/// Advances the write position by the specified number of bytes.
 	void AdvanceWritePosition(uint32_t byteCount) noexcept;
 
 
@@ -198,7 +198,7 @@ public:
 	/// A pair of @c ReadBuffer objects
 	using ReadBufferPair = std::pair<const ReadBuffer, const ReadBuffer>;
 
-	/// Returns the read vector containing the current readable data
+	/// Returns the read vector containing the current readable data.
 	const ReadBufferPair ReadVector() const noexcept;
 
 
@@ -223,7 +223,7 @@ public:
 	/// A pair of @c WriteBuffer objects
 	using WriteBufferPair = std::pair<const WriteBuffer, const WriteBuffer>;
 
-	/// Returns the write vector containing the current writable space
+	/// Returns the write vector containing the current writable space.
 	const WriteBufferPair WriteVector() const noexcept;
 
 private:
