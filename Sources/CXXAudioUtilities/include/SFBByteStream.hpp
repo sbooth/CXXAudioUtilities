@@ -7,6 +7,7 @@
 #pragma once
 
 #import <algorithm>
+#import <optional>
 #import <stdexcept>
 #import <type_traits>
 
@@ -99,17 +100,17 @@ public:
 	}
 
 
-	/// Reads an integral type and advances the read position
-	/// @tparam T The integral type to read
+	/// Reads a trivially-copyable type and advances the read position
+	/// @tparam T The trivially-copyable type to read
 	/// @param value The destination value
 	/// @return @c true on success, @c false otherwise
-	template <typename T, typename = std::enable_if_t<std::is_integral_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 	bool Read(T& value) noexcept
 	{
 		auto valueSize = sizeof(value);
 		if(valueSize > Remaining())
 			return false;
-		auto bytesRead = Read(&value, valueSize);
+		auto bytesRead = Read(static_cast<void *>(&value), valueSize);
 		return bytesRead == valueSize;
 	}
 
@@ -117,13 +118,13 @@ public:
 	/// @tparam T The unsigned integral type to read
 	/// @param value The destination value
 	/// @return @c true on success, @c false otherwise
-	template <typename T, typename = std::enable_if_t<std::is_unsigned_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
 	bool ReadLE(T& value) noexcept
 	{
 		auto valueSize = sizeof(value);
 		if(valueSize > Remaining())
 			return false;
-		auto bytesRead = Read(&value, valueSize);
+		auto bytesRead = Read(static_cast<void *>(&value), valueSize);
 		if(valueSize != bytesRead)
 			return false;
 
@@ -140,13 +141,13 @@ public:
 	/// @tparam T The unsigned integral type to read
 	/// @param value The destination value
 	/// @return @c true on success, @c false otherwise
-	template <typename T, typename = std::enable_if_t<std::is_unsigned_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
 	bool ReadBE(T& value) noexcept
 	{
 		auto valueSize = sizeof(value);
 		if(valueSize > Remaining())
 			return false;
-		auto bytesRead = Read(&value, valueSize);
+		auto bytesRead = Read(static_cast<void *>(&value), valueSize);
 		if(valueSize != bytesRead)
 			return false;
 
@@ -163,13 +164,13 @@ public:
 	/// @tparam T The unsigned integral type to read
 	/// @param value The destination value
 	/// @return @c true on success, @c false otherwise
-	template <typename T, typename = std::enable_if_t<std::is_unsigned_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
 	bool ReadSwapped(T& value) noexcept
 	{
 		auto valueSize = sizeof(value);
 		if(valueSize > Remaining())
 			return false;
-		auto bytesRead = Read(&value, valueSize);
+		auto bytesRead = Read(static_cast<void *>(&value), valueSize);
 		if(valueSize != bytesRead)
 			return false;
 
@@ -182,45 +183,54 @@ public:
 		return true;
 	}
 
-	/// Reads an integral type and advances the read position
-	/// @tparam T The integral type to read
-	/// @return The value read or @c 0 on failure
-	template <typename T, typename = std::enable_if_t<std::is_integral_v<T>, T>>
-	T Read() noexcept
+	/// Reads a trivially-copyable type and advances the read position
+	/// @tparam T The trivially-copyable type to read
+	/// @return The value read or @c std::nullopt on failure
+	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
+	std::optional<T> Read() noexcept
 	{
-		T value;
-		return Read(value) ? value : 0;
+		T value{};
+		if(!Read(value))
+			return std::nullopt;
+		return value;
 	}
 
 	/// Reads an unsigned little endian integral type converted to host byte ordering and advances the read position
 	/// @tparam T The unsigned integral type to read
-	/// @return The value read or @c 0 on failure
-	template <typename T, typename = std::enable_if_t<std::is_unsigned_v<T>, T>>
-	T ReadLE() noexcept
+	/// @return The value read or @c std::nullopt on failure
+	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
+	std::optional<T> ReadLE() noexcept
 	{
-		T value;
-		return ReadLE(value) ? value : 0;
+		T value{};
+		if(!ReadLE(value))
+			return std::nullopt;
+		return value;
 	}
 
 	/// Reads an unsigned big endian integral type converted to host byte ordering and advances the read position
 	/// @tparam T The unsigned integral type to read
-	/// @return The value read or @c 0 on failure
-	template <typename T, typename = std::enable_if_t<std::is_unsigned_v<T>, T>>
-	T ReadBE() noexcept
+	/// @return The value read or @c std::nullopt on failure
+	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
+	std::optional<T> ReadBE() noexcept
 	{
-		T value;
-		return ReadBE(value) ? value : 0;
+		T value{};
+		if(!ReadBE(value))
+			return std::nullopt;
+		return value;
 	}
 
 	/// Reads an unsigned integral type, swaps its byte ordering, and advances the read position
 	/// @tparam T The unsigned integral type to read
-	/// @return The value read or @c 0 on failure
-	template <typename T, typename = std::enable_if_t<std::is_unsigned_v<T>, T>>
-	T ReadSwapped() noexcept
+	/// @return The value read or @c std::nullopt on failure
+	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
+	std::optional<T> ReadSwapped() noexcept
 	{
-		T value;
-		return ReadSwapped(value) ? value : 0;
+		T value{};
+		if(!ReadSwapped(value))
+			return std::nullopt;
+		return value;
 	}
+
 
 	/// Reads bytes and advances the read position
 	/// @param buf The destination buffer or @c nullptr to discard the bytes
@@ -257,20 +267,20 @@ public:
 
 	/// Returns the number of bytes in the buffer
 	/// @return The number of bytes in the buffer
-	inline size_t Length() const noexcept
+	inline constexpr size_t Length() const noexcept
 	{
 		return mBufferLength;
 	}
 
 	/// Returns the number of bytes remaining
-	inline size_t Remaining() const noexcept
+	inline constexpr size_t Remaining() const noexcept
 	{
 		return mBufferLength - mReadPosition;
 	}
 
 	/// Returns the read position
 	/// @return The read posiiton
-	inline size_t Position() const noexcept
+	inline constexpr size_t Position() const noexcept
 	{
 		return mReadPosition;
 	}
