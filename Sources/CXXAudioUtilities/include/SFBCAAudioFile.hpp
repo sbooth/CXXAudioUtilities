@@ -23,6 +23,7 @@ class CAAudioFile
 {
 
 public:
+
 	/// Creates a @c CAAudioFile
 	constexpr CAAudioFile() noexcept = default;
 

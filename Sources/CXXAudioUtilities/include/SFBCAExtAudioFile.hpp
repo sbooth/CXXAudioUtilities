@@ -35,6 +35,7 @@ private:
 	};
 
 public:
+
 	/// Creates a @c CAExtAudioFile
 	CAExtAudioFile() noexcept = default;
 

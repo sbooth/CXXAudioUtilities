@@ -23,6 +23,7 @@ class CAAUGraph
 {
 
 public:
+
 	/// Creates a @c CAAUGraph
 	CAAUGraph() noexcept = default;
 
