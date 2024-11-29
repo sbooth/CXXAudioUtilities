@@ -19,6 +19,7 @@ class CAAudioConverter
 {
 
 public:
+
 	/// Creates a @c CAAudioConverter
 	constexpr CAAudioConverter() noexcept = default;
 
