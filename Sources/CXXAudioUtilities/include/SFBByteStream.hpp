@@ -11,6 +11,8 @@
 #import <stdexcept>
 #import <type_traits>
 
+#import <libkern/OSByteOrder.h>
+
 namespace SFB {
 
 /// A @c ByteStream provides heterogeneous typed access to an untyped buffer.
@@ -107,80 +109,11 @@ public:
 	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 	bool Read(T& value) noexcept
 	{
-		auto valueSize = sizeof(value);
-		if(valueSize > Remaining())
+		auto size = sizeof(T);
+		if(size > Remaining())
 			return false;
-		auto bytesRead = Read(static_cast<void *>(&value), valueSize);
-		return bytesRead == valueSize;
-	}
-
-	/// Reads an unsigned little endian integral type converted to host byte ordering and advances the read position
-	/// @tparam T The unsigned integral type to read
-	/// @param value The destination value
-	/// @return @c true on success, @c false otherwise
-	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
-	bool ReadLE(T& value) noexcept
-	{
-		auto valueSize = sizeof(value);
-		if(valueSize > Remaining())
-			return false;
-		auto bytesRead = Read(static_cast<void *>(&value), valueSize);
-		if(valueSize != bytesRead)
-			return false;
-
-		switch(valueSize) {
-			case 2:	value = static_cast<T>(OSSwapLittleToHostInt16(value)); break;
-			case 4:	value = static_cast<T>(OSSwapLittleToHostInt32(value)); break;
-			case 8:	value = static_cast<T>(OSSwapLittleToHostInt64(value)); break;
-		}
-
-		return true;
-	}
-
-	/// Reads an unsigned big endian integral type converted to host byte ordering and advances the read position
-	/// @tparam T The unsigned integral type to read
-	/// @param value The destination value
-	/// @return @c true on success, @c false otherwise
-	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
-	bool ReadBE(T& value) noexcept
-	{
-		auto valueSize = sizeof(value);
-		if(valueSize > Remaining())
-			return false;
-		auto bytesRead = Read(static_cast<void *>(&value), valueSize);
-		if(valueSize != bytesRead)
-			return false;
-
-		switch(valueSize) {
-			case 2:	value = static_cast<T>(OSSwapBigToHostInt16(value)); break;
-			case 4:	value = static_cast<T>(OSSwapBigToHostInt32(value)); break;
-			case 8:	value = static_cast<T>(OSSwapBigToHostInt64(value)); break;
-		}
-
-		return true;
-	}
-
-	/// Reads an unsigned integral type, swaps its byte ordering, and advances the read position
-	/// @tparam T The unsigned integral type to read
-	/// @param value The destination value
-	/// @return @c true on success, @c false otherwise
-	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
-	bool ReadSwapped(T& value) noexcept
-	{
-		auto valueSize = sizeof(value);
-		if(valueSize > Remaining())
-			return false;
-		auto bytesRead = Read(static_cast<void *>(&value), valueSize);
-		if(valueSize != bytesRead)
-			return false;
-
-		switch(valueSize) {
-			case 2: value = static_cast<T>(OSSwapInt16(value)); break;
-			case 4: value = static_cast<T>(OSSwapInt32(value)); break;
-			case 8: value = static_cast<T>(OSSwapInt64(value)); break;
-		}
-
-		return true;
+		auto bytesRead = Read(static_cast<void *>(&value), size);
+		return bytesRead == size;
 	}
 
 	/// Reads a trivially-copyable type and advances the read position
@@ -197,6 +130,25 @@ public:
 
 	/// Reads an unsigned little endian integral type converted to host byte ordering and advances the read position
 	/// @tparam T The unsigned integral type to read
+	/// @param value The destination value
+	/// @return @c true on success, @c false otherwise
+	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
+	bool ReadLE(T& value) noexcept
+	{
+		if(!Read(value))
+			return false;
+
+		switch(sizeof(T)) {
+			case 2:	value = static_cast<T>(OSSwapLittleToHostInt16(value)); break;
+			case 4:	value = static_cast<T>(OSSwapLittleToHostInt32(value)); break;
+			case 8:	value = static_cast<T>(OSSwapLittleToHostInt64(value)); break;
+		}
+
+		return true;
+	}
+
+	/// Reads an unsigned little endian integral type converted to host byte ordering and advances the read position
+	/// @tparam T The unsigned integral type to read
 	/// @return The value read or @c std::nullopt on failure
 	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
 	std::optional<T> ReadLE() noexcept
@@ -209,6 +161,25 @@ public:
 
 	/// Reads an unsigned big endian integral type converted to host byte ordering and advances the read position
 	/// @tparam T The unsigned integral type to read
+	/// @param value The destination value
+	/// @return @c true on success, @c false otherwise
+	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
+	bool ReadBE(T& value) noexcept
+	{
+		if(!Read(value))
+			return false;
+
+		switch(sizeof(T)) {
+			case 2:	value = static_cast<T>(OSSwapBigToHostInt16(value)); break;
+			case 4:	value = static_cast<T>(OSSwapBigToHostInt32(value)); break;
+			case 8:	value = static_cast<T>(OSSwapBigToHostInt64(value)); break;
+		}
+
+		return true;
+	}
+
+	/// Reads an unsigned big endian integral type converted to host byte ordering and advances the read position
+	/// @tparam T The unsigned integral type to read
 	/// @return The value read or @c std::nullopt on failure
 	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
 	std::optional<T> ReadBE() noexcept
@@ -217,6 +188,25 @@ public:
 		if(!ReadBE(value))
 			return std::nullopt;
 		return value;
+	}
+
+	/// Reads an unsigned integral type, swaps its byte ordering, and advances the read position
+	/// @tparam T The unsigned integral type to read
+	/// @param value The destination value
+	/// @return @c true on success, @c false otherwise
+	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
+	bool ReadSwapped(T& value) noexcept
+	{
+		if(!Read(value))
+			return false;
+
+		switch(sizeof(T)) {
+			case 2: value = static_cast<T>(OSSwapInt16(value)); break;
+			case 4: value = static_cast<T>(OSSwapInt32(value)); break;
+			case 8: value = static_cast<T>(OSSwapInt64(value)); break;
+		}
+
+		return true;
 	}
 
 	/// Reads an unsigned integral type, swaps its byte ordering, and advances the read position
