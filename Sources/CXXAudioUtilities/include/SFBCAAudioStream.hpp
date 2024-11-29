@@ -29,10 +29,10 @@ public:
 	virtual ~CAAudioStream() = default;
 
 	/// Move constructor
-	CAAudioStream(CAAudioStream&& rhs) = default;
+	CAAudioStream(CAAudioStream&& rhs) noexcept = default;
 
 	/// Move assignment operator
-	CAAudioStream& operator=(CAAudioStream&& rhs) = default;
+	CAAudioStream& operator=(CAAudioStream&& rhs) noexcept = default;
 
 
 	/// Creates a @c CAAudioStream with the specified objectID

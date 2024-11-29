@@ -37,7 +37,7 @@ public:
 	{}
 
 	// Move assignment operator
-	inline AudioFileWrapper& operator=(AudioFileWrapper&& rhs)
+	inline AudioFileWrapper& operator=(AudioFileWrapper&& rhs) noexcept
 	{
 		if(this != &rhs)
 			reset(rhs.release());

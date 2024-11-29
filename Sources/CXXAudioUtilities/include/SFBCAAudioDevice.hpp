@@ -29,10 +29,10 @@ public:
 	virtual ~CAAudioDevice() = default;
 
 	/// Move constructor
-	CAAudioDevice(CAAudioDevice&& rhs) = default;
+	CAAudioDevice(CAAudioDevice&& rhs) noexcept = default;
 
 	/// Move assignment operator
-	CAAudioDevice& operator=(CAAudioDevice&& rhs) = default;
+	CAAudioDevice& operator=(CAAudioDevice&& rhs) noexcept = default;
 
 
 	/// Creates a @c CAAudioDevice with the specified objectID
