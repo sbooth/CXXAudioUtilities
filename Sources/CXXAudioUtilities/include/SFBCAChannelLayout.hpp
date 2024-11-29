@@ -123,9 +123,7 @@ public:
 	/// @note The caller assumes responsiblity for deallocating the returned @c AudioChannelLayout using @c std::free
 	AudioChannelLayout * _Nullable Release() noexcept
 	{
-		auto channelLayout = mChannelLayout;
-		mChannelLayout = nullptr;
-		return channelLayout;
+		return std::exchange(mChannelLayout, nullptr);
 	}
 
 	/// Replaces the object's internal @c AudioChannelLayout with @c channelLayout and then deallocates it

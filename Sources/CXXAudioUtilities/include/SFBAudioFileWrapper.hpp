@@ -79,17 +79,13 @@ public:
 	/// Swaps the managed @c AudioFile of @c *this and @c other
 	inline void swap(AudioFileWrapper& other) noexcept
 	{
-		auto audioFile = mAudioFile;
-		mAudioFile = other.mAudioFile;
-		other.mAudioFile = audioFile;
+		std::swap(mAudioFile, other.mAudioFile);
 	}
 
 	/// Releases ownership of the managed @c AudioFile and returns it
 	inline AudioFileID release() noexcept
 	{
-		auto oldAudioFile = mAudioFile;
-		mAudioFile = nullptr;
-		return oldAudioFile;
+		return std::exchange(mAudioFile, nullptr);
 	}
 
 private:
