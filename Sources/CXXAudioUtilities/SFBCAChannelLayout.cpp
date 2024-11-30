@@ -392,39 +392,43 @@ bool SFB::CAChannelLayout::MapToLayout(const CAChannelLayout& outputLayout, std:
 	return true;
 }
 
-SFB::CFString SFB::CAChannelLayout::Description(const char * const prefix) const noexcept
+std::string SFB::CAChannelLayout::Description(const char * const prefix) const noexcept
 {
-	if(!mChannelLayout) {
-		if(prefix)
-			return CFString(prefix, kCFStringEncodingUTF8);
-		else
-			return CFString{};
-	}
+	if(!mChannelLayout)
+		return prefix ?: std::string{};
 
-	CFMutableString result{ CFStringCreateMutable(kCFAllocatorDefault, 0) };
+	std::string result{};
 
 	if(prefix)
-		CFStringAppendCString(result, prefix, kCFStringEncodingUTF8);
+		result.append(prefix);
 
-	if(kAudioChannelLayoutTag_UseChannelBitmap == mChannelLayout->mChannelLayoutTag)
-		CFStringAppendFormat(result, NULL, CFSTR("Channel bitmap: 0x%0.8x"), mChannelLayout->mChannelBitmap);
-	else if(kAudioChannelLayoutTag_UseChannelDescriptions == mChannelLayout->mChannelLayoutTag){
-		CFStringAppendFormat(result, NULL, CFSTR("%u channels ["), mChannelLayout->mNumberChannelDescriptions);
+	char buf [128];
+
+	if(kAudioChannelLayoutTag_UseChannelBitmap == mChannelLayout->mChannelLayoutTag) {
+		snprintf(buf, sizeof(buf), "Channel bitmap: 0x%0.8x", mChannelLayout->mChannelBitmap);
+		result.append(buf);
+	}
+	else if(kAudioChannelLayoutTag_UseChannelDescriptions == mChannelLayout->mChannelLayoutTag) {
+		snprintf(buf, sizeof(buf), "%u channels [", mChannelLayout->mNumberChannelDescriptions);
+		result.append(buf);
 
 		const AudioChannelDescription *desc = mChannelLayout->mChannelDescriptions;
 		for(UInt32 i = 0; i < mChannelLayout->mNumberChannelDescriptions; ++i, ++desc) {
 			if(kAudioChannelLabel_UseCoordinates == desc->mChannelLabel)
-				CFStringAppendFormat(result, NULL, CFSTR("(%f, %f, %f), flags = 0x%0.8x"), desc->mCoordinates[0], desc->mCoordinates[1], desc->mCoordinates[2], desc->mChannelFlags);
+				snprintf(buf, sizeof(buf), "(%f, %f, %f), flags = 0x%0.8x", desc->mCoordinates[0], desc->mCoordinates[1], desc->mCoordinates[2], desc->mChannelFlags);
 			else
-				CFStringAppendFormat(result, NULL, CFSTR("%s (0x%0.8x)"), GetChannelLabelName(desc->mChannelLabel), desc->mChannelLabel);
+				snprintf(buf, sizeof(buf), "%s (0x%0.8x)", GetChannelLabelName(desc->mChannelLabel), desc->mChannelLabel);
+			result.append(buf);
 			if(i < mChannelLayout->mNumberChannelDescriptions - 1)
-				CFStringAppend(result, CFSTR(", "));
+				result.append(", ");
 		}
 
-		CFStringAppend(result, CFSTR("]"));
+		result.append("]");
 	}
-	else
-		CFStringAppendFormat(result, NULL, CFSTR("%s (0x%0.8x)"), GetChannelLayoutTagName(mChannelLayout->mChannelLayoutTag), mChannelLayout->mChannelLayoutTag);
+	else {
+		snprintf(buf, sizeof(buf), "%s (0x%0.8x)", GetChannelLayoutTagName(mChannelLayout->mChannelLayoutTag), mChannelLayout->mChannelLayoutTag);
+		result.append(buf);
+	}
 
-	return CFString(static_cast<CFStringRef>(result.Relinquish()));
+	return result;
 }

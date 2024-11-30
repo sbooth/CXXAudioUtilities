@@ -4,15 +4,19 @@
 // MIT license
 //
 
+#import <libkern/OSByteOrder.h>
+
 #import "SFBCAStreamBasicDescription.hpp"
 
 // Most of this is stolen from Apple's CAStreamBasicDescription::Print()
-SFB::CFString SFB::CAStreamBasicDescription::Description(const char * const prefix) const noexcept
+std::string SFB::CAStreamBasicDescription::Description(const char * const prefix) const noexcept
 {
-	CFMutableString result{CFStringCreateMutable(kCFAllocatorDefault, 0)};
+	std::string result{};
 
 	if(prefix)
-		CFStringAppendCString(result, prefix, kCFStringEncodingUTF8);
+		result.append(prefix);
+
+	char buf [128];
 
 	unsigned char formatID [5];
 	auto formatIDBE = OSSwapHostToBigInt32(mFormatID);
@@ -20,41 +24,45 @@ SFB::CFString SFB::CAStreamBasicDescription::Description(const char * const pref
 	formatID[4] = '\0';
 
 	// General description
-	CFStringAppendFormat(result, NULL, CFSTR("%u ch, %.2f Hz, '%.4s' (0x%0.8x) "), mChannelsPerFrame, mSampleRate, formatID, mFormatFlags);
+	snprintf(buf, sizeof(buf), "%u ch, %.2f Hz, '%.4s' (0x%0.8x) ", mChannelsPerFrame, mSampleRate, formatID, mFormatFlags);
+	result.append(buf);
 
 	if(kAudioFormatLinearPCM == mFormatID) {
 		// Bit depth
 		UInt32 fractionalBits = (kLinearPCMFormatFlagsSampleFractionMask & mFormatFlags) >> kLinearPCMFormatFlagsSampleFractionShift;
 		if(fractionalBits > 0)
-			CFStringAppendFormat(result, NULL, CFSTR("%d.%d-bit"), mBitsPerChannel - fractionalBits, fractionalBits);
+			snprintf(buf, sizeof(buf), "%d.%d-bit", mBitsPerChannel - fractionalBits, fractionalBits);
 		else
-			CFStringAppendFormat(result, NULL, CFSTR("%d-bit"), mBitsPerChannel);
+			snprintf(buf, sizeof(buf), "%d-bit", mBitsPerChannel);
+		result.append(buf);
 
 		// Endianness
 		bool isInterleaved = !(kAudioFormatFlagIsNonInterleaved & mFormatFlags);
 		UInt32 interleavedChannelCount = (isInterleaved ? mChannelsPerFrame : 1);
 		UInt32 sampleSize = (mBytesPerFrame > 0 && interleavedChannelCount > 0 ? mBytesPerFrame / interleavedChannelCount : 0);
 		if(sampleSize > 1)
-			CFStringAppend(result, (kLinearPCMFormatFlagIsBigEndian & mFormatFlags) ? CFSTR(" big-endian") : CFSTR(" little-endian"));
+			result.append((kLinearPCMFormatFlagIsBigEndian & mFormatFlags) ? " big-endian" : " little-endian");
 
 		// Sign
 		bool isInteger = !(kLinearPCMFormatFlagIsFloat & mFormatFlags);
 		if(isInteger)
-			CFStringAppend(result, (kLinearPCMFormatFlagIsSignedInteger & mFormatFlags) ? CFSTR(" signed") : CFSTR(" unsigned"));
+			result.append((kLinearPCMFormatFlagIsSignedInteger & mFormatFlags) ? " signed" : " unsigned");
 
 		// Integer or floating
-		CFStringAppend(result, isInteger ? CFSTR(" integer") : CFSTR(" float"));
+		result.append(isInteger ? " integer" : " float");
 
 		// Packedness
-		if(sampleSize > 0 && ((sampleSize << 3) != mBitsPerChannel))
-			CFStringAppendFormat(result, NULL, (kLinearPCMFormatFlagIsPacked & mFormatFlags) ? CFSTR(", packed in %d bytes") : CFSTR(", unpacked in %d bytes"), sampleSize);
+		if(sampleSize > 0 && ((sampleSize << 3) != mBitsPerChannel)) {
+			snprintf(buf, sizeof(buf), ", %s in %d bytes", (kLinearPCMFormatFlagIsPacked & mFormatFlags) ? "packed" : "unpacked", sampleSize);
+			result.append(buf);
+		}
 
 		// Alignment
 		if((sampleSize > 0 && ((sampleSize << 3) != mBitsPerChannel)) || ((mBitsPerChannel & 7) != 0))
-			CFStringAppend(result, (kLinearPCMFormatFlagIsAlignedHigh & mFormatFlags) ? CFSTR(" high-aligned") : CFSTR(" low-aligned"));
+			result.append((kLinearPCMFormatFlagIsAlignedHigh & mFormatFlags) ? " high-aligned" : " low-aligned");
 
 		if(!isInterleaved)
-			CFStringAppend(result, CFSTR(", deinterleaved"));
+			result.append(", deinterleaved");
 	}
 	else if(kAudioFormatAppleLossless == mFormatID) {
 		UInt32 sourceBitDepth = 0;
@@ -66,14 +74,18 @@ SFB::CFString SFB::CAStreamBasicDescription::Description(const char * const pref
 		}
 
 		if(sourceBitDepth != 0)
-			CFStringAppendFormat(result, NULL, CFSTR("from %d-bit source, "), sourceBitDepth);
+			snprintf(buf, sizeof(buf), "from %d-bit source, ", sourceBitDepth);
 		else
-			CFStringAppend(result, CFSTR("from UNKNOWN source bit depth, "));
+			snprintf(buf, sizeof(buf), "from UNKNOWN source bit depth, ");
+		result.append(buf);
 
-		CFStringAppendFormat(result, NULL, CFSTR(" %d frames/packet"), mFramesPerPacket);
+		snprintf(buf, sizeof(buf), " %d frames/packet", mFramesPerPacket);
+		result.append(buf);
 	}
-	else
-		CFStringAppendFormat(result, NULL, CFSTR("%u bits/channel, %u bytes/packet, %u frames/packet, %u bytes/frame"), mBitsPerChannel, mBytesPerPacket, mFramesPerPacket, mBytesPerFrame);
+	else {
+		snprintf(buf, sizeof(buf), "%u bits/channel, %u bytes/packet, %u frames/packet, %u bytes/frame", mBitsPerChannel, mBytesPerPacket, mFramesPerPacket, mBytesPerFrame);
+		result.append(buf);
+	}
 
-	return CFString{static_cast<CFStringRef>(result.Relinquish())};
+	return result;
 }

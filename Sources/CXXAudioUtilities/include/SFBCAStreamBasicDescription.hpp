@@ -7,10 +7,9 @@
 #pragma once
 
 #import <cstring>
+#import <string>
 
 #import <CoreAudioTypes/CoreAudioTypes.h>
-
-#import "SFBCFWrapper.hpp"
 
 namespace SFB {
 
@@ -285,7 +284,7 @@ public:
 
 
 	/// Returns a string representation of this format suitable for logging
-	CFString Description(const char * const _Nullable prefix = nullptr) const noexcept;
+	std::string Description(const char * const _Nullable prefix = nullptr) const noexcept;
 
 };
 

@@ -6,6 +6,7 @@
 
 #pragma once
 
+#import <string>
 #import <utility>
 #import <vector>
 
@@ -14,8 +15,6 @@
 #ifdef __OBJC__
 #import <AVFAudio/AVFAudio.h>
 #endif /* __OBJC__ */
-
-#import "SFBCFWrapper.hpp"
 
 namespace SFB {
 
@@ -170,7 +169,7 @@ public:
 
 
 	/// Returns a string representation of this channel layout suitable for logging
-	CFString Description(const char * const _Nullable prefix = nullptr) const noexcept;
+	std::string Description(const char * const _Nullable prefix = nullptr) const noexcept;
 
 
 #ifdef __OBJC__
