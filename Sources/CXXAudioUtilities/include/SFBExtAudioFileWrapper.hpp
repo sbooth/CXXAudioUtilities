@@ -6,6 +6,8 @@
 
 #pragma once
 
+#import <utility>
+
 #import <AudioToolbox/ExtendedAudioFile.h>
 
 namespace SFB {
