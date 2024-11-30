@@ -7,6 +7,7 @@
 #pragma once
 
 #import <type_traits>
+#import <utility>
 
 #import <CFNetwork/CFNetwork.h>
 #import <CoreFoundation/CoreFoundation.h>
@@ -136,10 +137,7 @@ public:
 	/// Relinquishes ownership of the wrapped object and returns it
 	inline T Relinquish() noexcept
 	{
-		T object = mObject;
-		mObject = nullptr;
-
-		return object;
+		return std::exchange(mObject, nullptr);
 	}
 
 #pragma mark Equality testing
