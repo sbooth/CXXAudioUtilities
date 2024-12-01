@@ -551,6 +551,64 @@ constexpr const char * GetChannelLabelName(AudioChannelLabel label) noexcept
 	return nullptr;
 }
 
+/// Returns the string representation of a bit in an @c AudioChannelBitmask
+constexpr const char * GetChannelBitmaskBitName(UInt32 channelBit) noexcept
+{
+	switch(channelBit) {
+		case kAudioChannelBit_Left:
+			return "Left";
+		case kAudioChannelBit_Right:
+			return "Right";
+		case kAudioChannelBit_Center:
+			return "Center";
+		case kAudioChannelBit_LFEScreen:
+			return "LFE Screen";
+		case kAudioChannelBit_LeftSurround:
+			return "Left Surround";
+		case kAudioChannelBit_RightSurround:
+			return "Right Surround";
+		case kAudioChannelBit_LeftCenter:
+			return "Left Center";
+		case kAudioChannelBit_RightCenter:
+			return "Right Center";
+		case kAudioChannelBit_CenterSurround:
+			return "Center Surround";
+		case kAudioChannelBit_LeftSurroundDirect:
+			return "Left Surround Direct";
+		case kAudioChannelBit_RightSurroundDirect:
+			return "Right Surround Direct";
+		case kAudioChannelBit_TopCenterSurround:
+			return "Top Center Surround";
+		case kAudioChannelBit_VerticalHeightLeft:
+			return "Vertical Height Left";
+		case kAudioChannelBit_VerticalHeightCenter:
+			return "Vertical Height Center";
+		case kAudioChannelBit_VerticalHeightRight:
+			return "Vertical Height Right";
+		case kAudioChannelBit_TopBackLeft:
+			return "Top Back Left";
+		case kAudioChannelBit_TopBackCenter:
+			return "Top Back Center";
+		case kAudioChannelBit_TopBackRight:
+			return "Top Back Right";
+		case kAudioChannelBit_LeftTopMiddle:
+			return "Left Top Middle";
+		case kAudioChannelBit_RightTopMiddle:
+			return "Right Top Middle";
+		case kAudioChannelBit_LeftTopRear:
+			return "Left Top Rear";
+		case kAudioChannelBit_CenterTopRear:
+			return "Center Top Rear";
+		case kAudioChannelBit_RightTopRear:
+			return "Right Top Rear";
+
+		default:
+			break;
+	}
+
+	return nullptr;
+}
+
 }
 
 size_t SFB::AudioChannelLayoutSize(const AudioChannelLayout *channelLayout) noexcept
@@ -635,7 +693,7 @@ bool SFB::CAChannelLayout::operator==(const CAChannelLayout& rhs) const noexcept
 	return layoutsEqual;
 }
 
-size_t SFB::CAChannelLayout::ChannelCount() const noexcept
+UInt32 SFB::CAChannelLayout::ChannelCount() const noexcept
 {
 	if(!mChannelLayout)
 		return 0;
@@ -644,7 +702,7 @@ size_t SFB::CAChannelLayout::ChannelCount() const noexcept
 		return mChannelLayout->mNumberChannelDescriptions;
 
 	if(mChannelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap)
-		return (size_t)__builtin_popcount(mChannelLayout->mChannelBitmap);
+		return static_cast<UInt32>(__builtin_popcount(mChannelLayout->mChannelBitmap));
 
 	return AudioChannelLayoutTag_GetNumberOfChannels(mChannelLayout->mChannelLayoutTag);
 }
@@ -665,7 +723,7 @@ bool SFB::CAChannelLayout::MapToLayout(const CAChannelLayout& outputLayout, std:
 		return false;
 
 	SInt32 rawChannelMap [outputChannelCount];
-	UInt32 propertySize = (UInt32)sizeof(rawChannelMap);
+	UInt32 propertySize = static_cast<UInt32>(sizeof(rawChannelMap));
 	OSStatus result = AudioFormatGetProperty(kAudioFormatProperty_ChannelMap, sizeof(layouts), static_cast<void *>(layouts), &propertySize, &rawChannelMap);
 
 	if(noErr != result)
@@ -692,15 +750,13 @@ SFB::CFString SFB::CAChannelLayout::Description(const char * const prefix) const
 	if(prefix)
 		CFStringAppendCString(result, prefix, kCFStringEncodingUTF8);
 
-	if(kAudioChannelLayoutTag_UseChannelBitmap == mChannelLayout->mChannelLayoutTag)
-		CFStringAppendFormat(result, NULL, CFSTR("Channel bitmap: 0x%0.8x"), mChannelLayout->mChannelBitmap);
-	else if(kAudioChannelLayoutTag_UseChannelDescriptions == mChannelLayout->mChannelLayoutTag){
-		CFStringAppendFormat(result, NULL, CFSTR("%u channels ["), mChannelLayout->mNumberChannelDescriptions);
+	if(kAudioChannelLayoutTag_UseChannelDescriptions == mChannelLayout->mChannelLayoutTag){
+		CFStringAppendFormat(result, NULL, CFSTR("%u ch, ["), mChannelLayout->mNumberChannelDescriptions);
 
 		const AudioChannelDescription *desc = mChannelLayout->mChannelDescriptions;
 		for(UInt32 i = 0; i < mChannelLayout->mNumberChannelDescriptions; ++i, ++desc) {
 			if(kAudioChannelLabel_UseCoordinates == desc->mChannelLabel)
-				CFStringAppendFormat(result, NULL, CFSTR("(%f, %f, %f), flags = 0x%0.8x"), desc->mCoordinates[0], desc->mCoordinates[1], desc->mCoordinates[2], desc->mChannelFlags);
+				CFStringAppendFormat(result, NULL, CFSTR("(%f, %f, %f) flags 0x%0.8x"), desc->mCoordinates[0], desc->mCoordinates[1], desc->mCoordinates[2], desc->mChannelFlags);
 			else
 				CFStringAppendFormat(result, NULL, CFSTR("%s (0x%0.8x)"), GetChannelLabelName(desc->mChannelLabel), desc->mChannelLabel);
 			if(i < mChannelLayout->mNumberChannelDescriptions - 1)
@@ -709,8 +765,23 @@ SFB::CFString SFB::CAChannelLayout::Description(const char * const prefix) const
 
 		CFStringAppend(result, CFSTR("]"));
 	}
+	else if(kAudioChannelLayoutTag_UseChannelBitmap == mChannelLayout->mChannelLayoutTag) {
+		auto channelCount = __builtin_popcount(mChannelLayout->mChannelBitmap);
+		CFStringAppendFormat(result, NULL, CFSTR("%u ch, ["), channelCount);
+
+		auto i = 0;
+		for(UInt32 bit = 1u << 0; bit <= 1u << 31; bit <<= 1) {
+			if(mChannelLayout->mChannelBitmap & bit) {
+				CFStringAppendFormat(result, NULL, CFSTR("%s"), GetChannelBitmaskBitName(bit));
+				if(i++ < channelCount - 1)
+					CFStringAppend(result, CFSTR(" | "));
+			}
+		}
+
+		CFStringAppendFormat(result, NULL, CFSTR("] (0x%0.8x)"), mChannelLayout->mChannelBitmap);
+	}
 	else
-		CFStringAppendFormat(result, NULL, CFSTR("%s (0x%0.8x)"), GetChannelLayoutTagName(mChannelLayout->mChannelLayoutTag), mChannelLayout->mChannelLayoutTag);
+		CFStringAppendFormat(result, NULL, CFSTR("%u ch, %s (0x%0.8x)"), AudioChannelLayoutTag_GetNumberOfChannels(mChannelLayout->mChannelLayoutTag), GetChannelLayoutTagName(mChannelLayout->mChannelLayoutTag), mChannelLayout->mChannelLayoutTag);
 
 	return CFString(static_cast<CFStringRef>(result.Relinquish()));
 }

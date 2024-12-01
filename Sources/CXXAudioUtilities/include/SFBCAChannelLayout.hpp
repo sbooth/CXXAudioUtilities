@@ -104,7 +104,7 @@ public:
 #pragma mark Functionality
 
 	/// Returns the number of channels contained in this channel layout
-	size_t ChannelCount() const noexcept;
+	UInt32 ChannelCount() const noexcept;
 
 	/// Creates a channel map for remapping audio from this channel layout
 	/// @param outputLayout The output channel layout
