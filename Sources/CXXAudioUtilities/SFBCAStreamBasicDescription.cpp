@@ -4,6 +4,8 @@
 // MIT license
 //
 
+#import <cstdio>
+
 #import <libkern/OSByteOrder.h>
 
 #import "SFBCAStreamBasicDescription.hpp"
@@ -24,16 +26,16 @@ std::string SFB::CAStreamBasicDescription::Description(const char * const prefix
 	formatID[4] = '\0';
 
 	// General description
-	snprintf(buf, sizeof(buf), "%u ch, %.2f Hz, '%.4s' (0x%0.8x) ", mChannelsPerFrame, mSampleRate, formatID, mFormatFlags);
+	std::snprintf(buf, sizeof(buf), "%u ch, %.2f Hz, '%.4s' (0x%0.8x) ", mChannelsPerFrame, mSampleRate, formatID, mFormatFlags);
 	result.append(buf);
 
 	if(kAudioFormatLinearPCM == mFormatID) {
 		// Bit depth
 		UInt32 fractionalBits = (kLinearPCMFormatFlagsSampleFractionMask & mFormatFlags) >> kLinearPCMFormatFlagsSampleFractionShift;
 		if(fractionalBits > 0)
-			snprintf(buf, sizeof(buf), "%d.%d-bit", mBitsPerChannel - fractionalBits, fractionalBits);
+			std::snprintf(buf, sizeof(buf), "%d.%d-bit", mBitsPerChannel - fractionalBits, fractionalBits);
 		else
-			snprintf(buf, sizeof(buf), "%d-bit", mBitsPerChannel);
+			std::snprintf(buf, sizeof(buf), "%d-bit", mBitsPerChannel);
 		result.append(buf);
 
 		// Endianness
@@ -53,7 +55,7 @@ std::string SFB::CAStreamBasicDescription::Description(const char * const prefix
 
 		// Packedness
 		if(sampleSize > 0 && ((sampleSize << 3) != mBitsPerChannel)) {
-			snprintf(buf, sizeof(buf), ", %s in %d bytes", (kLinearPCMFormatFlagIsPacked & mFormatFlags) ? "packed" : "unpacked", sampleSize);
+			std::snprintf(buf, sizeof(buf), ", %s in %d bytes", (kLinearPCMFormatFlagIsPacked & mFormatFlags) ? "packed" : "unpacked", sampleSize);
 			result.append(buf);
 		}
 
@@ -74,16 +76,16 @@ std::string SFB::CAStreamBasicDescription::Description(const char * const prefix
 		}
 
 		if(sourceBitDepth != 0)
-			snprintf(buf, sizeof(buf), "from %d-bit source, ", sourceBitDepth);
+			std::snprintf(buf, sizeof(buf), "from %d-bit source, ", sourceBitDepth);
 		else
-			snprintf(buf, sizeof(buf), "from UNKNOWN source bit depth, ");
+			std::snprintf(buf, sizeof(buf), "from UNKNOWN source bit depth, ");
 		result.append(buf);
 
-		snprintf(buf, sizeof(buf), " %d frames/packet", mFramesPerPacket);
+		std::snprintf(buf, sizeof(buf), " %d frames/packet", mFramesPerPacket);
 		result.append(buf);
 	}
 	else {
-		snprintf(buf, sizeof(buf), "%u bits/channel, %u bytes/packet, %u frames/packet, %u bytes/frame", mBitsPerChannel, mBytesPerPacket, mFramesPerPacket, mBytesPerFrame);
+		std::snprintf(buf, sizeof(buf), "%u bits/channel, %u bytes/packet, %u frames/packet, %u bytes/frame", mBitsPerChannel, mBytesPerPacket, mFramesPerPacket, mBytesPerFrame);
 		result.append(buf);
 	}
 
