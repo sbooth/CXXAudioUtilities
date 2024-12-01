@@ -166,43 +166,43 @@ constexpr const char * GetChannelLayoutTagName(AudioChannelLayoutTag layoutTag) 
 		case kAudioChannelLayoutTag_TMH_10_2_full:
 			return "TMH 10.2 full";
 		case kAudioChannelLayoutTag_AC3_1_0_1:
-			return "AC3 1.0.1";
+			return "AC-3 1.0.1";
 		case kAudioChannelLayoutTag_AC3_3_0:
-			return "AC3 3.0";
+			return "AC-3 3.0";
 		case kAudioChannelLayoutTag_AC3_3_1:
-			return "AC3 3.1";
+			return "AC-3 3.1";
 		case kAudioChannelLayoutTag_AC3_3_0_1:
-			return "AC3 3.0.1";
+			return "AC-3 3.0.1";
 		case kAudioChannelLayoutTag_AC3_2_1_1:
-			return "AC3 2.1.1";
+			return "AC-3 2.1.1";
 		case kAudioChannelLayoutTag_AC3_3_1_1:
-			return "AC3 3.1.1";
+			return "AC-3 3.1.1";
 		case kAudioChannelLayoutTag_EAC_6_0_A:
 			return "EAC 6.0 A";
 		case kAudioChannelLayoutTag_EAC_7_0_A:
 			return "EAC 7.0 A";
 		case kAudioChannelLayoutTag_EAC3_6_1_A:
-			return "EAC3 6.1 A";
+			return "E-AC-3 6.1 A";
 		case kAudioChannelLayoutTag_EAC3_6_1_B:
-			return "EAC3 6.1 B";
+			return "E-AC-3 6.1 B";
 		case kAudioChannelLayoutTag_EAC3_6_1_C:
-			return "EAC3 6.1 C";
+			return "E-AC-3 6.1 C";
 		case kAudioChannelLayoutTag_EAC3_7_1_A:
-			return "EAC3 7.1 A";
+			return "E-AC-3 7.1 A";
 		case kAudioChannelLayoutTag_EAC3_7_1_B:
-			return "EAC3 7.1 B";
+			return "E-AC-3 7.1 B";
 		case kAudioChannelLayoutTag_EAC3_7_1_C:
-			return "EAC3 7.1 C";
+			return "E-AC-3 7.1 C";
 		case kAudioChannelLayoutTag_EAC3_7_1_D:
-			return "EAC3 7.1 D";
+			return "E-AC-3 7.1 D";
 		case kAudioChannelLayoutTag_EAC3_7_1_E:
-			return "EAC3 7.1 E";
+			return "E-AC-3 7.1 E";
 		case kAudioChannelLayoutTag_EAC3_7_1_F:
-			return "EAC3 7.1 F";
+			return "E-AC-3 7.1 F";
 		case kAudioChannelLayoutTag_EAC3_7_1_G:
-			return "EAC3 7.1 G";
+			return "E-AC-3 7.1 G";
 		case kAudioChannelLayoutTag_EAC3_7_1_H:
-			return "EAC3 7.1 H";
+			return "E-AC-3 7.1 H";
 		case kAudioChannelLayoutTag_DTS_3_1:
 			return "DTS 3.1";
 		case kAudioChannelLayoutTag_DTS_4_1:
