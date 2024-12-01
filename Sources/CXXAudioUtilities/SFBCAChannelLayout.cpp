@@ -776,6 +776,7 @@ std::string SFB::CAChannelLayout::Description() const
 	else if(mChannelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap) {
 		auto channelCount = __builtin_popcount(mChannelLayout->mChannelBitmap);
 		std::snprintf(buf, sizeof(buf), "%u ch, [", channelCount);
+		result.append(buf);
 
 		auto i = 0;
 		for(auto bit = 0; bit < 32; ++bit) {
