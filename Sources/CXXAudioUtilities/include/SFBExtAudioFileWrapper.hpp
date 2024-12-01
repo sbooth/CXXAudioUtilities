@@ -72,9 +72,7 @@ public:
 	/// Disposes of the managed @c ExtAudioFile and replaces it with @c extAudioFile
 	inline void reset(ExtAudioFileRef extAudioFile = nullptr) noexcept
 	{
-		auto oldExtAudioFile = mExtAudioFile;
-		mExtAudioFile = extAudioFile;
-		if(oldExtAudioFile)
+		if(auto oldExtAudioFile = std::exchange(mExtAudioFile, extAudioFile); oldExtAudioFile)
 			ExtAudioFileDispose(oldExtAudioFile);
 	}
 
