@@ -622,13 +622,23 @@ size_t SFB::AudioChannelLayoutSize(const AudioChannelLayout *channelLayout) noex
 const SFB::CAChannelLayout SFB::CAChannelLayout::Mono		= CAChannelLayout(kAudioChannelLayoutTag_Mono);
 const SFB::CAChannelLayout SFB::CAChannelLayout::Stereo 	= CAChannelLayout(kAudioChannelLayoutTag_Stereo);
 
-SFB::CAChannelLayout SFB::CAChannelLayout::ChannelLayoutWithBitmap(UInt32 channelBitmap)
+SFB::CAChannelLayout SFB::CAChannelLayout::ChannelLayoutWithBitmap(AudioChannelBitmap channelBitmap)
 {
 	CAChannelLayout channelLayout{};
 	channelLayout.mChannelLayout = CreateChannelLayout(0);
 	channelLayout.mChannelLayout->mChannelLayoutTag = kAudioChannelLayoutTag_UseChannelBitmap;
 	channelLayout.mChannelLayout->mChannelBitmap = channelBitmap;
 	return channelLayout;
+}
+
+SFB::CAChannelLayout SFB::CAChannelLayout::ChannelLayoutWithTag(AudioChannelLayoutTag layoutTag)
+{
+	return CAChannelLayout{ layoutTag };
+}
+
+SFB::CAChannelLayout SFB::CAChannelLayout::ChannelLayoutWithChannelLabels(std::vector<AudioChannelLabel> channelLabels)
+{
+	return CAChannelLayout{ channelLabels };
 }
 
 SFB::CAChannelLayout::CAChannelLayout(const CAChannelLayout& rhs)
