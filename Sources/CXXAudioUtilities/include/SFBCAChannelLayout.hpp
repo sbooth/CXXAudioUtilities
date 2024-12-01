@@ -177,7 +177,7 @@ public:
 
 
 	/// Returns a string representation of this channel layout suitable for logging
-	std::string Description(const char * const _Nullable prefix = nullptr) const noexcept;
+	std::string Description(const char * const _Nullable prefix = nullptr) const;
 
 
 #ifdef __OBJC__
