@@ -747,15 +747,12 @@ bool SFB::CAChannelLayout::MapToLayout(const CAChannelLayout& outputLayout, std:
 	return true;
 }
 
-std::string SFB::CAChannelLayout::Description(const char * const prefix) const
+std::string SFB::CAChannelLayout::Description() const
 {
 	if(!mChannelLayout)
-		return prefix ?: std::string{};
+		return {};
 
 	std::string result{};
-
-	if(prefix)
-		result.append(prefix);
 
 	char buf [128];
 

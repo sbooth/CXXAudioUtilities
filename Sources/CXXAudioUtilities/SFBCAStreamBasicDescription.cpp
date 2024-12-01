@@ -11,12 +11,9 @@
 #import "SFBCAStreamBasicDescription.hpp"
 
 // Most of this is stolen from Apple's CAStreamBasicDescription::Print()
-std::string SFB::CAStreamBasicDescription::Description(const char * const prefix) const noexcept
+std::string SFB::CAStreamBasicDescription::Description() const
 {
 	std::string result{};
-
-	if(prefix)
-		result.append(prefix);
 
 	char buf [128];
 
