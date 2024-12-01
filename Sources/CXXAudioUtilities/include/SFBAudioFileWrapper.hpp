@@ -72,10 +72,8 @@ public:
 	/// Closes the managed @c AudioFile and replaces it with @c audioFile
 	inline void reset(AudioFileID audioFile = nullptr) noexcept
 	{
-		auto oldAudioFile = mAudioFile;
-		mAudioFile = audioFile;
-		if(oldAudioFile)
-			AudioFileClose(oldAudioFile);
+		if(auto old = std::exchange(mAudioFile, audioFile); old)
+			AudioFileClose(old);
 	}
 
 	/// Swaps the managed @c AudioFile of @c *this and @c other
