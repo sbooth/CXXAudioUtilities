@@ -770,9 +770,10 @@ SFB::CFString SFB::CAChannelLayout::Description(const char * const prefix) const
 		CFStringAppendFormat(result, NULL, CFSTR("%u ch, ["), channelCount);
 
 		auto i = 0;
-		for(UInt32 bit = 1u << 0; bit <= 1u << 31; bit <<= 1) {
-			if(mChannelLayout->mChannelBitmap & bit) {
-				CFStringAppendFormat(result, NULL, CFSTR("%s"), GetChannelBitmaskBitName(bit));
+		for(auto bit = 0; bit < 32; ++bit) {
+			UInt32 value = 1u << bit;
+			if(mChannelLayout->mChannelBitmap & value) {
+				CFStringAppendFormat(result, NULL, CFSTR("%s"), GetChannelBitmaskBitName(value));
 				if(i++ < channelCount - 1)
 					CFStringAppend(result, CFSTR(" | "));
 			}
