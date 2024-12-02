@@ -13,6 +13,9 @@
 
 #import "SFBCAChannelLayout.hpp"
 
+#import "fmt/format.h"
+#import "fmt/ranges.h"
+
 namespace {
 
 /// Returns the size in bytes of an @c AudioChannelLayout with the specified number of channel descriptions
@@ -747,55 +750,86 @@ bool SFB::CAChannelLayout::MapToLayout(const CAChannelLayout& outputLayout, std:
 	return true;
 }
 
+#if 0
+template<>
+struct fmt::formatter<AudioChannelDescription>
+{
+	template<typename ParseContext>
+	constexpr auto parse(ParseContext& ctx)
+	{
+		return ctx.begin();
+	}
+
+	template<typename FormatContext>
+	auto format(const AudioChannelDescription& desc, FormatContext& ctx) const
+	{
+		if(desc.mChannelLabel == kAudioChannelLabel_UseCoordinates)
+			return fmt::format_to(ctx.out(),
+								  "({}, {}, {}) flags {:#x}",
+								  desc.mCoordinates[0],
+								  desc.mCoordinates[1],
+								  desc.mCoordinates[2],
+								  desc.mChannelFlags);
+		else
+			return fmt::format_to(ctx.out(),
+								  "{}",
+								  GetChannelLabelName(desc.mChannelLabel));
+	}
+};
+#endif
+
 std::string SFB::CAChannelLayout::Description() const
 {
 	if(!mChannelLayout)
 		return {};
 
-	std::string result{};
-
-	char buf [128];
+	auto out = fmt::memory_buffer();
 
 	if(mChannelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelDescriptions) {
-		std::snprintf(buf, sizeof(buf), "%u ch, [", mChannelLayout->mNumberChannelDescriptions);
-		result.append(buf);
+		fmt::format_to(std::back_inserter(out),
+					   "{} ch, [",
+					   mChannelLayout->mNumberChannelDescriptions);
 
 		const AudioChannelDescription *desc = mChannelLayout->mChannelDescriptions;
 		for(UInt32 i = 0; i < mChannelLayout->mNumberChannelDescriptions; ++i, ++desc) {
 			if(desc->mChannelLabel == kAudioChannelLabel_UseCoordinates)
-				std::snprintf(buf, sizeof(buf), "(%f, %f, %f), flags = 0x%0.8x", desc->mCoordinates[0], desc->mCoordinates[1], desc->mCoordinates[2], desc->mChannelFlags);
+				fmt::format_to(std::back_inserter(out),
+							   "({}, {}, {}) flags {:#x}",
+							   desc->mCoordinates[0],
+							   desc->mCoordinates[1],
+							   desc->mCoordinates[2],
+							   desc->mChannelFlags);
 			else
-				std::snprintf(buf, sizeof(buf), "%s (0x%0.8x)", GetChannelLabelName(desc->mChannelLabel), desc->mChannelLabel);
-			result.append(buf);
+				fmt::format_to(std::back_inserter(out),
+							   "{}",
+							   GetChannelLabelName(desc->mChannelLabel));
+
 			if(i < mChannelLayout->mNumberChannelDescriptions - 1)
-				result.append(", ");
+				fmt::format_to(std::back_inserter(out), ", ");
 		}
 
-		result.append("]");
+		fmt::format_to(std::back_inserter(out), "]");
 	}
 	else if(mChannelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap) {
-		auto channelCount = __builtin_popcount(mChannelLayout->mChannelBitmap);
-		std::snprintf(buf, sizeof(buf), "%u ch, [", channelCount);
-		result.append(buf);
-
-		auto i = 0;
+		std::vector<std::string_view> v{};
 		for(auto bit = 0; bit < 32; ++bit) {
 			UInt32 value = 1u << bit;
-			if(mChannelLayout->mChannelBitmap & value) {
-				std::snprintf(buf, sizeof(buf), "%s", GetChannelBitmaskBitName(value));
-				result.append(buf);
-				if(i++ < channelCount - 1)
-					result.append(" | ");
-			}
+			if(mChannelLayout->mChannelBitmap & value)
+				v.push_back(GetChannelBitmaskBitName(value));
 		}
 
-		std::snprintf(buf, sizeof(buf), "] (0x%0.8x)", mChannelLayout->mChannelBitmap);
-		result.append(buf);
+		fmt::format_to(std::back_inserter(out),
+					   "{} ch, [{}] ({:#b})",
+					   __builtin_popcount(mChannelLayout->mChannelBitmap),
+					   fmt::join(v, " | "),
+					   mChannelLayout->mChannelBitmap);
 	}
-	else {
-		std::snprintf(buf, sizeof(buf), "%u ch, %s (0x%0.8x)", AudioChannelLayoutTag_GetNumberOfChannels(mChannelLayout->mChannelLayoutTag), GetChannelLayoutTagName(mChannelLayout->mChannelLayoutTag), mChannelLayout->mChannelLayoutTag);
-		result.append(buf);
-	}
+	else
+		fmt::format_to(std::back_inserter(out),
+					   "{} ch, {} ({:#010x})",
+					   AudioChannelLayoutTag_GetNumberOfChannels(mChannelLayout->mChannelLayoutTag),
+					   GetChannelLayoutTagName(mChannelLayout->mChannelLayoutTag),
+					   mChannelLayout->mChannelLayoutTag);
 
-	return result;
+	return fmt::to_string(out);
 }

@@ -10,58 +10,54 @@
 
 #import "SFBCAStreamBasicDescription.hpp"
 
+#import "fmt/format.h"
+
 // Most of this is stolen from Apple's CAStreamBasicDescription::Print()
 std::string SFB::CAStreamBasicDescription::Description() const
 {
-	std::string result{};
+	auto out = fmt::memory_buffer();
 
-	char buf [128];
-
-	unsigned char formatID [5];
+	char formatID [5];
 	auto formatIDBE = OSSwapHostToBigInt32(mFormatID);
 	std::memcpy(formatID, &formatIDBE, 4);
 	formatID[4] = '\0';
 
 	// General description
-	std::snprintf(buf, sizeof(buf), "%u ch, %.2f Hz, '%.4s' (0x%0.8x) ", mChannelsPerFrame, mSampleRate, formatID, mFormatFlags);
-	result.append(buf);
+	fmt::format_to(std::back_inserter(out), "{} ch, {} Hz, '{:.4}' ({:#010x}) ", mChannelsPerFrame, mSampleRate, formatID, mFormatFlags);
 
 	if(kAudioFormatLinearPCM == mFormatID) {
 		// Bit depth
 		UInt32 fractionalBits = (kLinearPCMFormatFlagsSampleFractionMask & mFormatFlags) >> kLinearPCMFormatFlagsSampleFractionShift;
 		if(fractionalBits > 0)
-			std::snprintf(buf, sizeof(buf), "%d.%d-bit", mBitsPerChannel - fractionalBits, fractionalBits);
+			fmt::format_to(std::back_inserter(out), "{}.{}-bit", mBitsPerChannel - fractionalBits, fractionalBits);
 		else
-			std::snprintf(buf, sizeof(buf), "%d-bit", mBitsPerChannel);
-		result.append(buf);
+			fmt::format_to(std::back_inserter(out), "{}-bit", mBitsPerChannel);
 
 		// Endianness
 		bool isInterleaved = !(kAudioFormatFlagIsNonInterleaved & mFormatFlags);
 		UInt32 interleavedChannelCount = (isInterleaved ? mChannelsPerFrame : 1);
 		UInt32 sampleSize = (mBytesPerFrame > 0 && interleavedChannelCount > 0 ? mBytesPerFrame / interleavedChannelCount : 0);
 		if(sampleSize > 1)
-			result.append((kLinearPCMFormatFlagIsBigEndian & mFormatFlags) ? " big-endian" : " little-endian");
+			fmt::format_to(std::back_inserter(out), (kLinearPCMFormatFlagIsBigEndian & mFormatFlags) ? " big-endian" : " little-endian");
 
 		// Sign
 		bool isInteger = !(kLinearPCMFormatFlagIsFloat & mFormatFlags);
 		if(isInteger)
-			result.append((kLinearPCMFormatFlagIsSignedInteger & mFormatFlags) ? " signed" : " unsigned");
+			fmt::format_to(std::back_inserter(out), (kLinearPCMFormatFlagIsSignedInteger & mFormatFlags) ? " signed" : " unsigned");
 
 		// Integer or floating
-		result.append(isInteger ? " integer" : " float");
+		fmt::format_to(std::back_inserter(out), isInteger ? " integer" : " float");
 
 		// Packedness
-		if(sampleSize > 0 && ((sampleSize << 3) != mBitsPerChannel)) {
-			std::snprintf(buf, sizeof(buf), ", %s in %d bytes", (kLinearPCMFormatFlagIsPacked & mFormatFlags) ? "packed" : "unpacked", sampleSize);
-			result.append(buf);
-		}
+		if(sampleSize > 0 && ((sampleSize << 3) != mBitsPerChannel))
+			fmt::format_to(std::back_inserter(out), ", {} in {} bytes", (kLinearPCMFormatFlagIsPacked & mFormatFlags) ? "packed" : "unpacked", sampleSize);
 
 		// Alignment
 		if((sampleSize > 0 && ((sampleSize << 3) != mBitsPerChannel)) || ((mBitsPerChannel & 7) != 0))
-			result.append((kLinearPCMFormatFlagIsAlignedHigh & mFormatFlags) ? " high-aligned" : " low-aligned");
+			fmt::format_to(std::back_inserter(out), (kLinearPCMFormatFlagIsAlignedHigh & mFormatFlags) ? " high-aligned" : " low-aligned");
 
 		if(!isInterleaved)
-			result.append(", deinterleaved");
+			fmt::format_to(std::back_inserter(out), ", deinterleaved");
 	}
 	else if(kAudioFormatAppleLossless == mFormatID) {
 		UInt32 sourceBitDepth = 0;
@@ -73,18 +69,19 @@ std::string SFB::CAStreamBasicDescription::Description() const
 		}
 
 		if(sourceBitDepth != 0)
-			std::snprintf(buf, sizeof(buf), "from %d-bit source, ", sourceBitDepth);
+			fmt::format_to(std::back_inserter(out), "from {}-bit source, ", sourceBitDepth);
 		else
-			std::snprintf(buf, sizeof(buf), "from UNKNOWN source bit depth, ");
-		result.append(buf);
+			fmt::format_to(std::back_inserter(out), "from UNKNOWN source bit depth, ");
 
-		std::snprintf(buf, sizeof(buf), " %d frames/packet", mFramesPerPacket);
-		result.append(buf);
+		fmt::format_to(std::back_inserter(out), " {} frames/packet", mFramesPerPacket);
 	}
-	else {
-		std::snprintf(buf, sizeof(buf), "%u bits/channel, %u bytes/packet, %u frames/packet, %u bytes/frame", mBitsPerChannel, mBytesPerPacket, mFramesPerPacket, mBytesPerFrame);
-		result.append(buf);
-	}
+	else
+		fmt::format_to(std::back_inserter(out),
+					   "{} bits/channel, {} bytes/packet, {} frames/packet, {} bytes/frame",
+					   mBitsPerChannel,
+					   mBytesPerPacket,
+					   mFramesPerPacket,
+					   mBytesPerFrame);
 
-	return result;
+	return fmt::to_string(out);
 }
