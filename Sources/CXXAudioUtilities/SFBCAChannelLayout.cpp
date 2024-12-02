@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2013-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -759,6 +759,12 @@ struct fmt::formatter<AudioChannelDescription>
 	{
 		return ctx.begin();
 	}
+=======
+SFB::CFString SFB::CAChannelLayout::Description() const noexcept
+{
+	if(!mChannelLayout)
+		return {};
+>>>>>>> main
 
 	template<typename FormatContext>
 	auto format(const AudioChannelDescription& desc, FormatContext& ctx) const

@@ -286,6 +286,7 @@ public:
 	/// Returns a string representation of this format suitable for logging
 	std::string Description() const;
 
+
 };
 
 } // namespace SFB
