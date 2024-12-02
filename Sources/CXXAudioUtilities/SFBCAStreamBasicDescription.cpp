@@ -7,12 +7,9 @@
 #import "SFBCAStreamBasicDescription.hpp"
 
 // Most of this is stolen from Apple's CAStreamBasicDescription::Print()
-SFB::CFString SFB::CAStreamBasicDescription::Description(const char * const prefix) const noexcept
+SFB::CFString SFB::CAStreamBasicDescription::Description() const noexcept
 {
 	CFMutableString result{CFStringCreateMutable(kCFAllocatorDefault, 0)};
-
-	if(prefix)
-		CFStringAppendCString(result, prefix, kCFStringEncodingUTF8);
 
 	unsigned char formatID [5];
 	auto formatIDBE = OSSwapHostToBigInt32(mFormatID);

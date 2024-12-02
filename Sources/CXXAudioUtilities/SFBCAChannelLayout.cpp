@@ -746,19 +746,12 @@ bool SFB::CAChannelLayout::MapToLayout(const CAChannelLayout& outputLayout, std:
 	return true;
 }
 
-SFB::CFString SFB::CAChannelLayout::Description(const char * const prefix) const noexcept
+SFB::CFString SFB::CAChannelLayout::Description() const noexcept
 {
-	if(!mChannelLayout) {
-		if(prefix)
-			return CFString(prefix, kCFStringEncodingUTF8);
-		else
-			return CFString{};
-	}
+	if(!mChannelLayout)
+		return {};
 
 	CFMutableString result{ CFStringCreateMutable(kCFAllocatorDefault, 0) };
-
-	if(prefix)
-		CFStringAppendCString(result, prefix, kCFStringEncodingUTF8);
 
 	if(kAudioChannelLayoutTag_UseChannelDescriptions == mChannelLayout->mChannelLayoutTag){
 		CFStringAppendFormat(result, NULL, CFSTR("%u ch, ["), mChannelLayout->mNumberChannelDescriptions);
