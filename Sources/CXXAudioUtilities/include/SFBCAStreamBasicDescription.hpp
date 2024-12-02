@@ -285,7 +285,7 @@ public:
 
 
 	/// Returns a string representation of this format suitable for logging
-	CFString Description(const char * const _Nullable prefix = nullptr) const noexcept;
+	CFString Description() const noexcept;
 
 };
 
