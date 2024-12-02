@@ -1,10 +1,12 @@
 //
-// Copyright (c) 2021 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
 
 #pragma once
+
+#import <utility>
 
 #import <AudioToolbox/ExtendedAudioFile.h>
 
@@ -37,7 +39,7 @@ public:
 	{}
 
 	// Move assignment operator
-	inline ExtAudioFileWrapper& operator=(ExtAudioFileWrapper&& rhs)
+	inline ExtAudioFileWrapper& operator=(ExtAudioFileWrapper&& rhs) noexcept
 	{
 		if(this != &rhs)
 			reset(rhs.release());
@@ -70,26 +72,20 @@ public:
 	/// Disposes of the managed @c ExtAudioFile and replaces it with @c extAudioFile
 	inline void reset(ExtAudioFileRef extAudioFile = nullptr) noexcept
 	{
-		auto oldExtAudioFile = mExtAudioFile;
-		mExtAudioFile = extAudioFile;
-		if(oldExtAudioFile)
+		if(auto oldExtAudioFile = std::exchange(mExtAudioFile, extAudioFile); oldExtAudioFile)
 			ExtAudioFileDispose(oldExtAudioFile);
 	}
 
 	/// Swaps the managed @c ExtAudioFile of @c *this and @c other
 	inline void swap(ExtAudioFileWrapper& other) noexcept
 	{
-		auto oldExtAudioFile = mExtAudioFile;
-		mExtAudioFile = other.mExtAudioFile;
-		other.mExtAudioFile = oldExtAudioFile;
+		std::swap(mExtAudioFile, other.mExtAudioFile);
 	}
 
 	/// Releases ownership of the managed @c ExtAudioFile and returns it
 	inline ExtAudioFileRef release() noexcept
 	{
-		auto oldExtAudioFile = mExtAudioFile;
-		mExtAudioFile = nullptr;
-		return oldExtAudioFile;
+		return std::exchange(mExtAudioFile, nullptr);
 	}
 
 private:

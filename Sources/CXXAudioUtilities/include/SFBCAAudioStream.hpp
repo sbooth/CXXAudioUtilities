@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -29,10 +29,10 @@ public:
 	virtual ~CAAudioStream() = default;
 
 	/// Move constructor
-	CAAudioStream(CAAudioStream&& rhs) = default;
+	CAAudioStream(CAAudioStream&& rhs) noexcept = default;
 
 	/// Move assignment operator
-	CAAudioStream& operator=(CAAudioStream&& rhs) = default;
+	CAAudioStream& operator=(CAAudioStream&& rhs) noexcept = default;
 
 
 	/// Creates a @c CAAudioStream with the specified objectID

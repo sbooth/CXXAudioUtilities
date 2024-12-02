@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -22,19 +22,19 @@ public:
 	{}
 
 	/// Copy constructor
-	CAAudioSystemObject(const CAAudioSystemObject& rhs) = default;
+	CAAudioSystemObject(const CAAudioSystemObject& rhs) noexcept = default;
 
 	/// Assignment operator
-	CAAudioSystemObject& operator=(const CAAudioSystemObject& rhs) = default;
+	CAAudioSystemObject& operator=(const CAAudioSystemObject& rhs) noexcept = default;
 
 	/// Destructor
 	virtual ~CAAudioSystemObject() = default;
 
 	// Move constructor
-	CAAudioSystemObject(CAAudioSystemObject&& rhs) = default;
+	CAAudioSystemObject(CAAudioSystemObject&& rhs) noexcept = default;
 
 	// Move assignment operator
-	CAAudioSystemObject& operator=(CAAudioSystemObject&& rhs) = default;
+	CAAudioSystemObject& operator=(CAAudioSystemObject&& rhs) noexcept = default;
 
 
 	inline std::vector<AudioObjectID> DeviceIDs() const

@@ -1,10 +1,12 @@
 //
-// Copyright (c) 2021 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
 
 #pragma once
+
+#import <utility>
 
 #import <AudioToolbox/AudioFile.h>
 
@@ -37,7 +39,7 @@ public:
 	{}
 
 	// Move assignment operator
-	inline AudioFileWrapper& operator=(AudioFileWrapper&& rhs)
+	inline AudioFileWrapper& operator=(AudioFileWrapper&& rhs) noexcept
 	{
 		if(this != &rhs)
 			reset(rhs.release());
@@ -70,26 +72,20 @@ public:
 	/// Closes the managed @c AudioFile and replaces it with @c audioFile
 	inline void reset(AudioFileID audioFile = nullptr) noexcept
 	{
-		auto oldAudioFile = mAudioFile;
-		mAudioFile = audioFile;
-		if(oldAudioFile)
-			AudioFileClose(oldAudioFile);
+		if(auto old = std::exchange(mAudioFile, audioFile); old)
+			AudioFileClose(old);
 	}
 
 	/// Swaps the managed @c AudioFile of @c *this and @c other
 	inline void swap(AudioFileWrapper& other) noexcept
 	{
-		auto audioFile = mAudioFile;
-		mAudioFile = other.mAudioFile;
-		other.mAudioFile = audioFile;
+		std::swap(mAudioFile, other.mAudioFile);
 	}
 
 	/// Releases ownership of the managed @c AudioFile and returns it
 	inline AudioFileID release() noexcept
 	{
-		auto oldAudioFile = mAudioFile;
-		mAudioFile = nullptr;
-		return oldAudioFile;
+		return std::exchange(mAudioFile, nullptr);
 	}
 
 private:

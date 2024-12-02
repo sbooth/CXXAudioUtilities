@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -29,10 +29,10 @@ public:
 	virtual ~CAAudioDevice() = default;
 
 	/// Move constructor
-	CAAudioDevice(CAAudioDevice&& rhs) = default;
+	CAAudioDevice(CAAudioDevice&& rhs) noexcept = default;
 
 	/// Move assignment operator
-	CAAudioDevice& operator=(CAAudioDevice&& rhs) = default;
+	CAAudioDevice& operator=(CAAudioDevice&& rhs) noexcept = default;
 
 
 	/// Creates a @c CAAudioDevice with the specified objectID

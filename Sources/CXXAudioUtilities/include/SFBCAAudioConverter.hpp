@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -19,6 +19,7 @@ class CAAudioConverter
 {
 
 public:
+
 	/// Creates a @c CAAudioConverter
 	constexpr CAAudioConverter() noexcept = default;
 

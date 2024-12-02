@@ -1,11 +1,12 @@
 //
-// Copyright (c) 2013 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2013-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
 
 #pragma once
 
+#import <utility>
 #import <vector>
 
 #import <CoreAudioTypes/CoreAudioTypes.h>
@@ -40,7 +41,17 @@ public:
 	/// Creates a @c CAChannelLayout
 	/// @param channelBitmap The channel bitmap for the channel layout
 	/// @return A @c CAChannelLayout
-	static CAChannelLayout ChannelLayoutWithBitmap(UInt32 channelBitmap);
+	static CAChannelLayout ChannelLayoutWithBitmap(AudioChannelBitmap channelBitmap);
+
+	/// Creates a @c CAChannelLayout
+	/// @param layoutTag The layout tag for the channel layout
+	/// @return A @c CAChannelLayout
+	static CAChannelLayout ChannelLayoutWithTag(AudioChannelLayoutTag layoutTag);
+
+	/// Creates a @c CAChannelLayout
+	/// @param channelLabels A @c std::vector of the desired channel labels
+	/// @return A @c CAChannelLayout
+	static CAChannelLayout ChannelLayoutWithChannelLabels(std::vector<AudioChannelLabel> channelLabels);
 
 #pragma mark Creation and Destruction
 
@@ -103,7 +114,7 @@ public:
 #pragma mark Functionality
 
 	/// Returns the number of channels contained in this channel layout
-	size_t ChannelCount() const noexcept;
+	UInt32 ChannelCount() const noexcept;
 
 	/// Creates a channel map for remapping audio from this channel layout
 	/// @param outputLayout The output channel layout
@@ -121,20 +132,16 @@ public:
 
 	/// Releases ownership of the object's internal @c AudioChannelLayout and returns it
 	/// @note The caller assumes responsiblity for deallocating the returned @c AudioChannelLayout using @c std::free
-	AudioChannelLayout * _Nullable Release() noexcept
+	inline AudioChannelLayout * _Nullable Release() noexcept
 	{
-		auto channelLayout = mChannelLayout;
-		mChannelLayout = nullptr;
-		return channelLayout;
+		return std::exchange(mChannelLayout, nullptr);
 	}
 
 	/// Replaces the object's internal @c AudioChannelLayout with @c channelLayout and then deallocates it
 	/// @note The object assumes responsiblity for deallocating the passed @c AudioChannelLayout using @c std::free
-	void Reset(AudioChannelLayout * _Nullable channelLayout = nullptr) noexcept
+	inline void Reset(AudioChannelLayout * _Nullable channelLayout = nullptr) noexcept
 	{
-		auto oldChannelLayout = mChannelLayout;
-		mChannelLayout = channelLayout;
-		std::free(oldChannelLayout);
+		std::free(std::exchange(mChannelLayout, channelLayout));
 	}
 
 	/// Retrieves a const pointer to this object's internal @c AudioChannelLayout
@@ -171,7 +178,7 @@ public:
 
 
 	/// Returns a string representation of this channel layout suitable for logging
-	CFString Description(const char * const _Nullable prefix = nullptr) const noexcept;
+	CFString Description() const noexcept;
 
 
 #ifdef __OBJC__

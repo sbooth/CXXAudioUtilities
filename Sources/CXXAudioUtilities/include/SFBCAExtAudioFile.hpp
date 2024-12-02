@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -35,6 +35,7 @@ private:
 	};
 
 public:
+
 	/// Creates a @c CAExtAudioFile
 	CAExtAudioFile() noexcept = default;
 
