@@ -759,12 +759,6 @@ struct fmt::formatter<AudioChannelDescription>
 	{
 		return ctx.begin();
 	}
-=======
-SFB::CFString SFB::CAChannelLayout::Description() const noexcept
-{
-	if(!mChannelLayout)
-		return {};
->>>>>>> main
 
 	template<typename FormatContext>
 	auto format(const AudioChannelDescription& desc, FormatContext& ctx) const
