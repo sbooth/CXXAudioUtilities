@@ -7,6 +7,7 @@
 #pragma once
 
 #import <algorithm>
+#import <cstdint>
 #import <optional>
 #import <stdexcept>
 #import <type_traits>
@@ -132,19 +133,28 @@ public:
 	/// @tparam T The type to read
 	/// @param value The destination value
 	/// @return @c true on success, @c false otherwise
-	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_same_v<T, std::uint16_t> || std::is_same_v<T, std::uint32_t> || std::is_same_v<T, std::uint64_t>>>
 	bool ReadLE(T& value) noexcept
 	{
 		if(!Read(value))
 			return false;
 
-		switch(sizeof(T)) {
-			case 2:	value = static_cast<T>(OSSwapLittleToHostInt16(value)); break;
-			case 4:	value = static_cast<T>(OSSwapLittleToHostInt32(value)); break;
-			case 8:	value = static_cast<T>(OSSwapLittleToHostInt64(value)); break;
+		if constexpr (std::is_same_v<T, std::uint16_t>) {
+			value = OSSwapLittleToHostInt16(value);
+			return true;
 		}
+		else if constexpr (std::is_same_v<T, std::uint32_t>) {
+			value = OSSwapLittleToHostInt32(value);
+			return true;
+		}
+		else if constexpr (std::is_same_v<T, std::uint64_t>) {
+			value = OSSwapLittleToHostInt64(value);
+			return true;
+		}
+		else
+			static_assert(false, "Unsupported unsigned integer type in ReadLE");
 
-		return true;
+		return false;
 	}
 
 	/// Reads a little endian value, converts it to host byte ordering, and advances the read position.
@@ -163,19 +173,28 @@ public:
 	/// @tparam T The type to read
 	/// @param value The destination value
 	/// @return @c true on success, @c false otherwise
-	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_same_v<T, std::uint16_t> || std::is_same_v<T, std::uint32_t> || std::is_same_v<T, std::uint64_t>>>
 	bool ReadBE(T& value) noexcept
 	{
 		if(!Read(value))
 			return false;
 
-		switch(sizeof(T)) {
-			case 2:	value = static_cast<T>(OSSwapBigToHostInt16(value)); break;
-			case 4:	value = static_cast<T>(OSSwapBigToHostInt32(value)); break;
-			case 8:	value = static_cast<T>(OSSwapBigToHostInt64(value)); break;
+		if constexpr (std::is_same_v<T, std::uint16_t>) {
+			value = OSSwapBigToHostInt16(value);
+			return true;
 		}
+		else if constexpr (std::is_same_v<T, std::uint32_t>) {
+			value = OSSwapBigToHostInt32(value);
+			return true;
+		}
+		else if constexpr (std::is_same_v<T, std::uint64_t>) {
+			value = OSSwapBigToHostInt64(value);
+			return true;
+		}
+		else
+			static_assert(false, "Unsupported unsigned integer type in ReadBE");
 
-		return true;
+		return false;
 	}
 
 	/// Reads a big endian value, converts it to host byte ordering, and advances the read position.
@@ -194,19 +213,28 @@ public:
 	/// @tparam T The type to read
 	/// @param value The destination value
 	/// @return @c true on success, @c false otherwise
-	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_same_v<T, std::uint16_t> || std::is_same_v<T, std::uint32_t> || std::is_same_v<T, std::uint64_t>>>
 	bool ReadSwapped(T& value) noexcept
 	{
 		if(!Read(value))
 			return false;
 
-		switch(sizeof(T)) {
-			case 2: value = static_cast<T>(OSSwapInt16(value)); break;
-			case 4: value = static_cast<T>(OSSwapInt32(value)); break;
-			case 8: value = static_cast<T>(OSSwapInt64(value)); break;
+		if constexpr (std::is_same_v<T, std::uint16_t>) {
+			value = OSSwapInt16(value);
+			return true;
 		}
+		else if constexpr (std::is_same_v<T, std::uint32_t>) {
+			value = OSSwapInt32(value);
+			return true;
+		}
+		else if constexpr (std::is_same_v<T, std::uint64_t>) {
+			value = OSSwapInt64(value);
+			return true;
+		}
+		else
+			static_assert(false, "Unsupported unsigned integer type in ReadBE");
 
-		return true;
+		return false;
 	}
 
 	/// Reads a value, swaps its byte ordering, and advances the read position.
