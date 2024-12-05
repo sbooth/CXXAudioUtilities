@@ -7,6 +7,7 @@
 #pragma once
 
 #import <algorithm>
+#import <cstdint>
 #import <optional>
 #import <stdexcept>
 #import <type_traits>
@@ -83,7 +84,7 @@ public:
 	}
 
 
-	/// Compares to @c ByteStream objects for equality.
+	/// Compares two @c ByteStream objects for equality.
 	/// Two @c ByteStream objects are equal if they have the same buffer, length, and read position
 	/// @param rhs The object to compare
 	/// @return @c true if the objects are equal, @c false otherwise
@@ -92,7 +93,7 @@ public:
 		return mBuffer == rhs.mBuffer && mBufferLength == rhs.mBufferLength && mReadPosition == rhs.mReadPosition;
 	}
 
-	/// Compares to @c ByteStream objects for inequality.
+	/// Compares two @c ByteStream objects for inequality.
 	/// Two @c ByteStream objects are equal if they have the same buffer, length, and read position
 	/// @param rhs The object to compare
 	/// @return @c true if the objects are not equal, @c false otherwise
@@ -120,7 +121,7 @@ public:
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
 	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
-	std::optional<T> Read() noexcept
+	std::optional<T> Read() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
 		if(!Read(value))
@@ -132,26 +133,35 @@ public:
 	/// @tparam T The type to read
 	/// @param value The destination value
 	/// @return @c true on success, @c false otherwise
-	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_same_v<T, std::uint16_t> || std::is_same_v<T, std::uint32_t> || std::is_same_v<T, std::uint64_t>>>
 	bool ReadLE(T& value) noexcept
 	{
 		if(!Read(value))
 			return false;
 
-		switch(sizeof(T)) {
-			case 2:	value = static_cast<T>(OSSwapLittleToHostInt16(value)); break;
-			case 4:	value = static_cast<T>(OSSwapLittleToHostInt32(value)); break;
-			case 8:	value = static_cast<T>(OSSwapLittleToHostInt64(value)); break;
+		if constexpr (std::is_same_v<T, std::uint16_t>) {
+			value = OSSwapLittleToHostInt16(value);
+			return true;
 		}
+		else if constexpr (std::is_same_v<T, std::uint32_t>) {
+			value = OSSwapLittleToHostInt32(value);
+			return true;
+		}
+		else if constexpr (std::is_same_v<T, std::uint64_t>) {
+			value = OSSwapLittleToHostInt64(value);
+			return true;
+		}
+		else
+			static_assert(false, "Unsupported unsigned integer type in ReadLE");
 
-		return true;
+		return false;
 	}
 
 	/// Reads a little endian value, converts it to host byte ordering, and advances the read position.
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
 	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
-	std::optional<T> ReadLE() noexcept
+	std::optional<T> ReadLE() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
 		if(!ReadLE(value))
@@ -163,26 +173,35 @@ public:
 	/// @tparam T The type to read
 	/// @param value The destination value
 	/// @return @c true on success, @c false otherwise
-	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_same_v<T, std::uint16_t> || std::is_same_v<T, std::uint32_t> || std::is_same_v<T, std::uint64_t>>>
 	bool ReadBE(T& value) noexcept
 	{
 		if(!Read(value))
 			return false;
 
-		switch(sizeof(T)) {
-			case 2:	value = static_cast<T>(OSSwapBigToHostInt16(value)); break;
-			case 4:	value = static_cast<T>(OSSwapBigToHostInt32(value)); break;
-			case 8:	value = static_cast<T>(OSSwapBigToHostInt64(value)); break;
+		if constexpr (std::is_same_v<T, std::uint16_t>) {
+			value = OSSwapBigToHostInt16(value);
+			return true;
 		}
+		else if constexpr (std::is_same_v<T, std::uint32_t>) {
+			value = OSSwapBigToHostInt32(value);
+			return true;
+		}
+		else if constexpr (std::is_same_v<T, std::uint64_t>) {
+			value = OSSwapBigToHostInt64(value);
+			return true;
+		}
+		else
+			static_assert(false, "Unsupported unsigned integer type in ReadBE");
 
-		return true;
+		return false;
 	}
 
 	/// Reads a big endian value, converts it to host byte ordering, and advances the read position.
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
 	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
-	std::optional<T> ReadBE() noexcept
+	std::optional<T> ReadBE() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
 		if(!ReadBE(value))
@@ -194,26 +213,35 @@ public:
 	/// @tparam T The type to read
 	/// @param value The destination value
 	/// @return @c true on success, @c false otherwise
-	template <typename T, typename = std::enable_if_t<std::is_integral_v<T> && std::is_unsigned_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_same_v<T, std::uint16_t> || std::is_same_v<T, std::uint32_t> || std::is_same_v<T, std::uint64_t>>>
 	bool ReadSwapped(T& value) noexcept
 	{
 		if(!Read(value))
 			return false;
 
-		switch(sizeof(T)) {
-			case 2: value = static_cast<T>(OSSwapInt16(value)); break;
-			case 4: value = static_cast<T>(OSSwapInt32(value)); break;
-			case 8: value = static_cast<T>(OSSwapInt64(value)); break;
+		if constexpr (std::is_same_v<T, std::uint16_t>) {
+			value = OSSwapInt16(value);
+			return true;
 		}
+		else if constexpr (std::is_same_v<T, std::uint32_t>) {
+			value = OSSwapInt32(value);
+			return true;
+		}
+		else if constexpr (std::is_same_v<T, std::uint64_t>) {
+			value = OSSwapInt64(value);
+			return true;
+		}
+		else
+			static_assert(false, "Unsupported unsigned integer type in ReadBE");
 
-		return true;
+		return false;
 	}
 
 	/// Reads a value, swaps its byte ordering, and advances the read position.
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
 	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
-	std::optional<T> ReadSwapped() noexcept
+	std::optional<T> ReadSwapped() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
 		if(!ReadSwapped(value))
@@ -257,20 +285,20 @@ public:
 
 	/// Returns the number of bytes in the buffer.
 	/// @return The number of bytes in the buffer
-	inline constexpr size_t Length() const noexcept
+	constexpr size_t Length() const noexcept
 	{
 		return mBufferLength;
 	}
 
 	/// Returns the number of bytes remaining.
-	inline constexpr size_t Remaining() const noexcept
+	constexpr size_t Remaining() const noexcept
 	{
 		return mBufferLength - mReadPosition;
 	}
 
 	/// Returns the read position.
 	/// @return The read posiiton
-	inline constexpr size_t Position() const noexcept
+	constexpr size_t Position() const noexcept
 	{
 		return mReadPosition;
 	}
@@ -278,7 +306,7 @@ public:
 	/// Sets the read position.
 	/// @param pos The desired read position
 	/// @return The new read posiiton
-	inline size_t SetPosition(size_t pos) noexcept
+	size_t SetPosition(size_t pos) noexcept
 	{
 		mReadPosition = std::min(pos, mBufferLength);
 		return mReadPosition;

@@ -49,49 +49,49 @@ public:
 
 
 	/// Creates a @c CAAudioObject with the specified objectID
-	inline CAAudioObject(AudioObjectID objectID) noexcept
+	CAAudioObject(AudioObjectID objectID) noexcept
 	: mObjectID{objectID}
 	{}
 
 #pragma mark Comparison
 
 	/// Returns @c true if this object's @c AudioObjectID is not @c kAudioObjectUnknown
-	inline explicit operator bool() const noexcept
+	explicit operator bool() const noexcept
 	{
 		return mObjectID != kAudioObjectUnknown;
 	}
 
 	/// Returns @c true if this object's @c AudioObjectID is @c kAudioObjectUnknown
-	inline bool operator!() const noexcept
+	bool operator!() const noexcept
 	{
 		return !operator bool();
 	}
 
 	/// Returns @c true if @c rhs is equal to @c this
-	inline bool operator==(AudioObjectID rhs) const noexcept
+	bool operator==(AudioObjectID rhs) const noexcept
 	{
 		return mObjectID == rhs;
 	}
 
 	/// Returns @c true if @c rhs is not equal to @c this
-	inline bool operator!=(AudioObjectID rhs) const noexcept
+	bool operator!=(AudioObjectID rhs) const noexcept
 	{
 		return !operator==(rhs);
 	}
 
-	inline operator AudioObjectID() const noexcept
+	operator AudioObjectID() const noexcept
 	{
 		return mObjectID;
 	}
 
-	inline AudioObjectID ObjectID() const noexcept
+	AudioObjectID ObjectID() const noexcept
 	{
 		return mObjectID;
 	}
 
 #pragma mark Property Operations
 
-	inline bool HasProperty(const AudioObjectPropertyAddress& inAddress) const noexcept
+	bool HasProperty(const AudioObjectPropertyAddress& inAddress) const noexcept
 	{
 		return AudioObjectHasProperty(mObjectID, &inAddress);
 	}
@@ -113,13 +113,13 @@ public:
 	}
 
 
-	inline void GetPropertyData(const AudioObjectPropertyAddress& inAddress, UInt32 inQualifierDataSize, const void * _Nullable inQualifierData, UInt32& ioDataSize, void * _Nonnull outData) const
+	void GetPropertyData(const AudioObjectPropertyAddress& inAddress, UInt32 inQualifierDataSize, const void * _Nullable inQualifierData, UInt32& ioDataSize, void * _Nonnull outData) const
 	{
 		auto result = AudioObjectGetPropertyData(mObjectID, &inAddress, inQualifierDataSize, inQualifierData, &ioDataSize, outData);
 		ThrowIfCAAudioObjectError(result, "AudioObjectGetPropertyData");
 	}
 
-	inline void SetPropertyData(const AudioObjectPropertyAddress& inAddress, UInt32 inQualifierDataSize, const void * _Nullable inQualifierData, UInt32 inDataSize, const void * _Nonnull inData)
+	void SetPropertyData(const AudioObjectPropertyAddress& inAddress, UInt32 inQualifierDataSize, const void * _Nullable inQualifierData, UInt32 inDataSize, const void * _Nonnull inData)
 	{
 		auto result = AudioObjectSetPropertyData(mObjectID, &inAddress, inQualifierDataSize, inQualifierData, inDataSize, inData);
 		ThrowIfCAAudioObjectError(result, "AudioObjectSetPropertyData");
@@ -163,26 +163,26 @@ public:
 		return CFWrapper<T>(value);
 	}
 
-	inline void AddPropertyListener(const AudioObjectPropertyAddress& inAddress, AudioObjectPropertyListenerProc _Nonnull inListenerProc, void * _Nullable inClientData)
+	void AddPropertyListener(const AudioObjectPropertyAddress& inAddress, AudioObjectPropertyListenerProc _Nonnull inListenerProc, void * _Nullable inClientData)
 	{
 		auto result = AudioObjectAddPropertyListener(mObjectID, &inAddress, inListenerProc, inClientData);
 		ThrowIfCAAudioObjectError(result, "AudioObjectAddPropertyListener");
 	}
 
-	inline void RemovePropertyListener(const AudioObjectPropertyAddress& inAddress, AudioObjectPropertyListenerProc _Nonnull inListenerProc, void * _Nullable inClientData)
+	void RemovePropertyListener(const AudioObjectPropertyAddress& inAddress, AudioObjectPropertyListenerProc _Nonnull inListenerProc, void * _Nullable inClientData)
 	{
 		auto result = AudioObjectRemovePropertyListener(mObjectID, &inAddress, inListenerProc, inClientData);
 		ThrowIfCAAudioObjectError(result, "AudioObjectRemovePropertyListener");
 	}
 
 
-	inline void AddPropertyListenerBlock(const AudioObjectPropertyAddress& inAddress, dispatch_queue_t _Nonnull inDispatchQueue, AudioObjectPropertyListenerBlock _Nonnull inListenerBlock)
+	void AddPropertyListenerBlock(const AudioObjectPropertyAddress& inAddress, dispatch_queue_t _Nonnull inDispatchQueue, AudioObjectPropertyListenerBlock _Nonnull inListenerBlock)
 	{
 		auto result = AudioObjectAddPropertyListenerBlock(mObjectID, &inAddress, inDispatchQueue, inListenerBlock);
 		ThrowIfCAAudioObjectError(result, "AudioObjectAddPropertyListenerBlock");
 	}
 
-	inline void RemovePropertyListenerBlock(const AudioObjectPropertyAddress& inAddress, dispatch_queue_t _Nonnull inDispatchQueue, AudioObjectPropertyListenerBlock _Nonnull inListenerBlock)
+	void RemovePropertyListenerBlock(const AudioObjectPropertyAddress& inAddress, dispatch_queue_t _Nonnull inDispatchQueue, AudioObjectPropertyListenerBlock _Nonnull inListenerBlock)
 	{
 		auto result = AudioObjectRemovePropertyListenerBlock(mObjectID, &inAddress, inDispatchQueue, inListenerBlock);
 		ThrowIfCAAudioObjectError(result, "AudioObjectRemovePropertyListenerBlock");
@@ -190,57 +190,57 @@ public:
 
 #pragma mark AudioObject Properties
 
-	inline AudioClassID BaseClass() const
+	AudioClassID BaseClass() const
 	{
 		return ArithmeticProperty<AudioClassID>(CAPropertyAddress(kAudioObjectPropertyBaseClass));
 	}
 
-	inline AudioClassID Class() const
+	AudioClassID Class() const
 	{
 		return ArithmeticProperty<AudioClassID>(CAPropertyAddress(kAudioObjectPropertyClass));
 	}
 
-	inline AudioObjectID OwnerID() const
+	AudioObjectID OwnerID() const
 	{
 		return ArithmeticProperty<AudioObjectID>(CAPropertyAddress(kAudioObjectPropertyOwner));
 	}
 
-	inline CAAudioObject Owner() const
+	CAAudioObject Owner() const
 	{
 		return CAAudioObject(OwnerID());
 	}
 
-	inline CFString Name() const
+	CFString Name() const
 	{
 		return CFTypeProperty<CFStringRef>(CAPropertyAddress(kAudioObjectPropertyName));
 	}
 
-	inline CFString ModelName() const
+	CFString ModelName() const
 	{
 		return CFTypeProperty<CFStringRef>(CAPropertyAddress(kAudioObjectPropertyModelName));
 	}
 
-	inline CFString Manufacturer() const
+	CFString Manufacturer() const
 	{
 		return CFTypeProperty<CFStringRef>(CAPropertyAddress(kAudioObjectPropertyManufacturer));
 	}
 
-	inline CFString ElementName(AudioObjectPropertyScope inScope, AudioObjectPropertyElement inElement) const
+	CFString ElementName(AudioObjectPropertyScope inScope, AudioObjectPropertyElement inElement) const
 	{
 		return CFTypeProperty<CFStringRef>(CAPropertyAddress(kAudioObjectPropertyElementName, inScope, inElement));
 	}
 
-	inline CFString ElementCategoryName(AudioObjectPropertyScope inScope, AudioObjectPropertyElement inElement) const
+	CFString ElementCategoryName(AudioObjectPropertyScope inScope, AudioObjectPropertyElement inElement) const
 	{
 		return CFTypeProperty<CFStringRef>(CAPropertyAddress(kAudioObjectPropertyElementCategoryName, inScope, inElement));
 	}
 
-	inline CFString ElementNumberName(AudioObjectPropertyScope inScope, AudioObjectPropertyElement inElement) const
+	CFString ElementNumberName(AudioObjectPropertyScope inScope, AudioObjectPropertyElement inElement) const
 	{
 		return CFTypeProperty<CFStringRef>(CAPropertyAddress(kAudioObjectPropertyElementNumberName, inScope, inElement));
 	}
 
-	inline std::vector<AudioObjectID> OwnedObjectIDs() const
+	std::vector<AudioObjectID> OwnedObjectIDs() const
 	{
 		return ArrayProperty<AudioObjectID>(CAPropertyAddress(kAudioObjectPropertyOwnedObjects));
 	}
@@ -255,12 +255,12 @@ public:
 
 	//	kAudioObjectPropertyIdentify            = 'iden',
 
-	inline CFString SerialNumber() const
+	CFString SerialNumber() const
 	{
 		return CFTypeProperty<CFStringRef>(CAPropertyAddress(kAudioObjectPropertySerialNumber));
 	}
 
-	inline CFString FirmwareVersion() const
+	CFString FirmwareVersion() const
 	{
 		return CFTypeProperty<CFStringRef>(CAPropertyAddress(kAudioObjectPropertyFirmwareVersion));
 	}

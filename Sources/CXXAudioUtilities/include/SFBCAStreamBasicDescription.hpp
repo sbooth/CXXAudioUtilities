@@ -78,7 +78,7 @@ public:
 	// Native overloads
 
 	/// Creates a new @c CAStreamBasicDescription for the specified @c AudioStreamBasicDescription
-	inline CAStreamBasicDescription(const AudioStreamBasicDescription& rhs) noexcept
+	CAStreamBasicDescription(const AudioStreamBasicDescription& rhs) noexcept
 	: AudioStreamBasicDescription{rhs}
 	{}
 
@@ -92,13 +92,13 @@ public:
 #pragma mark Comparison
 
 	/// Returns @c true if @c rhs is equal to @c this
-	inline bool operator==(const AudioStreamBasicDescription& rhs) const noexcept
+	bool operator==(const AudioStreamBasicDescription& rhs) const noexcept
 	{
 		return !std::memcmp(this, &rhs, sizeof(AudioStreamBasicDescription));
 	}
 
 	/// Returns @c true if @c rhs is not equal to @c this
-	inline bool operator!=(const AudioStreamBasicDescription& rhs) const noexcept
+	bool operator!=(const AudioStreamBasicDescription& rhs) const noexcept
 	{
 		return !operator==(rhs);
 	}
@@ -106,105 +106,105 @@ public:
 #pragma mark Format information
 
 	/// Returns @c true if this format is non-interleaved
-	inline bool IsNonInterleaved() const noexcept
+	bool IsNonInterleaved() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsNonInterleaved) == kAudioFormatFlagIsNonInterleaved;
 	}
 
 	/// Returns @c true if this format is interleaved
-	inline bool IsInterleaved() const noexcept
+	bool IsInterleaved() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsNonInterleaved) == 0;
 	}
 
 	/// Returns the number of interleaved channels
-	inline UInt32 InterleavedChannelCount() const noexcept
+	UInt32 InterleavedChannelCount() const noexcept
 	{
 		return IsInterleaved() ? mChannelsPerFrame : 1;
 	}
 
 	/// Returns the number of channel streams
-	inline UInt32 ChannelStreamCount() const noexcept
+	UInt32 ChannelStreamCount() const noexcept
 	{
 		return IsInterleaved() ? 1 : mChannelsPerFrame;
 	}
 
 	/// Returns the number of channels
-	inline UInt32 ChannelCount() const noexcept
+	UInt32 ChannelCount() const noexcept
 	{
 		return mChannelsPerFrame;
 	}
 
 	/// Returns @c true if this format is PCM
-	inline bool IsPCM() const noexcept
+	bool IsPCM() const noexcept
 	{
 		return mFormatID == kAudioFormatLinearPCM;
 	}
 
 	/// Returns @c true if this format is big-endian
-	inline bool IsBigEndian() const noexcept
+	bool IsBigEndian() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsBigEndian) == kAudioFormatFlagIsBigEndian;
 	}
 
 	/// Returns @c true if this format is little-endian
-	inline bool IsLittleEndian() const noexcept
+	bool IsLittleEndian() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsBigEndian) == 0;
 	}
 
 	/// Returns @c true if this format is native-endian
-	inline bool IsNativeEndian() const noexcept
+	bool IsNativeEndian() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsBigEndian) == kAudioFormatFlagsNativeEndian;
 	}
 
 	/// Returns @c true if this format is floating-point linear PCM
-	inline bool IsFloat() const noexcept
+	bool IsFloat() const noexcept
 	{
 		return IsPCM() && (mFormatFlags & kAudioFormatFlagIsFloat) == kAudioFormatFlagIsFloat;
 	}
 
 	/// Returns @c true if this format is integer linear PCM
-	inline bool IsInteger() const noexcept
+	bool IsInteger() const noexcept
 	{
 		return IsPCM() && (mFormatFlags & kAudioFormatFlagIsFloat) == 0;
 	}
 
 	/// Returns @c true if this format is signed integer linear PCM
-	inline bool IsSignedInteger() const noexcept
+	bool IsSignedInteger() const noexcept
 	{
 		return IsPCM() && (mFormatFlags & kAudioFormatFlagIsSignedInteger) == kAudioFormatFlagIsSignedInteger;
 	}
 
 	/// Returns @c true if this format is packed
-	inline bool IsPacked() const noexcept
+	bool IsPacked() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsPacked) == kAudioFormatFlagIsPacked;
 	}
 
 	/// Returns @c true if this format is high-aligned
-	inline bool IsAlignedHigh() const noexcept
+	bool IsAlignedHigh() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsAlignedHigh) == kAudioFormatFlagIsAlignedHigh;
 	}
 
 	/// Returns @c true if this format is non-mixable
 	/// @note This flag is only used when interacting with HAL stream formats
-	inline bool IsNonMixable() const noexcept
+	bool IsNonMixable() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsNonMixable) == kAudioFormatFlagIsNonMixable;
 	}
 
 	/// Returns @c true if this format is mixable
 	/// @note This flag is only used when interacting with HAL stream formats
-	inline bool IsMixable() const noexcept
+	bool IsMixable() const noexcept
 	{
 		return IsPCM() && (mFormatFlags & kAudioFormatFlagIsNonMixable) == 0;
 	}
 
 	/// Returns the sample word size in bytes
-	inline UInt32 SampleWordSize() const noexcept
+	UInt32 SampleWordSize() const noexcept
 	{
 		auto interleavedChannelCount = InterleavedChannelCount();
 		if(!interleavedChannelCount)
@@ -214,14 +214,14 @@ public:
 
 	/// Returns the byte size of @c frameCount audio frames
 	/// @note This is equivalent to @c frameCount*mBytesPerFrame
-	inline UInt32 FrameCountToByteSize(UInt32 frameCount) const noexcept
+	UInt32 FrameCountToByteSize(UInt32 frameCount) const noexcept
 	{
 		return frameCount * mBytesPerFrame;
 	}
 
 	/// Returns the frame count of @c byteSize bytes
 	/// @note This is equivalent to @c byteSize/mBytesPerFrame
-	inline UInt32 ByteSizeToFrameCount(UInt32 byteSize) const noexcept
+	UInt32 ByteSizeToFrameCount(UInt32 byteSize) const noexcept
 	{
 		if(!mBytesPerFrame)
 			return 0;
@@ -229,7 +229,7 @@ public:
 	}
 
 	/// Returns the duration of a single packet in seconds
-	inline double GetPacketDuration() const noexcept
+	double GetPacketDuration() const noexcept
 	{
 		return (1 / mSampleRate) * mFramesPerPacket;
 	}
@@ -277,7 +277,7 @@ public:
 	}
 
 	/// Resets the @c CAStreamBasicDescription to the default state
-	inline void Reset() noexcept
+	void Reset() noexcept
 	{
 		std::memset(this, 0, sizeof(AudioStreamBasicDescription));
 	}

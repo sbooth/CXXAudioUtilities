@@ -27,7 +27,7 @@ public:
 #pragma mark Creation and Destruction
 
 	/// Creates a new @c UnfairLock
-	inline UnfairLock() noexcept
+	UnfairLock() noexcept
 	: mLock{OS_UNFAIR_LOCK_INIT}
 	{}
 
@@ -49,20 +49,20 @@ public:
 #pragma mark Lockable
 
 	/// Locks the lock
-	inline void lock() noexcept
+	void lock() noexcept
 	{
 		os_unfair_lock_lock(&mLock);
 	}
 
 	/// Unlocks the lock
-	inline void unlock() noexcept
+	void unlock() noexcept
 	{
 		os_unfair_lock_unlock(&mLock);
 	}
 
 	/// Attempts to lock the lock
 	/// @return @c true if the lock was successfully locked, @c false on error
-	inline bool try_lock() noexcept
+	bool try_lock() noexcept
 	{
 		return os_unfair_lock_trylock(&mLock);
 	}
@@ -75,7 +75,7 @@ public:
 	///
 	/// If the lock is unlocked or owned by a different thread, this function
 	/// asserts and terminates the process.
-	inline void assert_owner() noexcept
+	void assert_owner() noexcept
 	{
 		os_unfair_lock_assert_owner(&mLock);
 	}
@@ -86,7 +86,7 @@ public:
 	///
 	///	If the lock is currently owned by the current thread, this function asserts
 	///	and terminates the process.
-	inline void assert_not_owner() noexcept
+	void assert_not_owner() noexcept
 	{
 		os_unfair_lock_assert_not_owner(&mLock);
 	}
