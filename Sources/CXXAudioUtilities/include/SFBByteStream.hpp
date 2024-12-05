@@ -83,7 +83,7 @@ public:
 	}
 
 
-	/// Compares to @c ByteStream objects for equality.
+	/// Compares two @c ByteStream objects for equality.
 	/// Two @c ByteStream objects are equal if they have the same buffer, length, and read position
 	/// @param rhs The object to compare
 	/// @return @c true if the objects are equal, @c false otherwise
@@ -92,7 +92,7 @@ public:
 		return mBuffer == rhs.mBuffer && mBufferLength == rhs.mBufferLength && mReadPosition == rhs.mReadPosition;
 	}
 
-	/// Compares to @c ByteStream objects for inequality.
+	/// Compares two @c ByteStream objects for inequality.
 	/// Two @c ByteStream objects are equal if they have the same buffer, length, and read position
 	/// @param rhs The object to compare
 	/// @return @c true if the objects are not equal, @c false otherwise
@@ -120,7 +120,7 @@ public:
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
 	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
-	std::optional<T> Read() noexcept
+	std::optional<T> Read() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
 		if(!Read(value))
@@ -151,7 +151,7 @@ public:
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
 	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
-	std::optional<T> ReadLE() noexcept
+	std::optional<T> ReadLE() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
 		if(!ReadLE(value))
@@ -182,7 +182,7 @@ public:
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
 	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
-	std::optional<T> ReadBE() noexcept
+	std::optional<T> ReadBE() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
 		if(!ReadBE(value))
@@ -213,7 +213,7 @@ public:
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
 	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
-	std::optional<T> ReadSwapped() noexcept
+	std::optional<T> ReadSwapped() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
 		if(!ReadSwapped(value))
