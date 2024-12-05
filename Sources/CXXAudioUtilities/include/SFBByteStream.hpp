@@ -285,20 +285,20 @@ public:
 
 	/// Returns the number of bytes in the buffer.
 	/// @return The number of bytes in the buffer
-	inline constexpr size_t Length() const noexcept
+	constexpr size_t Length() const noexcept
 	{
 		return mBufferLength;
 	}
 
 	/// Returns the number of bytes remaining.
-	inline constexpr size_t Remaining() const noexcept
+	constexpr size_t Remaining() const noexcept
 	{
 		return mBufferLength - mReadPosition;
 	}
 
 	/// Returns the read position.
 	/// @return The read posiiton
-	inline constexpr size_t Position() const noexcept
+	constexpr size_t Position() const noexcept
 	{
 		return mReadPosition;
 	}
@@ -306,7 +306,7 @@ public:
 	/// Sets the read position.
 	/// @param pos The desired read position
 	/// @return The new read posiiton
-	inline size_t SetPosition(size_t pos) noexcept
+	size_t SetPosition(size_t pos) noexcept
 	{
 		mReadPosition = std::min(pos, mBufferLength);
 		return mReadPosition;

@@ -28,18 +28,18 @@ public:
 	ExtAudioFileWrapper& operator=(const ExtAudioFileWrapper& rhs) = delete;
 
 	/// Calls @c ExtAudioFileDispose on the managed @c ExtAudioFile
-	inline ~ExtAudioFileWrapper()
+	~ExtAudioFileWrapper()
 	{
 		reset();
 	}
 
 	/// Move constructor
-	inline ExtAudioFileWrapper(ExtAudioFileWrapper&& rhs) noexcept
+	ExtAudioFileWrapper(ExtAudioFileWrapper&& rhs) noexcept
 	: mExtAudioFile{rhs.release()}
 	{}
 
 	// Move assignment operator
-	inline ExtAudioFileWrapper& operator=(ExtAudioFileWrapper&& rhs) noexcept
+	ExtAudioFileWrapper& operator=(ExtAudioFileWrapper&& rhs) noexcept
 	{
 		if(this != &rhs)
 			reset(rhs.release());
@@ -47,43 +47,43 @@ public:
 	}
 
 	/// Creates an @c ExtAudioFileWrapper managing @c extAudioFile
-	inline ExtAudioFileWrapper(ExtAudioFileRef extAudioFile) noexcept
+	ExtAudioFileWrapper(ExtAudioFileRef extAudioFile) noexcept
 	: mExtAudioFile{extAudioFile}
 	{}
 
 	/// Returns @c true if the managed @c ExtAudioFile is not @c nullptr
-	inline explicit operator bool() const noexcept
+	explicit operator bool() const noexcept
 	{
 		return mExtAudioFile != nullptr;
 	}
 
 	/// Returns the managed @c ExtAudioFile
-	inline operator ExtAudioFileRef() const noexcept
+	operator ExtAudioFileRef() const noexcept
 	{
 		return mExtAudioFile;
 	}
 
 	/// Returns the managed @c ExtAudioFile
-	inline ExtAudioFileRef get() const noexcept
+	ExtAudioFileRef get() const noexcept
 	{
 		return mExtAudioFile;
 	}
 
 	/// Disposes of the managed @c ExtAudioFile and replaces it with @c extAudioFile
-	inline void reset(ExtAudioFileRef extAudioFile = nullptr) noexcept
+	void reset(ExtAudioFileRef extAudioFile = nullptr) noexcept
 	{
 		if(auto oldExtAudioFile = std::exchange(mExtAudioFile, extAudioFile); oldExtAudioFile)
 			ExtAudioFileDispose(oldExtAudioFile);
 	}
 
 	/// Swaps the managed @c ExtAudioFile of @c *this and @c other
-	inline void swap(ExtAudioFileWrapper& other) noexcept
+	void swap(ExtAudioFileWrapper& other) noexcept
 	{
 		std::swap(mExtAudioFile, other.mExtAudioFile);
 	}
 
 	/// Releases ownership of the managed @c ExtAudioFile and returns it
-	inline ExtAudioFileRef release() noexcept
+	ExtAudioFileRef release() noexcept
 	{
 		return std::exchange(mExtAudioFile, nullptr);
 	}

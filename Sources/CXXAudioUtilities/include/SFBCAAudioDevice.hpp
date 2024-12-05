@@ -36,19 +36,19 @@ public:
 
 
 	/// Creates a @c CAAudioDevice with the specified objectID
-	inline CAAudioDevice(AudioObjectID objectID) noexcept
+	CAAudioDevice(AudioObjectID objectID) noexcept
 	: CAAudioObject{objectID}
 	{}
 
 
 	//	kAudioDevicePropertyConfigurationApplication        = 'capp',
 
-	inline CFString UID() const
+	CFString UID() const
 	{
 		return CFTypeProperty<CFStringRef>(CAPropertyAddress(kAudioDevicePropertyDeviceUID));
 	}
 
-	inline CFString ModelUID() const
+	CFString ModelUID() const
 	{
 		return CFTypeProperty<CFStringRef>(CAPropertyAddress(kAudioDevicePropertyModelUID));
 	}
@@ -61,12 +61,12 @@ public:
 	//	kAudioDevicePropertyDeviceCanBeDefaultDevice        = 'dflt',
 	//	kAudioDevicePropertyDeviceCanBeDefaultSystemDevice  = 'sflt',
 
-	inline UInt32 Latency(CAAudioObjectDirectionalScope scope) const
+	UInt32 Latency(CAAudioObjectDirectionalScope scope) const
 	{
 		return ArithmeticProperty<UInt32>(CAPropertyAddress(kAudioDevicePropertyLatency, scope == CAAudioObjectDirectionalScope::input ? kAudioObjectPropertyScopeInput : kAudioObjectPropertyScopeOutput));
 	}
 
-	inline std::vector<AudioObjectID> StreamIDs(CAAudioObjectDirectionalScope scope) const
+	std::vector<AudioObjectID> StreamIDs(CAAudioObjectDirectionalScope scope) const
 	{
 		return ArrayProperty<AudioObjectID>(CAPropertyAddress(kAudioDevicePropertyStreams, scope == CAAudioObjectDirectionalScope::input ? kAudioObjectPropertyScopeInput : kAudioObjectPropertyScopeOutput));
 	}
@@ -81,12 +81,12 @@ public:
 
 	//	kAudioObjectPropertyControlList                     = 'ctrl',
 
-	inline UInt32 SafetyOffset(CAAudioObjectDirectionalScope scope) const
+	UInt32 SafetyOffset(CAAudioObjectDirectionalScope scope) const
 	{
 		return ArithmeticProperty<UInt32>(CAPropertyAddress(kAudioDevicePropertySafetyOffset, scope == CAAudioObjectDirectionalScope::input ? kAudioObjectPropertyScopeInput : kAudioObjectPropertyScopeOutput));
 	}
 
-	inline Float64 NominalSampleRate() const
+	Float64 NominalSampleRate() const
 	{
 		return ArithmeticProperty<Float64>(CAPropertyAddress(kAudioDevicePropertyNominalSampleRate));
 	}
@@ -104,7 +104,7 @@ public:
 	//	kAudioDevicePropertyIOStoppedAbnormally             = 'stpd',
 	//	kAudioDevicePropertyHogMode                         = 'oink',
 
-	inline UInt32 BufferFrameSize() const
+	UInt32 BufferFrameSize() const
 	{
 		return ArithmeticProperty<UInt32>(CAPropertyAddress(kAudioDevicePropertyBufferFrameSize));
 	}
