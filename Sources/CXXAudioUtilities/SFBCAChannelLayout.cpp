@@ -4,6 +4,7 @@
 // MIT license
 //
 
+#import <cstdio>
 #import <cstdlib>
 #import <cstring>
 #import <new>
@@ -11,6 +12,9 @@
 #import <AudioToolbox/AudioFormat.h>
 
 #import "SFBCAChannelLayout.hpp"
+
+#import "fmt/format.h"
+#import "fmt/ranges.h"
 
 namespace {
 
@@ -746,46 +750,86 @@ bool SFB::CAChannelLayout::MapToLayout(const CAChannelLayout& outputLayout, std:
 	return true;
 }
 
-SFB::CFString SFB::CAChannelLayout::Description() const noexcept
+#if 0
+template<>
+struct fmt::formatter<AudioChannelDescription>
+{
+	template<typename ParseContext>
+	constexpr auto parse(ParseContext& ctx)
+	{
+		return ctx.begin();
+	}
+
+	template<typename FormatContext>
+	auto format(const AudioChannelDescription& desc, FormatContext& ctx) const
+	{
+		if(desc.mChannelLabel == kAudioChannelLabel_UseCoordinates)
+			return fmt::format_to(ctx.out(),
+								  "({}, {}, {}) flags {:#x}",
+								  desc.mCoordinates[0],
+								  desc.mCoordinates[1],
+								  desc.mCoordinates[2],
+								  desc.mChannelFlags);
+		else
+			return fmt::format_to(ctx.out(),
+								  "{}",
+								  GetChannelLabelName(desc.mChannelLabel));
+	}
+};
+#endif
+
+std::string SFB::CAChannelLayout::Description() const
 {
 	if(!mChannelLayout)
 		return {};
 
-	CFMutableString result{ CFStringCreateMutable(kCFAllocatorDefault, 0) };
+	auto out = fmt::memory_buffer();
 
-	if(kAudioChannelLayoutTag_UseChannelDescriptions == mChannelLayout->mChannelLayoutTag){
-		CFStringAppendFormat(result, NULL, CFSTR("%u ch, ["), mChannelLayout->mNumberChannelDescriptions);
+	if(mChannelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelDescriptions) {
+		fmt::format_to(std::back_inserter(out),
+					   "{} ch, [",
+					   mChannelLayout->mNumberChannelDescriptions);
 
 		const AudioChannelDescription *desc = mChannelLayout->mChannelDescriptions;
 		for(UInt32 i = 0; i < mChannelLayout->mNumberChannelDescriptions; ++i, ++desc) {
-			if(kAudioChannelLabel_UseCoordinates == desc->mChannelLabel)
-				CFStringAppendFormat(result, NULL, CFSTR("(%f, %f, %f) flags 0x%0.8x"), desc->mCoordinates[0], desc->mCoordinates[1], desc->mCoordinates[2], desc->mChannelFlags);
+			if(desc->mChannelLabel == kAudioChannelLabel_UseCoordinates)
+				fmt::format_to(std::back_inserter(out),
+							   "({}, {}, {}) flags {:#x}",
+							   desc->mCoordinates[0],
+							   desc->mCoordinates[1],
+							   desc->mCoordinates[2],
+							   desc->mChannelFlags);
 			else
-				CFStringAppendFormat(result, NULL, CFSTR("%s (0x%0.8x)"), GetChannelLabelName(desc->mChannelLabel), desc->mChannelLabel);
+				fmt::format_to(std::back_inserter(out),
+							   "{}",
+							   GetChannelLabelName(desc->mChannelLabel));
+
 			if(i < mChannelLayout->mNumberChannelDescriptions - 1)
-				CFStringAppend(result, CFSTR(", "));
+				fmt::format_to(std::back_inserter(out), ", ");
 		}
 
-		CFStringAppend(result, CFSTR("]"));
+		fmt::format_to(std::back_inserter(out), "]");
 	}
-	else if(kAudioChannelLayoutTag_UseChannelBitmap == mChannelLayout->mChannelLayoutTag) {
-		auto channelCount = __builtin_popcount(mChannelLayout->mChannelBitmap);
-		CFStringAppendFormat(result, NULL, CFSTR("%u ch, ["), channelCount);
-
-		auto i = 0;
+	else if(mChannelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap) {
+		std::vector<std::string_view> v{};
 		for(auto bit = 0; bit < 32; ++bit) {
 			UInt32 value = 1u << bit;
-			if(mChannelLayout->mChannelBitmap & value) {
-				CFStringAppendFormat(result, NULL, CFSTR("%s"), GetChannelBitmaskBitName(value));
-				if(i++ < channelCount - 1)
-					CFStringAppend(result, CFSTR(" | "));
-			}
+			if(mChannelLayout->mChannelBitmap & value)
+				v.push_back(GetChannelBitmaskBitName(value));
 		}
 
-		CFStringAppendFormat(result, NULL, CFSTR("] (0x%0.8x)"), mChannelLayout->mChannelBitmap);
+		fmt::format_to(std::back_inserter(out),
+					   "{} ch, [{}] ({:#b})",
+					   __builtin_popcount(mChannelLayout->mChannelBitmap),
+					   fmt::join(v, " | "),
+					   mChannelLayout->mChannelBitmap);
 	}
 	else
-		CFStringAppendFormat(result, NULL, CFSTR("%u ch, %s (0x%0.8x)"), AudioChannelLayoutTag_GetNumberOfChannels(mChannelLayout->mChannelLayoutTag), GetChannelLayoutTagName(mChannelLayout->mChannelLayoutTag), mChannelLayout->mChannelLayoutTag);
+		fmt::format_to(std::back_inserter(out),
+					   "{} ch, {} ({:#010x})",
+					   AudioChannelLayoutTag_GetNumberOfChannels(mChannelLayout->mChannelLayoutTag),
+					   GetChannelLayoutTagName(mChannelLayout->mChannelLayoutTag),
+					   mChannelLayout->mChannelLayoutTag);
 
-	return CFString(static_cast<CFStringRef>(result.Relinquish()));
+	return fmt::to_string(out);
 }

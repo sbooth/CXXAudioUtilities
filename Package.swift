@@ -20,6 +20,9 @@ let package = Package(
 //			swiftSettings: [
 //				.interoperabilityMode(.Cxx),
 //			],
+			cxxSettings: [
+				.headerSearchPath("fmt/include"),
+			],
 			linkerSettings: [
 				.linkedFramework("CoreAudio"),
 				.linkedFramework("AudioToolbox"),
