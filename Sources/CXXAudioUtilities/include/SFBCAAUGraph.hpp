@@ -34,7 +34,7 @@ public:
 	CAAUGraph& operator=(const CAAUGraph& rhs) = delete;
 
 	/// Destroys the @c CAAUGraph and releases all associated resources.
-	inline ~CAAUGraph()
+	~CAAUGraph()
 	{
 		if(mAUGraph)
 			DisposeAUGraph(mAUGraph);
@@ -60,25 +60,25 @@ public:
 	}
 
 	/// Returns @c true if this object's internal @c AUGraph is not @c nullptr
-	inline explicit operator bool() const noexcept
+	explicit operator bool() const noexcept
 	{
 		return mAUGraph != nullptr;
 	}
 
 	/// Returns @c true if this object's internal @c AUGraph is @c nullptr
-	inline bool operator!() const noexcept
+	bool operator!() const noexcept
 	{
 		return !operator bool();
 	}
 
 	/// Returns @c true if this object's internal @c AUGraph is not @c nullptr
-	inline bool IsValid() const noexcept
+	bool IsValid() const noexcept
 	{
 		return operator bool();
 	}
 
 	/// Returns the object's internal @c AUGraph
-	inline operator AUGraph const _Nullable () const noexcept
+	operator AUGraph const _Nullable () const noexcept
 	{
 		return mAUGraph;
 	}

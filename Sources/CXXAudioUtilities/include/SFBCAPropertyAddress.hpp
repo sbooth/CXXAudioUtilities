@@ -41,19 +41,19 @@ public:
 	/// @param selector The property selector
 	/// @param scope The property element
 	/// @param element The property scope
-	inline CAPropertyAddress(AudioObjectPropertySelector selector, AudioObjectPropertyScope scope = kAudioObjectPropertyScopeGlobal, AudioObjectPropertyElement element = kAudioObjectPropertyElementMain) noexcept
+	CAPropertyAddress(AudioObjectPropertySelector selector, AudioObjectPropertyScope scope = kAudioObjectPropertyScopeGlobal, AudioObjectPropertyElement element = kAudioObjectPropertyElementMain) noexcept
 	: AudioObjectPropertyAddress{selector, scope, element}
 	{}
 
 	// Native overloads
 
 	/// Creates a new @c CAPropertyAddress for the specified @c AudioObjectPropertyAddress
-	inline CAPropertyAddress(const AudioObjectPropertyAddress& rhs) noexcept
+	CAPropertyAddress(const AudioObjectPropertyAddress& rhs) noexcept
 	: AudioObjectPropertyAddress{rhs}
 	{}
 
 	/// Assignment operator
-	inline CAPropertyAddress& operator=(const AudioObjectPropertyAddress& rhs) noexcept
+	CAPropertyAddress& operator=(const AudioObjectPropertyAddress& rhs) noexcept
 	{
 		AudioObjectPropertyAddress::operator=(rhs);
 		return *this;
@@ -62,20 +62,20 @@ public:
 #pragma mark Comparison
 
 	/// Returns @c true if @c rhs is equal to @c this
-	inline bool operator==(const AudioObjectPropertyAddress& rhs) const noexcept
+	bool operator==(const AudioObjectPropertyAddress& rhs) const noexcept
 	{
 		return !std::memcmp(this, &rhs, sizeof(AudioObjectPropertyAddress));
 	}
 
 	/// Returns @c true if @c rhs is not equal to @c this
-	inline bool operator!=(const AudioObjectPropertyAddress& rhs) const noexcept
+	bool operator!=(const AudioObjectPropertyAddress& rhs) const noexcept
 	{
 		return !operator==(rhs);
 	}
 
 	/// Returns @c true if @c rhs is congruent to @c this
 	/// @note Congruence relations consider wildcards
-	inline bool Congruent(const AudioObjectPropertyAddress& rhs) const noexcept
+	bool Congruent(const AudioObjectPropertyAddress& rhs) const noexcept
 	{
 		return (mSelector == rhs.mSelector || mSelector == kAudioObjectPropertySelectorWildcard || rhs.mSelector == kAudioObjectPropertySelectorWildcard)
 		&& (mScope == rhs.mScope || mScope == kAudioObjectPropertyScopeWildcard || rhs.mScope == kAudioObjectPropertyScopeWildcard)

@@ -30,7 +30,7 @@ public:
 	CAAudioConverter& operator=(const CAAudioConverter& rhs) = delete;
 
 	/// Destroys the @c CAAudioConverter and release all associated resources.
-	inline ~CAAudioConverter()
+	~CAAudioConverter()
 	{
 		if(mConverter)
 			AudioConverterDispose(mConverter);
@@ -56,25 +56,25 @@ public:
 	}
 
 	/// Returns @c true if this object's internal @c AudioConverterRef is not @c nullptr
-	inline explicit operator bool() const noexcept
+	explicit operator bool() const noexcept
 	{
 		return mConverter != nullptr;
 	}
 
 	/// Returns @c true if this object's internal @c AudioConverterRef is @c nullptr
-	inline bool operator!() const noexcept
+	bool operator!() const noexcept
 	{
 		return !operator bool();
 	}
 
 	/// Returns @c true if this object's internal @c AudioConverterRef is not @c nullptr
-	inline bool IsValid() const noexcept
+	bool IsValid() const noexcept
 	{
 		return operator bool();
 	}
 
 	/// Returns the object's internal @c AudioConverterRef
-	inline operator AudioConverterRef const _Nullable () const noexcept
+	operator AudioConverterRef const _Nullable () const noexcept
 	{
 		return mConverter;
 	}

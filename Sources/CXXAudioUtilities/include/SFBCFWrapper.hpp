@@ -34,7 +34,7 @@ public:
 #pragma mark Creation and Destruction
 
 	/// Creates a new @c CFWrapper
-	inline CFWrapper() noexcept
+	CFWrapper() noexcept
 	: CFWrapper{nullptr, true}
 	{}
 
@@ -96,14 +96,14 @@ public:
 
 
 	/// Create a new @c CFWrapper
-	inline CFWrapper(std::nullptr_t) noexcept
+	CFWrapper(std::nullptr_t) noexcept
 	: CFWrapper{nullptr, true}
 	{}
 
 	/// Create a new @c CFWrapper
 	/// @note The @c CFWrapper takes ownership of @c object
 	/// @param object The object to wrap
-	inline explicit CFWrapper(T object) noexcept
+	explicit CFWrapper(T object) noexcept
 	: CFWrapper{object, true}
 	{}
 
@@ -135,7 +135,7 @@ public:
 #pragma mark Pointer management
 
 	/// Relinquishes ownership of the wrapped object and returns it
-	inline T Relinquish() noexcept
+	T Relinquish() noexcept
 	{
 		return std::exchange(mObject, nullptr);
 	}
@@ -143,7 +143,7 @@ public:
 #pragma mark Equality testing
 
 	/// Tests two @c CFWrapper objects for equality using @c CFEqual()
-	inline bool operator==(const CFWrapper& rhs) const noexcept
+	bool operator==(const CFWrapper& rhs) const noexcept
 	{
 		if(mObject == rhs.mObject)
 			return true;
@@ -156,7 +156,7 @@ public:
 	}
 
 	/// Tests two @c CFWrapper objects for inequality
-	inline bool operator!=(const CFWrapper& rhs) const noexcept
+	bool operator!=(const CFWrapper& rhs) const noexcept
 	{
 		return !operator==(rhs);
 	}
@@ -164,33 +164,33 @@ public:
 #pragma mark Core Foundation object access
 
 	/// Returns @c true if the wrapped object is not @c nullptr
-	inline explicit operator bool() const noexcept
+	explicit operator bool() const noexcept
 	{
 		return mObject != nullptr;
 	}
 
 	/// Returns @c true if the wrapped object is @c nullptr
-	inline bool operator!() const noexcept
+	bool operator!() const noexcept
 	{
 		return !operator bool();
 	}
 
 	/// Returns the wrapped object
-	inline operator T() const noexcept
+	operator T() const noexcept
 	{
 		return mObject;
 	}
 
 
 	/// Returns a pointer to the wrapped object
-	inline T * _Nonnull operator&() noexcept
+	T * _Nonnull operator&() noexcept
 	{
 		return &mObject;
 	}
 
 
 	/// Returns the wrapped object
-	inline T Object() const noexcept
+	T Object() const noexcept
 	{
 		return mObject;
 	}
@@ -254,42 +254,42 @@ public:
 
 	/// Returns the wrapped string
 	template <typename = std::enable_if<std::is_same_v<T, CFStringRef>>>
-	inline NSString * _Nullable NSString() const noexcept
+	NSString * _Nullable NSString() const noexcept
 	{
 		return (__bridge ::NSString *)mObject;
 	}
 
 	/// Returns the wrapped string
 	template <typename = std::enable_if<std::is_same_v<T, CFStringRef>>>
-	inline operator ::NSString * _Nullable () const noexcept
+	operator ::NSString * _Nullable () const noexcept
 	{
 		return (__bridge ::NSString *)mObject;
 	}
 
 	/// Returns the wrapped array
 	template <typename = std::enable_if<std::is_same_v<T, CFArrayRef>>>
-	inline NSArray * _Nullable NSArray() const noexcept
+	NSArray * _Nullable NSArray() const noexcept
 	{
 		return (__bridge ::NSArray *)mObject;
 	}
 
 	/// Returns the wrapped array
 	template <typename = std::enable_if<std::is_same_v<T, CFArrayRef>>>
-	inline operator ::NSArray * _Nullable () const noexcept
+	operator ::NSArray * _Nullable () const noexcept
 	{
 		return (__bridge ::NSArray *)mObject;
 	}
 
 	/// Returns the wrapped dictionary
 	template <typename = std::enable_if<std::is_same_v<T, CFDictionaryRef>>>
-	inline NSDictionary * _Nullable NSDictionary() const noexcept
+	NSDictionary * _Nullable NSDictionary() const noexcept
 	{
 		return (__bridge ::NSDictionary *)mObject;
 	}
 
 	/// Returns the wrapped dictionary
 	template <typename = std::enable_if<std::is_same_v<T, CFDictionaryRef>>>
-	inline operator ::NSDictionary * _Nullable () const noexcept
+	operator ::NSDictionary * _Nullable () const noexcept
 	{
 		return (__bridge ::NSDictionary *)mObject;
 	}

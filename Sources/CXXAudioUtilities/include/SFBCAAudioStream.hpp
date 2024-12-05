@@ -36,51 +36,51 @@ public:
 
 
 	/// Creates a @c CAAudioStream with the specified objectID
-	inline CAAudioStream(AudioObjectID objectID) noexcept
+	CAAudioStream(AudioObjectID objectID) noexcept
 	: CAAudioObject{objectID}
 	{}
 
-	inline bool IsActive() const
+	bool IsActive() const
 	{
 		return ArithmeticProperty<UInt32>(CAPropertyAddress(kAudioStreamPropertyIsActive)) != 0;
 	}
 
-	inline UInt32 Direction() const
+	UInt32 Direction() const
 	{
 		return ArithmeticProperty<UInt32>(CAPropertyAddress(kAudioStreamPropertyDirection));
 	}
 
-	inline UInt32 TerminalType() const
+	UInt32 TerminalType() const
 	{
 		return ArithmeticProperty<UInt32>(CAPropertyAddress(kAudioStreamPropertyTerminalType));
 	}
 
-	inline UInt32 StartingChannel() const
+	UInt32 StartingChannel() const
 	{
 		return ArithmeticProperty<UInt32>(CAPropertyAddress(kAudioStreamPropertyStartingChannel));
 	}
 
-	inline UInt32 Latency() const
+	UInt32 Latency() const
 	{
 		return ArithmeticProperty<UInt32>(CAPropertyAddress(kAudioStreamPropertyLatency));
 	}
 
-	inline CAStreamBasicDescription VirtualFormat() const
+	CAStreamBasicDescription VirtualFormat() const
 	{
 		return StructProperty<AudioStreamBasicDescription>(CAPropertyAddress(kAudioStreamPropertyVirtualFormat));
 	}
 
-	inline std::vector<AudioStreamRangedDescription> AvailableVirtualFormats() const
+	std::vector<AudioStreamRangedDescription> AvailableVirtualFormats() const
 	{
 		return ArrayProperty<AudioStreamRangedDescription>(CAPropertyAddress(kAudioStreamPropertyAvailableVirtualFormats));
 	}
 
-	inline CAStreamBasicDescription PhysicalFormat() const
+	CAStreamBasicDescription PhysicalFormat() const
 	{
 		return StructProperty<AudioStreamBasicDescription>(CAPropertyAddress(kAudioStreamPropertyPhysicalFormat));
 	}
 
-	inline std::vector<AudioStreamRangedDescription> AvailablePhysicalFormats() const
+	std::vector<AudioStreamRangedDescription> AvailablePhysicalFormats() const
 	{
 		return ArrayProperty<AudioStreamRangedDescription>(CAPropertyAddress(kAudioStreamPropertyAvailablePhysicalFormats));
 	}

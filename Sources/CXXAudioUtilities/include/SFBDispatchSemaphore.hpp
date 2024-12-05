@@ -23,7 +23,7 @@ public:
 	/// Creates a new @c DispatchSemaphore
 	/// @param value The starting value for the semaphore.
 	/// @throw @c std::runtime_error If the semaphore could not be created
-	inline DispatchSemaphore(intptr_t value)
+	DispatchSemaphore(intptr_t value)
 	{
 		mSemaphore = dispatch_semaphore_create(value);
 		if(!mSemaphore)
@@ -37,7 +37,7 @@ public:
 	DispatchSemaphore& operator=(const DispatchSemaphore& rhs) = delete;
 
 	// Destructor
-	inline ~DispatchSemaphore()
+	~DispatchSemaphore()
 	{
 #if !__has_feature(objc_arc)
 		dispatch_release(mSemaphore);
@@ -55,7 +55,7 @@ public:
 	 /// Signals (increments) the semaphore.
 	 /// If the previous value was less than zero, this function wakes a waiting thread.
 	 /// @return \c true if a thread was woken, \c false otherwise
-	inline bool Signal() noexcept
+	bool Signal() noexcept
 	{
 		return dispatch_semaphore_signal(mSemaphore) != 0;
 	}
@@ -63,7 +63,7 @@ public:
 	/// Waits for (decrements) the semaphore.
 	/// If the resulting value is less than zero this function waits for a signal to occur before returning.
 	/// @return \c true if successful, \c false if the timeout occurred
-	inline bool Wait() noexcept
+	bool Wait() noexcept
 	{
 		return Wait(DISPATCH_TIME_FOREVER);
 	}
@@ -72,7 +72,7 @@ public:
 	 /// If the resulting value is less than zero this function waits for a signal to occur before returning.
 	 /// @param duration The maximum duration to block
 	 /// @return \c true if successful, \c false if the timeout occurred
-	inline bool Wait(dispatch_time_t duration) noexcept
+	bool Wait(dispatch_time_t duration) noexcept
 	{
 		return dispatch_semaphore_wait(mSemaphore, duration) == 0;
 	}
