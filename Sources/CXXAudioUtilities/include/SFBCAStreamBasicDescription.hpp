@@ -7,6 +7,7 @@
 #pragma once
 
 #import <cstring>
+#import <optional>
 
 #import <CoreAudioTypes/CoreAudioTypes.h>
 
@@ -105,6 +106,9 @@ public:
 	}
 
 #pragma mark Format information
+
+	/// Returns the common PCM format described by @c this or @c std::nullopt if none
+	std::optional<CommonPCMFormat> GetCommonFormat() const noexcept;
 
 	/// Returns @c true if this format is non-interleaved
 	bool IsNonInterleaved() const noexcept

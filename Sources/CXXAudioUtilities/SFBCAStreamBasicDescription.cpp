@@ -6,6 +6,30 @@
 
 #import "SFBCAStreamBasicDescription.hpp"
 
+std::optional<SFB::CommonPCMFormat> SFB::CAStreamBasicDescription::GetCommonFormat() const noexcept
+{
+	if(!IsPCM() || ! IsNativeEndian())
+		return std::nullopt;
+
+	if(IsSignedInteger()) {
+		if(!IsPacked())
+			return std::nullopt;
+
+		if(mBitsPerChannel == 16)
+			return CommonPCMFormat::int16;
+		else if(mBitsPerChannel == 32)
+			return CommonPCMFormat::int32;
+	}
+	else if(IsFloat()) {
+		if(mBitsPerChannel == 32)
+			return CommonPCMFormat::float32;
+		else if(mBitsPerChannel == 64)
+			return CommonPCMFormat::float64;
+	}
+
+	return std::nullopt;
+}
+
 // Most of this is stolen from Apple's CAStreamBasicDescription::Print()
 SFB::CFString SFB::CAStreamBasicDescription::Description() const noexcept
 {
