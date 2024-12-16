@@ -10,8 +10,7 @@
 #import <optional>
 
 #import <CoreAudioTypes/CoreAudioTypes.h>
-
-#import "SFBCFWrapper.hpp"
+#import <CoreFoundation/CFString.h>
 
 namespace SFB {
 
@@ -302,8 +301,9 @@ public:
 	}
 
 
-	/// Returns a string representation of this format suitable for logging
-	CFString Description() const noexcept;
+	/// Creates and returns a string representation of this format
+	/// - note: The caller is responsible for releasing the returned string
+	CFStringRef _Nullable CreateDescription() const noexcept;
 
 };
 

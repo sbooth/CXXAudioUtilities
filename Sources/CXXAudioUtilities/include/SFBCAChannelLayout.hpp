@@ -10,12 +10,11 @@
 #import <vector>
 
 #import <CoreAudioTypes/CoreAudioTypes.h>
+#import <CoreFoundation/CFString.h>
 
 #ifdef __OBJC__
 #import <AVFAudio/AVFAudio.h>
 #endif /* __OBJC__ */
-
-#import "SFBCFWrapper.hpp"
 
 namespace SFB {
 
@@ -177,8 +176,9 @@ public:
 	}
 
 
-	/// Returns a string representation of this channel layout suitable for logging
-	CFString Description() const noexcept;
+	/// Creates and returns a string representation of this channel layout
+	/// - note: The caller is responsible for releasing the returned string
+	CFStringRef _Nullable CreateDescription() const noexcept;
 
 
 #ifdef __OBJC__

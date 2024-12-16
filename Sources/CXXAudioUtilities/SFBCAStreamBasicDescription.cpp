@@ -4,6 +4,8 @@
 // MIT license
 //
 
+#import <libkern/OSByteOrder.h>
+
 #import "SFBCAStreamBasicDescription.hpp"
 
 std::optional<SFB::CommonPCMFormat> SFB::CAStreamBasicDescription::GetCommonFormat() const noexcept
@@ -31,9 +33,9 @@ std::optional<SFB::CommonPCMFormat> SFB::CAStreamBasicDescription::GetCommonForm
 }
 
 // Most of this is stolen from Apple's CAStreamBasicDescription::Print()
-SFB::CFString SFB::CAStreamBasicDescription::Description() const noexcept
+CFStringRef SFB::CAStreamBasicDescription::CreateDescription() const noexcept
 {
-	CFMutableString result{CFStringCreateMutable(kCFAllocatorDefault, 0)};
+	CFMutableStringRef result = CFStringCreateMutable(kCFAllocatorDefault, 0);
 
 	unsigned char formatID [5];
 	auto formatIDBE = OSSwapHostToBigInt32(mFormatID);
@@ -96,5 +98,5 @@ SFB::CFString SFB::CAStreamBasicDescription::Description() const noexcept
 	else
 		CFStringAppendFormat(result, NULL, CFSTR("%u bits/channel, %u bytes/packet, %u frames/packet, %u bytes/frame"), mBitsPerChannel, mBytesPerPacket, mFramesPerPacket, mBytesPerFrame);
 
-	return CFString{static_cast<CFStringRef>(result.Relinquish())};
+	return result;
 }
