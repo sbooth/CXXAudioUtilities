@@ -179,15 +179,29 @@ public:
 	}
 
 	/// Returns @c true if this format is packed
+	///
+	/// A format is considered packed even if @c kAudioFormatFlagIsPacked is clear when  @c ((mBitsPerChannel/8)*mChannelsPerFrame)==mBytesPerFrame
 	bool IsPacked() const noexcept
 	{
-		return (mFormatFlags & kAudioFormatFlagIsPacked) == kAudioFormatFlagIsPacked;
+		return (mFormatFlags & kAudioFormatFlagIsPacked) == kAudioFormatFlagIsPacked || ((mBitsPerChannel / 8) * mChannelsPerFrame) == mBytesPerFrame;
 	}
 
 	/// Returns @c true if this format is high-aligned
 	bool IsAlignedHigh() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsAlignedHigh) == kAudioFormatFlagIsAlignedHigh;
+	}
+
+	/// Returns the number of fractional bits
+	UInt32 FractionalBits() const noexcept
+	{
+		return (mFormatFlags & kLinearPCMFormatFlagsSampleFractionMask) >> kLinearPCMFormatFlagsSampleFractionShift;
+	}
+
+	/// Returns @c true if this format is integer fixed-point PCM
+	bool IsFixedPoint() const noexcept
+	{
+		return IsInteger() && FractionalBits() > 0;
 	}
 
 	/// Returns @c true if this format is non-mixable
