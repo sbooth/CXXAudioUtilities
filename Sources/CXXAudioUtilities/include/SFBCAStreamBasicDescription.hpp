@@ -243,7 +243,7 @@ public:
 	UInt32 SampleWordSize() const noexcept
 	{
 		auto interleavedChannelCount = InterleavedChannelCount();
-		if(!interleavedChannelCount || mBytesPerFrame % interleavedChannelCount == 0)
+		if(interleavedChannelCount == 0 || mBytesPerFrame % interleavedChannelCount != 0)
 			return 0;
 		return mBytesPerFrame / interleavedChannelCount;
 	}
@@ -259,7 +259,7 @@ public:
 	/// @note This is equivalent to @c byteSize/mBytesPerFrame
 	UInt32 ByteSizeToFrameCount(UInt32 byteSize) const noexcept
 	{
-		if(!mBytesPerFrame)
+		if(mBytesPerFrame == 0)
 			return 0;
 		return byteSize / mBytesPerFrame;
 	}
@@ -275,7 +275,7 @@ public:
 	/// Sets @c format to the equivalent non-interleaved format of @c this. Fails for non-PCM formats.
 	bool GetNonInterleavedEquivalent(CAStreamBasicDescription& format) const noexcept
 	{
-		if(!IsPCM() || !mChannelsPerFrame)
+		if(!IsPCM() || mChannelsPerFrame == 0)
 			return false;
 		format = *this;
 		if(IsInterleaved()) {
