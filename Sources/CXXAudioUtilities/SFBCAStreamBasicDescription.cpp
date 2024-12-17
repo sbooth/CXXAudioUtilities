@@ -147,8 +147,8 @@ CFStringRef SFB::CAStreamBasicDescription::CreateDescription() const noexcept
 			CFStringAppendFormat(result, nullptr, CFSTR("%d-bit"), mBitsPerChannel);
 
 		// Endianness
-		auto sampleSize = SampleWordSize();
-		if(sampleSize > 1)
+		auto sampleWordSize = SampleWordSize();
+		if(sampleWordSize > 1)
 			CFStringAppendCString(result, IsBigEndian() ? " big-endian" : " little-endian", kCFStringEncodingASCII);
 
 		// Sign
@@ -160,13 +160,13 @@ CFStringRef SFB::CAStreamBasicDescription::CreateDescription() const noexcept
 		CFStringAppendCString(result, isInteger ? " integer" : " float", kCFStringEncodingASCII);
 
 		// Packedness and alignment
-		if(sampleSize > 0) {
+		if(sampleWordSize > 0) {
 			if(IsImplicitlyPacked())
 				CFStringAppendCString(result, ", packed", kCFStringEncodingASCII);
 			else if(IsUnaligned())
 				CFStringAppendCString(result, IsAlignedHigh() ? ", high-aligned" : ", low-aligned", kCFStringEncodingASCII);
 
-			CFStringAppendFormat(result, nullptr, CFSTR(" in %d bytes"), sampleSize);
+			CFStringAppendFormat(result, nullptr, CFSTR(" in %d bytes"), sampleWordSize);
 		}
 
 		if(IsNonInterleaved())
@@ -182,6 +182,8 @@ CFStringRef SFB::CAStreamBasicDescription::CreateDescription() const noexcept
 		else
 			CFStringAppendFormat(result, nullptr, CFSTR("0x%.08x"), mFormatID);
 
+		CFStringAppendCString(result, ", ", kCFStringEncodingASCII);
+
 		UInt32 sourceBitDepth = 0;
 		switch(mFormatFlags) {
 			case kAppleLosslessFormatFlag_16BitSourceData:	sourceBitDepth = 16;	break;
@@ -195,15 +197,9 @@ CFStringRef SFB::CAStreamBasicDescription::CreateDescription() const noexcept
 		else
 			CFStringAppendCString(result, "from UNKNOWN source bit depth, ", kCFStringEncodingASCII);
 
-		CFStringAppendFormat(result, nullptr, CFSTR(" %d frames/packet"), mFramesPerPacket);
+		CFStringAppendFormat(result, nullptr, CFSTR("%d frames/packet"), mFramesPerPacket);
 	}
 	else {
-		// Format flags
-		if(mFormatFlags != 0)
-			CFStringAppendFormat(result, nullptr, CFSTR(" [0x%.08x], "), mFormatFlags);
-
-		CFStringAppendCString(result, ", ", kCFStringEncodingASCII);
-
 		if(CFStringRef formatIDString = GetFormatIDName(mFormatID); formatIDString)
 			CFStringAppend(result, formatIDString);
 		else if(CFStringRef fourCC = CreateFourCharCodeString(mFormatID); fourCC) {
@@ -213,9 +209,11 @@ CFStringRef SFB::CAStreamBasicDescription::CreateDescription() const noexcept
 		else
 			CFStringAppendFormat(result, nullptr, CFSTR("0x%.08x"), mFormatID);
 
-		CFStringAppendCString(result, ", ", kCFStringEncodingASCII);
+		// Format flags
+		if(mFormatFlags != 0)
+			CFStringAppendFormat(result, nullptr, CFSTR(" [0x%.08x]"), mFormatFlags);
 
-		CFStringAppendFormat(result, nullptr, CFSTR("%u bits/channel, %u bytes/packet, %u frames/packet, %u bytes/frame"), mBitsPerChannel, mBytesPerPacket, mFramesPerPacket, mBytesPerFrame);
+		CFStringAppendFormat(result, nullptr, CFSTR(", %u bits/channel, %u bytes/packet, %u frames/packet, %u bytes/frame"), mBitsPerChannel, mBytesPerPacket, mFramesPerPacket, mBytesPerFrame);
 	}
 
 	return result;
