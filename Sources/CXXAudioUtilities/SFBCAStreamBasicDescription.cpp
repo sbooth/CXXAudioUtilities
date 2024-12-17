@@ -18,6 +18,9 @@ std::optional<SFB::CommonPCMFormat> SFB::CAStreamBasicDescription::CommonFormat(
 
 	if(IsSignedInteger()) {
 		if(IsFixedPoint())
+			return std::nullopt;
+
+		if(mBitsPerChannel == 16)
 			return CommonPCMFormat::int16;
 		else if(mBitsPerChannel == 32)
 			return CommonPCMFormat::int32;
