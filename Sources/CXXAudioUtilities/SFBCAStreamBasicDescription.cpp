@@ -10,14 +10,14 @@
 
 std::optional<SFB::CommonPCMFormat> SFB::CAStreamBasicDescription::GetCommonFormat() const noexcept
 {
-	if(!IsPCM() || ! IsNativeEndian())
+	if(mFramesPerPacket != 1 || mBytesPerFrame != mBytesPerPacket || mChannelsPerFrame == 0)
+		return std::nullopt;
+
+	if(!IsPCM() || ! IsNativeEndian() || !IsImplicitlyPacked())
 		return std::nullopt;
 
 	if(IsSignedInteger()) {
-		if(!IsPacked())
-			return std::nullopt;
-
-		if(mBitsPerChannel == 16)
+		if(IsFixedPoint())
 			return CommonPCMFormat::int16;
 		else if(mBitsPerChannel == 32)
 			return CommonPCMFormat::int32;
