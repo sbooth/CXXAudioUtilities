@@ -109,13 +109,13 @@ public:
 	/// Returns the common PCM format described by @c this or @c std::nullopt if none
 	std::optional<CommonPCMFormat> GetCommonFormat() const noexcept;
 
-	/// Returns @c true if this format is non-interleaved
+	/// Returns @c true if @c kAudioFormatFlagIsNonInterleaved is set
 	bool IsNonInterleaved() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsNonInterleaved) == kAudioFormatFlagIsNonInterleaved;
 	}
 
-	/// Returns @c true if this format is interleaved
+	/// Returns @c true if @c kAudioFormatFlagIsNonInterleaved is clear
 	bool IsInterleaved() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsNonInterleaved) == 0;
@@ -139,19 +139,19 @@ public:
 		return mChannelsPerFrame;
 	}
 
-	/// Returns @c true if this format is PCM
+	/// Returns @c true if @c mFormatID==kAudioFormatLinearPCM
 	bool IsPCM() const noexcept
 	{
 		return mFormatID == kAudioFormatLinearPCM;
 	}
 
-	/// Returns @c true if this format is big-endian
+	/// Returns @c true if @c kAudioFormatFlagIsBigEndian is set
 	bool IsBigEndian() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsBigEndian) == kAudioFormatFlagIsBigEndian;
 	}
 
-	/// Returns @c true if this format is little-endian
+	/// Returns @c true if @c kAudioFormatFlagIsBigEndian is clear
 	bool IsLittleEndian() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsBigEndian) == 0;
@@ -163,33 +163,39 @@ public:
 		return (mFormatFlags & kAudioFormatFlagIsBigEndian) == kAudioFormatFlagsNativeEndian;
 	}
 
-	/// Returns @c true if this format is floating-point linear PCM
+	/// Returns @c true if this format is linear PCM and @c kAudioFormatFlagIsFloat is set
 	bool IsFloat() const noexcept
 	{
 		return IsPCM() && (mFormatFlags & kAudioFormatFlagIsFloat) == kAudioFormatFlagIsFloat;
 	}
 
-	/// Returns @c true if this format is integer linear PCM
+	/// Returns @c true if this format is linear PCM and @c kAudioFormatFlagIsFloat is clear
 	bool IsInteger() const noexcept
 	{
 		return IsPCM() && (mFormatFlags & kAudioFormatFlagIsFloat) == 0;
 	}
 
-	/// Returns @c true if this format is signed integer linear PCM
+	/// Returns @c true if this format is linear PCM and @c kAudioFormatFlagIsSignedInteger is set
 	bool IsSignedInteger() const noexcept
 	{
 		return IsPCM() && (mFormatFlags & kAudioFormatFlagIsSignedInteger) == kAudioFormatFlagIsSignedInteger;
 	}
 
-	/// Returns @c true if this format is packed
-	///
-	/// A format is considered packed even if @c kAudioFormatFlagIsPacked is clear when  @c ((mBitsPerChannel/8)*mChannelsPerFrame)==mBytesPerFrame
+	/// Returns @c true if @c kAudioFormatFlagIsPacked is set
 	bool IsPacked() const noexcept
 	{
-		return (mFormatFlags & kAudioFormatFlagIsPacked) == kAudioFormatFlagIsPacked || ((mBitsPerChannel / 8) * mChannelsPerFrame) == mBytesPerFrame;
+		return (mFormatFlags & kAudioFormatFlagIsPacked) == kAudioFormatFlagIsPacked;
 	}
 
-	/// Returns @c true if this format is high-aligned
+	/// Returns @c true if this format is implicitly packed
+	///
+	/// A format is implicitly packed when  @c ((mBitsPerChannel/8)*mChannelsPerFrame)==mBytesPerFrame
+	bool IsImplicitlyPacked() const noexcept
+	{
+		return ((mBitsPerChannel / 8) * mChannelsPerFrame) == mBytesPerFrame;
+	}
+
+	/// Returns @c true if @c kAudioFormatFlagIsAlignedHigh is set
 	bool IsAlignedHigh() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsAlignedHigh) == kAudioFormatFlagIsAlignedHigh;
@@ -201,20 +207,20 @@ public:
 		return (mFormatFlags & kLinearPCMFormatFlagsSampleFractionMask) >> kLinearPCMFormatFlagsSampleFractionShift;
 	}
 
-	/// Returns @c true if this format is integer fixed-point PCM
+	/// Returns @c true if this format is integer fixed-point linear PCM
 	bool IsFixedPoint() const noexcept
 	{
 		return IsInteger() && FractionalBits() > 0;
 	}
 
-	/// Returns @c true if this format is non-mixable
+	/// Returns @c true if @c kAudioFormatFlagIsNonMixable is set
 	/// @note This flag is only used when interacting with HAL stream formats
 	bool IsNonMixable() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsNonMixable) == kAudioFormatFlagIsNonMixable;
 	}
 
-	/// Returns @c true if this format is mixable
+	/// Returns @c true if this format is linear PCM and @c kAudioFormatFlagIsNonMixable is clear
 	/// @note This flag is only used when interacting with HAL stream formats
 	bool IsMixable() const noexcept
 	{
