@@ -189,7 +189,7 @@ public:
 
 	/// Returns @c true if this format is implicitly packed
 	///
-	/// A format is implicitly packed when  @c ((mBitsPerChannel/8)*mChannelsPerFrame)==mBytesPerFrame
+	/// A format is implicitly packed when @c ((mBitsPerChannel/8)*mChannelsPerFrame)==mBytesPerFrame
 	bool IsImplicitlyPacked() const noexcept
 	{
 		return ((mBitsPerChannel / 8) * mChannelsPerFrame) == mBytesPerFrame;
