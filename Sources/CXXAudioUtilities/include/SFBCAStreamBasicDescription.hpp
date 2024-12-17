@@ -107,7 +107,7 @@ public:
 #pragma mark Format information
 
 	/// Returns the common PCM format described by @c this or @c std::nullopt if none
-	std::optional<CommonPCMFormat> GetCommonFormat() const noexcept;
+	std::optional<CommonPCMFormat> CommonFormat() const noexcept;
 
 	/// Returns @c true if @c kAudioFormatFlagIsNonInterleaved is set
 	bool IsNonInterleaved() const noexcept
