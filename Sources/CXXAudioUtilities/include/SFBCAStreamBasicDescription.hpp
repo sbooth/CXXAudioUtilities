@@ -195,10 +195,22 @@ public:
 		return ((mBitsPerChannel / 8) * InterleavedChannelCount()) == mBytesPerFrame;
 	}
 
+	/// Returns @c true if this format is linear PCM and the sample bits do not occupy the entire channel
+	bool IsUnpackedPCM() const noexcept
+	{
+		return IsPCM() && (SampleWordSize() << 3) != mBitsPerChannel;
+	}
+
 	/// Returns @c true if @c kAudioFormatFlagIsAlignedHigh is set
 	bool IsAlignedHigh() const noexcept
 	{
 		return (mFormatFlags & kAudioFormatFlagIsAlignedHigh) == kAudioFormatFlagIsAlignedHigh;
+	}
+
+	/// Returns @c true if this format is unpacked linear PCM or if @c mBitsPerChannel is not a multiple of 8
+	bool IsUnaligned() const noexcept
+	{
+		return IsUnpackedPCM() || (mBitsPerChannel & 7) != 0;
 	}
 
 	/// Returns the number of fractional bits
