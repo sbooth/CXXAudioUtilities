@@ -189,10 +189,10 @@ public:
 
 	/// Returns @c true if this format is implicitly packed
 	///
-	/// A format is implicitly packed when @c ((mBitsPerChannel/8)*mChannelsPerFrame)==mBytesPerFrame
+	/// A format is implicitly packed when @c ((mBitsPerChannel/8)*InterleavedChannelCount())==mBytesPerFrame
 	bool IsImplicitlyPacked() const noexcept
 	{
-		return ((mBitsPerChannel / 8) * mChannelsPerFrame) == mBytesPerFrame;
+		return ((mBitsPerChannel / 8) * InterleavedChannelCount()) == mBytesPerFrame;
 	}
 
 	/// Returns @c true if @c kAudioFormatFlagIsAlignedHigh is set
@@ -231,7 +231,7 @@ public:
 	UInt32 SampleWordSize() const noexcept
 	{
 		auto interleavedChannelCount = InterleavedChannelCount();
-		if(!interleavedChannelCount)
+		if(!interleavedChannelCount || mBytesPerFrame % interleavedChannelCount == 0)
 			return 0;
 		return mBytesPerFrame / interleavedChannelCount;
 	}
