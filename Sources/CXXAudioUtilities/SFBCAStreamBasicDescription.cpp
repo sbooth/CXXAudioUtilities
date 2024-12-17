@@ -8,7 +8,7 @@
 
 #import "SFBCAStreamBasicDescription.hpp"
 
-std::optional<SFB::CommonPCMFormat> SFB::CAStreamBasicDescription::GetCommonFormat() const noexcept
+std::optional<SFB::CommonPCMFormat> SFB::CAStreamBasicDescription::CommonFormat() const noexcept
 {
 	if(mFramesPerPacket != 1 || mBytesPerFrame != mBytesPerPacket || mChannelsPerFrame == 0)
 		return std::nullopt;
