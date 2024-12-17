@@ -107,7 +107,7 @@ CFStringRef SFB::CAStreamBasicDescription::CreateDescription() const noexcept
 {
 	CFMutableStringRef result = CFStringCreateMutable(kCFAllocatorDefault, 0);
 
-	// Sample rate and channels
+	// Channels and sample rate
 	if(std::rint(mSampleRate) == mSampleRate)
 		CFStringAppendFormat(result, nullptr, CFSTR("%u ch @ %lld Hz, "), mChannelsPerFrame, static_cast<uint64_t>(mSampleRate));
 	else
