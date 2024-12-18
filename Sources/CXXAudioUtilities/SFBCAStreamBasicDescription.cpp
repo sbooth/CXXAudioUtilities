@@ -68,7 +68,7 @@ CFStringRef _Nullable CreateFourCharCodeString(UInt32 fourcc) noexcept
 	u.ui32 = OSSwapHostToBigInt32(fourcc);
 
 	if(std::isprint(u.str[0]) && std::isprint(u.str[1]) && std::isprint(u.str[2]) && std::isprint(u.str[3]))
-		return CFStringCreateWithBytes(kCFAllocatorDefault, u.str, 4, kCFStringEncodingASCII, false);
+		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("'%.4s'"), u.str);
 	else
 		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("0x%.02x%.02x%.02x%.02x"), u.str[0], u.str[1], u.str[2], u.str[3]);
 }
