@@ -62,7 +62,7 @@ CFStringRef _Nullable GetFormatIDName(AudioFormatID formatID) noexcept
 }
 
 /// Creates a string representation of the four-character code @c fourcc
-CFStringRef _Nullable CreateFourCharCodeString(UInt32 fourcc) noexcept
+CFStringRef _Nullable CreateFourCharCodeString(UInt32 fourcc) noexcept CF_RETURNS_RETAINED
 {
 	union { UInt32 ui32; unsigned char str[4]; } u;
 	u.ui32 = OSSwapHostToBigInt32(fourcc);
