@@ -36,7 +36,7 @@ class CAStreamBasicDescription : public AudioStreamBasicDescription
 {
 
 public:
-	
+
 #pragma mark Creation and Destruction
 
 	/// Creates an empty @c CAStreamBasicDescription
@@ -338,7 +338,7 @@ public:
 	/// Returns a string representation of this format
 	operator NSString * _Nullable () const noexcept
 	{
-		return (__bridge_transfer)CreateDescription();
+		return (__bridge_transfer NSString *)CreateDescription();
 	}
 #endif /* __OBJC__ */
 
