@@ -12,6 +12,11 @@
 #import <CoreAudioTypes/CoreAudioTypes.h>
 #import <CoreFoundation/CFString.h>
 
+#ifdef __OBJC__
+#import <AVFAudio/AVFAudio.h>
+#import <Foundation/NSString.h>
+#endif /* __OBJC__ */
+
 namespace SFB {
 
 /// Common PCM audio formats
@@ -322,6 +327,20 @@ public:
 	/// Creates and returns a string representation of this format
 	/// - note: The caller is responsible for releasing the returned string
 	CFStringRef _Nullable CreateDescription() const noexcept CF_RETURNS_RETAINED;
+
+#ifdef __OBJC__
+	/// Returns an  @c AVAudioFormat object initialized with this format and no channel layout
+	operator AVAudioFormat * _Nullable () const noexcept
+	{
+		return [[AVAudioFormat alloc] initWithStreamDescription:this];
+	}
+
+	/// Returns a string representation of this format
+	operator NSString * _Nullable () const noexcept
+	{
+		return (__bridge_transfer)CreateDescription();
+	}
+#endif /* __OBJC__ */
 
 };
 

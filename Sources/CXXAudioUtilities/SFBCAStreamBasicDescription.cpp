@@ -106,7 +106,6 @@ std::optional<SFB::CommonPCMFormat> SFB::CAStreamBasicDescription::CommonFormat(
 	return std::nullopt;
 }
 
-// Most of this is stolen from Apple's CAStreamBasicDescription::Print()
 CFStringRef SFB::CAStreamBasicDescription::CreateDescription() const noexcept
 {
 	CFMutableStringRef result = CFStringCreateMutable(kCFAllocatorDefault, 0);
