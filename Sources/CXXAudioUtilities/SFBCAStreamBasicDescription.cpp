@@ -4,8 +4,6 @@
 // MIT license
 //
 
-#import <cctype>
-
 #import <libkern/OSByteOrder.h>
 
 #import "SFBCAStreamBasicDescription.hpp"
@@ -61,13 +59,19 @@ CFStringRef _Nullable GetFormatIDName(AudioFormatID formatID) noexcept
 	}
 }
 
+/// Returns `true` if `c` is a printable ASCII character
+constexpr bool IsPrintableASCII(unsigned char c) noexcept
+{
+	return c > 0x1f && c < 0x7f;
+}
+
 /// Creates a string representation of the four-character code @c fourcc
 CFStringRef _Nullable CreateFourCharCodeString(UInt32 fourcc) noexcept CF_RETURNS_RETAINED
 {
 	union { UInt32 ui32; unsigned char str[4]; } u;
 	u.ui32 = OSSwapHostToBigInt32(fourcc);
 
-	if(std::isprint(u.str[0]) && std::isprint(u.str[1]) && std::isprint(u.str[2]) && std::isprint(u.str[3]))
+	if(IsPrintableASCII(u.str[0]) && IsPrintableASCII(u.str[1]) && IsPrintableASCII(u.str[2]) && IsPrintableASCII(u.str[3]))
 		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("'%.4s'"), u.str);
 	else
 		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("0x%.02x%.02x%.02x%.02x"), u.str[0], u.str[1], u.str[2], u.str[3]);
