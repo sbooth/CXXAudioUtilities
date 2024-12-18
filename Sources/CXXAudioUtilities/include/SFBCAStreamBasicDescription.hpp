@@ -14,7 +14,6 @@
 
 #ifdef __OBJC__
 #import <AVFAudio/AVFAudio.h>
-#import <Foundation/NSString.h>
 #endif /* __OBJC__ */
 
 namespace SFB {
@@ -333,12 +332,6 @@ public:
 	operator AVAudioFormat * _Nullable () const noexcept
 	{
 		return [[AVAudioFormat alloc] initWithStreamDescription:this];
-	}
-
-	/// Returns a string representation of this format
-	operator NSString * _Nullable () const noexcept
-	{
-		return (__bridge_transfer NSString *)CreateDescription();
 	}
 #endif /* __OBJC__ */
 
