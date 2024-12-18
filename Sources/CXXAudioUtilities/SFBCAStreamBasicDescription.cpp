@@ -80,7 +80,7 @@ std::optional<SFB::CommonPCMFormat> SFB::CAStreamBasicDescription::CommonFormat(
 	if(mFramesPerPacket != 1 || mBytesPerFrame != mBytesPerPacket || mChannelsPerFrame == 0)
 		return std::nullopt;
 
-	if(!IsPCM() || ! IsNativeEndian() || !IsImplicitlyPacked())
+	if(!IsPCM() || !IsNativeEndian() || !IsImplicitlyPacked())
 		return std::nullopt;
 
 	if(IsSignedInteger()) {
