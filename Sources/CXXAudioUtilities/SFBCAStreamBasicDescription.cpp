@@ -59,7 +59,7 @@ CFStringRef _Nullable GetFormatIDName(AudioFormatID formatID) noexcept
 	}
 }
 
-/// Returns `true` if `c` is a printable ASCII character
+/// Returns @c true if @c c is a printable ASCII character
 constexpr bool IsPrintableASCII(unsigned char c) noexcept
 {
 	return c > 0x1f && c < 0x7f;
