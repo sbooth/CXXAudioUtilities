@@ -624,10 +624,18 @@ const SFB::CAChannelLayout SFB::CAChannelLayout::Stereo 	= CAChannelLayout(kAudi
 
 SFB::CAChannelLayout SFB::CAChannelLayout::ChannelLayoutWithBitmap(AudioChannelBitmap channelBitmap)
 {
-	CAChannelLayout channelLayout{};
-	channelLayout.mChannelLayout = CreateChannelLayout(0);
-	channelLayout.mChannelLayout->mChannelLayoutTag = kAudioChannelLayoutTag_UseChannelBitmap;
+	CAChannelLayout channelLayout{kAudioChannelLayoutTag_UseChannelBitmap};
 	channelLayout.mChannelLayout->mChannelBitmap = channelBitmap;
+
+	// Attempt to convert the bitmap to a layout tag
+	AudioChannelLayoutTag tag;
+	UInt32 dataSize = sizeof(tag);
+	OSStatus result = AudioFormatGetProperty(kAudioFormatProperty_TagForChannelLayout, static_cast<UInt32>(AudioChannelLayoutSize(channelLayout.mChannelLayout)), channelLayout.mChannelLayout, &dataSize, &tag);
+	if(result == noErr) {
+		channelLayout.mChannelLayout->mChannelLayoutTag = tag;
+		channelLayout.mChannelLayout->mChannelBitmap = 0;
+	}
+
 	return channelLayout;
 }
 
@@ -666,6 +674,15 @@ SFB::CAChannelLayout::CAChannelLayout(std::vector<AudioChannelLabel> channelLabe
 	mChannelLayout->mChannelLayoutTag = kAudioChannelLayoutTag_UseChannelDescriptions;
 	for(std::vector<AudioChannelLabel>::size_type i = 0; i != channelLabels.size(); ++i)
 		mChannelLayout->mChannelDescriptions[i].mChannelLabel = channelLabels[i];
+
+	// Attempt to convert the channel labels to a layout tag
+	AudioChannelLayoutTag tag;
+	UInt32 dataSize = sizeof(tag);
+	OSStatus result = AudioFormatGetProperty(kAudioFormatProperty_TagForChannelLayout, static_cast<UInt32>(AudioChannelLayoutSize(mChannelLayout)), mChannelLayout, &dataSize, &tag);
+	if(result == noErr) {
+		Reset(CreateChannelLayout(0));
+		mChannelLayout->mChannelLayoutTag = tag;
+	}
 }
 
 SFB::CAChannelLayout::CAChannelLayout(const AudioChannelLayout *rhs)
