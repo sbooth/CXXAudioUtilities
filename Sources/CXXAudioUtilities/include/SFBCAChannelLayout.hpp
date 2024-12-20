@@ -14,6 +14,7 @@
 
 #ifdef __OBJC__
 #import <AVFAudio/AVFAudio.h>
+#import <Foundation/NSString.h>
 #endif /* __OBJC__ */
 
 namespace SFB {
@@ -176,11 +177,13 @@ public:
 	}
 
 
-	/// Creates and returns a string representation of this channel layout
+	/// Returns the name of this channel layout
+	///
+	/// This is the value of @c kAudioFormatProperty_ChannelLayoutName or @c kAudioFormatProperty_ChannelLayoutSimpleName
 	/// - note: The caller is responsible for releasing the returned string
 	CFStringRef _Nullable CopyLayoutName(bool simpleName = false) const noexcept CF_RETURNS_RETAINED;
 
-	/// Creates and returns a string representation of this channel layout
+	/// Returns a string representation of this channel layout
 	/// - note: The caller is responsible for releasing the returned string
 	CFStringRef _Nullable CopyLayoutDescription() const noexcept CF_RETURNS_RETAINED;
 
@@ -190,6 +193,20 @@ public:
 	operator AVAudioChannelLayout * _Nullable () const noexcept
 	{
 		return [[AVAudioChannelLayout alloc] initWithLayout:mChannelLayout];
+	}
+
+	/// Returns the name of this channel layout
+	///
+	/// This is the value of @c kAudioFormatProperty_ChannelLayoutName or @c kAudioFormatProperty_ChannelLayoutSimpleName
+	NSString * _Nullable LayoutName() const noexcept
+	{
+		return (__bridge_transfer NSString *)CopyLayoutName();
+	}
+
+	/// Returns a string representation of this channel layout
+	NSString * _Nullable LayoutDescription() const noexcept
+	{
+		return (__bridge_transfer NSString *)CopyLayoutDescription();
 	}
 #endif /* __OBJC__ */
 
