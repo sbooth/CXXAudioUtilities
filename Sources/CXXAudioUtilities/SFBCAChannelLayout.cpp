@@ -307,13 +307,13 @@ CFStringRef SFB::CopyAudioChannelLayoutDescription(const AudioChannelLayout *cha
 	if(channelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelDescriptions){
 		// kAudioFormatProperty_ChannelLayoutName returns '!fmt' for kAudioChannelLabel_UseCoordinates
 		if(layoutName)
-			return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Channel Descriptions: %u ch, %@"), channelLayout->mNumberChannelDescriptions, layoutName.get());
+			return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("%u channel descriptions, %@"), channelLayout->mNumberChannelDescriptions, layoutName.get());
 
 		CFMutableStringRef result = CFStringCreateMutable(kCFAllocatorDefault, 0);
 		if(!result)
 			return nullptr;
 
-		CFStringAppendFormat(result, nullptr, CFSTR("Channel Descriptions: %u ch"), channelLayout->mNumberChannelDescriptions);
+		CFStringAppendFormat(result, nullptr, CFSTR("%u channel descriptions"), channelLayout->mNumberChannelDescriptions);
 
 		cf_type_ref_unique_ptr<CFMutableArrayRef> array{CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks)};
 
@@ -339,14 +339,14 @@ CFStringRef SFB::CopyAudioChannelLayoutDescription(const AudioChannelLayout *cha
 		}
 
 		auto channelNamesString = JoinStringArray(array.get(), CFSTR(" "));
-		CFStringAppendFormat(result, nullptr, CFSTR(", (%@)"), channelNamesString.get());
+		CFStringAppendFormat(result, nullptr, CFSTR(", %@"), channelNamesString.get());
 
 		return result;
 	}
 	else if(channelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap)
-		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Channel Bitmap: 0x%x (%u ch), %@"), channelLayout->mChannelBitmap, __builtin_popcount(channelLayout->mChannelBitmap), layoutName.get());
+		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Bitmap %#x (%u ch), %@"), channelLayout->mChannelBitmap, __builtin_popcount(channelLayout->mChannelBitmap), layoutName.get());
 	else
-		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Tag: %s (0x%x, %u ch), %@"), GetChannelLayoutTagName(channelLayout->mChannelLayoutTag), channelLayout->mChannelLayoutTag, channelLayout->mChannelLayoutTag & 0xffff, layoutName.get());
+		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("%s (0x%x, %u ch), %@"), GetChannelLayoutTagName(channelLayout->mChannelLayoutTag), channelLayout->mChannelLayoutTag, channelLayout->mChannelLayoutTag & 0xffff, layoutName.get());
 }
 
 // Constants
