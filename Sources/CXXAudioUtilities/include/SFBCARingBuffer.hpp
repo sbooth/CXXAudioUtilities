@@ -26,7 +26,7 @@ public:
 
 	/// Creates a new @c CARingBuffer
 	/// @note @c Allocate() must be called before the object may be used.
-	CARingBuffer() noexcept = default;
+	constexpr CARingBuffer() noexcept = default;
 
 	// This class is non-copyable
 	CARingBuffer(const CARingBuffer& rhs) = delete;

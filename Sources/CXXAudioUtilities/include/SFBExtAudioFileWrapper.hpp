@@ -19,7 +19,7 @@ class ExtAudioFileWrapper
 public:
 
 	/// Creates an empty @c ExtAudioFileWrapper
-	ExtAudioFileWrapper() noexcept = default;
+	constexpr ExtAudioFileWrapper() noexcept = default;
 
 	// This class is non-copyable
 	ExtAudioFileWrapper(const ExtAudioFileWrapper& rhs) = delete;

@@ -25,7 +25,7 @@ public:
 
 	/// Creates a new @c RingBuffer
 	/// @note @c Allocate() must be called before the object may be used.
-	RingBuffer() noexcept = default;
+	constexpr RingBuffer() noexcept = default;
 
 	// This class is non-copyable
 	RingBuffer(const RingBuffer& rhs) = delete;

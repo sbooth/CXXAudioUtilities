@@ -34,7 +34,7 @@ public:
 #pragma mark Creation and Destruction
 
 	/// Creates a new @c CFWrapper
-	CFWrapper() noexcept
+	constexpr CFWrapper() noexcept
 	: CFWrapper{nullptr, true}
 	{}
 

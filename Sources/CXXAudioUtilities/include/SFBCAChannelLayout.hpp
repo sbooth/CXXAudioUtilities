@@ -66,7 +66,7 @@ public:
 #pragma mark Creation and Destruction
 
 	/// Creates an empty @c CAChannelLayout
-	CAChannelLayout() noexcept = default;
+	constexpr CAChannelLayout() noexcept = default;
 
 	/// Copy constructor
 	CAChannelLayout(const CAChannelLayout& rhs);

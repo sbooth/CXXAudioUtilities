@@ -17,7 +17,7 @@ class CAAudioSystemObject : public CAAudioObject
 public:
 
 	/// Creates a @c CAAudioSystemObject
-	CAAudioSystemObject() noexcept
+	constexpr CAAudioSystemObject() noexcept
 	: CAAudioObject{kAudioObjectSystemObject}
 	{}
 
