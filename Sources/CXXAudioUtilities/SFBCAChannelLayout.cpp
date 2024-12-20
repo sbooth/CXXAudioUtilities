@@ -283,6 +283,72 @@ size_t SFB::AudioChannelLayoutSize(const AudioChannelLayout *channelLayout) noex
 	return ChannelLayoutSize(channelLayout->mNumberChannelDescriptions);
 }
 
+CFStringRef SFB::CopyAudioChannelLayoutName(const AudioChannelLayout * channelLayout, bool simpleName) noexcept
+{
+	if(!channelLayout)
+		return nullptr;
+
+	CFStringRef name = nullptr;
+	UInt32 dataSize = sizeof(name);
+	OSStatus result = AudioFormatGetProperty(simpleName ? kAudioFormatProperty_ChannelLayoutSimpleName : kAudioFormatProperty_ChannelLayoutName, static_cast<UInt32>(AudioChannelLayoutSize(channelLayout)), channelLayout, &dataSize, &name);
+	if(result == noErr)
+		return name;
+	else
+		return nullptr;
+}
+
+CFStringRef SFB::CopyAudioChannelLayoutDescription(const AudioChannelLayout *channelLayout) noexcept
+{
+	if(!channelLayout)
+		return nullptr;
+
+	cf_string_unique_ptr layoutName{CopyAudioChannelLayoutName(channelLayout)};
+
+	if(channelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelDescriptions){
+		// kAudioFormatProperty_ChannelLayoutName returns '!fmt' for kAudioChannelLabel_UseCoordinates
+		if(layoutName)
+			return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Channel Descriptions: %u ch, %@"), channelLayout->mNumberChannelDescriptions, layoutName.get());
+
+		CFMutableStringRef result = CFStringCreateMutable(kCFAllocatorDefault, 0);
+		if(!result)
+			return nullptr;
+
+		CFStringAppendFormat(result, nullptr, CFSTR("Channel Descriptions: %u ch"), channelLayout->mNumberChannelDescriptions);
+
+		cf_type_ref_unique_ptr<CFMutableArrayRef> array{CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks)};
+
+		const AudioChannelDescription *desc = channelLayout->mChannelDescriptions;
+		for(UInt32 i = 0; i < channelLayout->mNumberChannelDescriptions; ++i, ++desc) {
+			if(desc->mChannelLabel == kAudioChannelLabel_UseCoordinates) {
+				cf_string_unique_ptr coordinateString{};
+				if(desc->mChannelFlags & kAudioChannelFlags_RectangularCoordinates)
+					coordinateString.reset(CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("[x: %g, y: %g, z: %g%s]"), desc->mCoordinates[0], desc->mCoordinates[1], desc->mCoordinates[2], desc->mChannelFlags & kAudioChannelFlags_Meters ? " m" : ""));
+				else if(desc->mChannelFlags & kAudioChannelFlags_SphericalCoordinates)
+					coordinateString.reset(CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("[r: %g, θ: %g, φ: %g%s]"), desc->mCoordinates[2], desc->mCoordinates[1], desc->mCoordinates[0], desc->mChannelFlags & kAudioChannelFlags_Meters ? " m" : ""));
+				else
+					coordinateString.reset(CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("[?! %g, %g, %g%s]"), desc->mCoordinates[0], desc->mCoordinates[1], desc->mCoordinates[2], desc->mChannelFlags & kAudioChannelFlags_Meters ? " m" : ""));
+
+				CFArrayAppendValue(array.get(), reinterpret_cast<const void *>(coordinateString.get()));
+			}
+			else {
+				if(auto channelName = CopyChannelLabelName(desc->mChannelLabel, true); channelName)
+					CFArrayAppendValue(array.get(), reinterpret_cast<const void *>(channelName.get()));
+				else
+					CFArrayAppendValue(array.get(), CFSTR("?"));
+			}
+		}
+
+		auto channelNamesString = JoinStringArray(array.get(), CFSTR(" "));
+		CFStringAppendFormat(result, nullptr, CFSTR(", (%@)"), channelNamesString.get());
+
+		return result;
+	}
+	else if(channelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap)
+		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Channel Bitmap: %u ch 0x%x, %@"), __builtin_popcount(channelLayout->mChannelBitmap), channelLayout->mChannelBitmap, layoutName.get());
+	else
+		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Layout Tag: %s 0x%x, %u ch, %@"), GetChannelLayoutTagName(channelLayout->mChannelLayoutTag), channelLayout->mChannelLayoutTag, channelLayout->mChannelLayoutTag & 0xffff, layoutName.get());
+}
+
 // Constants
 const SFB::CAChannelLayout SFB::CAChannelLayout::Mono		= CAChannelLayout(kAudioChannelLayoutTag_Mono);
 const SFB::CAChannelLayout SFB::CAChannelLayout::Stereo 	= CAChannelLayout(kAudioChannelLayoutTag_Stereo);
@@ -426,70 +492,4 @@ bool SFB::CAChannelLayout::MapToLayout(const CAChannelLayout& outputLayout, std:
 	channelMap.assign(start, start + outputChannelCount);
 
 	return true;
-}
-
-CFStringRef SFB::CAChannelLayout::CopyLayoutName(bool simpleName) const noexcept
-{
-	if(!mChannelLayout)
-		return nullptr;
-
-	CFStringRef name = nullptr;
-	UInt32 dataSize = sizeof(name);
-	OSStatus result = AudioFormatGetProperty(simpleName ? kAudioFormatProperty_ChannelLayoutSimpleName : kAudioFormatProperty_ChannelLayoutName, static_cast<UInt32>(AudioChannelLayoutSize(mChannelLayout)), mChannelLayout, &dataSize, &name);
-	if(result == noErr)
-		return name;
-	else
-		return nullptr;
-}
-
-CFStringRef SFB::CAChannelLayout::CopyLayoutDescription() const noexcept
-{
-	if(!mChannelLayout)
-		return nullptr;
-
-	cf_string_unique_ptr layoutName{CopyLayoutName()};
-
-	if(mChannelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelDescriptions){
-		// kAudioFormatProperty_ChannelLayoutName returns '!fmt' for kAudioChannelLabel_UseCoordinates
-		if(layoutName)
-			return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Channel Descriptions: %u ch, %@"), mChannelLayout->mNumberChannelDescriptions, layoutName.get());
-
-		CFMutableStringRef result = CFStringCreateMutable(kCFAllocatorDefault, 0);
-		if(!result)
-			return nullptr;
-
-		CFStringAppendFormat(result, nullptr, CFSTR("Channel Descriptions: %u ch"), mChannelLayout->mNumberChannelDescriptions);
-
-		cf_type_ref_unique_ptr<CFMutableArrayRef> array{CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks)};
-
-		const AudioChannelDescription *desc = mChannelLayout->mChannelDescriptions;
-		for(UInt32 i = 0; i < mChannelLayout->mNumberChannelDescriptions; ++i, ++desc) {
-			if(desc->mChannelLabel == kAudioChannelLabel_UseCoordinates) {
-				cf_string_unique_ptr coordinateString{};
-				if(desc->mChannelFlags & kAudioChannelFlags_RectangularCoordinates)
-					coordinateString.reset(CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("[x: %g, y: %g, z: %g%s]"), desc->mCoordinates[0], desc->mCoordinates[1], desc->mCoordinates[2], desc->mChannelFlags & kAudioChannelFlags_Meters ? " m" : ""));
-				else if(desc->mChannelFlags & kAudioChannelFlags_SphericalCoordinates)
-					coordinateString.reset(CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("[r: %g, θ: %g, φ: %g%s]"), desc->mCoordinates[2], desc->mCoordinates[1], desc->mCoordinates[0], desc->mChannelFlags & kAudioChannelFlags_Meters ? " m" : ""));
-				else
-					coordinateString.reset(CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("[?! %g, %g, %g%s]"), desc->mCoordinates[0], desc->mCoordinates[1], desc->mCoordinates[2], desc->mChannelFlags & kAudioChannelFlags_Meters ? " m" : ""));
-
-				CFArrayAppendValue(array.get(), reinterpret_cast<const void *>(coordinateString.get()));
-			}
-			else {
-				if(auto channelName = CopyChannelLabelName(desc->mChannelLabel, true); channelName)
-					CFArrayAppendValue(array.get(), reinterpret_cast<const void *>(channelName.get()));
-				else
-					CFArrayAppendValue(array.get(), CFSTR("?"));
-			}
-		}
-
-		auto channelNamesString = JoinStringArray(array.get(), CFSTR(" "));
-		CFStringAppendFormat(result, nullptr, CFSTR(", (%@)"), channelNamesString.get());
-
-		return result;
-	}
-	else if(mChannelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap)
-		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Channel Bitmap: %u ch 0x%x, %@"), __builtin_popcount(mChannelLayout->mChannelBitmap), mChannelLayout->mChannelBitmap, layoutName.get());
-	else
-		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Layout Tag: %s 0x%x, %u ch, %@"), GetChannelLayoutTagName(mChannelLayout->mChannelLayoutTag), mChannelLayout->mChannelLayoutTag, mChannelLayout->mChannelLayoutTag & 0xffff, layoutName.get());
 }

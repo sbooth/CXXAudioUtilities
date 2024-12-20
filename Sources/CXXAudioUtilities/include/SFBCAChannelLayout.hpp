@@ -24,6 +24,16 @@ namespace SFB {
 /// @return The size of @c channelLayout in bytes
 size_t AudioChannelLayoutSize(const AudioChannelLayout * _Nullable channelLayout) noexcept;
 
+/// Returns the name of @c channelLayout
+///
+/// This is the value of @c kAudioFormatProperty_ChannelLayoutName or @c kAudioFormatProperty_ChannelLayoutSimpleName
+/// - note: The caller is responsible for releasing the returned string
+CFStringRef _Nullable CopyAudioChannelLayoutName(const AudioChannelLayout * _Nullable channelLayout, bool simpleName = false) noexcept CF_RETURNS_RETAINED;
+
+/// Returns a string representation of @c channelLayout
+/// - note: The caller is responsible for releasing the returned string
+CFStringRef _Nullable CopyAudioChannelLayoutDescription(const AudioChannelLayout * _Nullable channelLayout) noexcept CF_RETURNS_RETAINED;
+
 /// A class wrapping a Core Audio @c AudioChannelLayout
 class CAChannelLayout
 {
@@ -181,11 +191,17 @@ public:
 	///
 	/// This is the value of @c kAudioFormatProperty_ChannelLayoutName or @c kAudioFormatProperty_ChannelLayoutSimpleName
 	/// - note: The caller is responsible for releasing the returned string
-	CFStringRef _Nullable CopyLayoutName(bool simpleName = false) const noexcept CF_RETURNS_RETAINED;
+	CFStringRef _Nullable CopyLayoutName(bool simpleName = false) const noexcept CF_RETURNS_RETAINED
+	{
+		return CopyAudioChannelLayoutName(mChannelLayout, simpleName);
+	}
 
 	/// Returns a string representation of this channel layout
 	/// - note: The caller is responsible for releasing the returned string
-	CFStringRef _Nullable CopyLayoutDescription() const noexcept CF_RETURNS_RETAINED;
+	CFStringRef _Nullable CopyLayoutDescription() const noexcept CF_RETURNS_RETAINED
+	{
+		return CopyAudioChannelLayoutDescription(mChannelLayout);
+	}
 
 
 #ifdef __OBJC__
