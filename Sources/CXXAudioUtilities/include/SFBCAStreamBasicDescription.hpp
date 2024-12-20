@@ -14,6 +14,7 @@
 
 #ifdef __OBJC__
 #import <AVFAudio/AVFAudio.h>
+#import <Foundation/NSString.h>
 #endif /* __OBJC__ */
 
 namespace SFB {
@@ -323,15 +324,35 @@ public:
 	}
 
 
-	/// Creates and returns a string representation of this format
+	/// Returns the name of this format
+	///
+	/// This is the value of @c kAudioFormatProperty_FormatName
 	/// - note: The caller is responsible for releasing the returned string
-	CFStringRef _Nullable CreateDescription() const noexcept CF_RETURNS_RETAINED;
+	CFStringRef _Nullable CopyFormatName() const noexcept CF_RETURNS_RETAINED;
+
+	/// Returns a string representation of this format
+	/// - note: The caller is responsible for releasing the returned string
+	CFStringRef _Nullable CopyFormatDescription() const noexcept CF_RETURNS_RETAINED;
 
 #ifdef __OBJC__
 	/// Returns an  @c AVAudioFormat object initialized with this format and no channel layout
 	operator AVAudioFormat * _Nullable () const noexcept
 	{
 		return [[AVAudioFormat alloc] initWithStreamDescription:this];
+	}
+
+	/// Returns the name of this format
+	///
+	/// This is the value of @c kAudioFormatProperty_FormatName
+	NSString * _Nullable FormatName() const noexcept
+	{
+		return (__bridge_transfer NSString *)CopyFormatName();
+	}
+
+	/// Returns a string representation of this format
+	NSString * _Nullable FormatDescription() const noexcept
+	{
+		return (__bridge_transfer NSString *)CopyFormatDescription();
 	}
 #endif /* __OBJC__ */
 

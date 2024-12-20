@@ -6,6 +6,8 @@
 
 #import <libkern/OSByteOrder.h>
 
+#import <AudioToolbox/AudioFormat.h>
+
 #import "SFBCAStreamBasicDescription.hpp"
 
 namespace {
@@ -106,7 +108,18 @@ std::optional<SFB::CommonPCMFormat> SFB::CAStreamBasicDescription::CommonFormat(
 	return std::nullopt;
 }
 
-CFStringRef SFB::CAStreamBasicDescription::CreateDescription() const noexcept
+CFStringRef SFB::CAStreamBasicDescription::CopyFormatName() const noexcept
+{
+	CFStringRef name = nullptr;
+	UInt32 dataSize = sizeof(name);
+	OSStatus result = AudioFormatGetProperty(kAudioFormatProperty_FormatName, sizeof(*this), this, &dataSize, &name);
+	if(result == noErr)
+		return name;
+	else
+		return nullptr;
+}
+
+CFStringRef SFB::CAStreamBasicDescription::CopyFormatDescription() const noexcept
 {
 	CFMutableStringRef result = CFStringCreateMutable(kCFAllocatorDefault, 0);
 
