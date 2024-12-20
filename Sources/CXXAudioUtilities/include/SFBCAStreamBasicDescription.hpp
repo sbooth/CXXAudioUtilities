@@ -40,7 +40,9 @@ public:
 #pragma mark Creation and Destruction
 
 	/// Creates an empty @c CAStreamBasicDescription
-	constexpr CAStreamBasicDescription() noexcept : AudioStreamBasicDescription{0} {}
+	constexpr CAStreamBasicDescription() noexcept
+	: AudioStreamBasicDescription{0}
+	{}
 
 	/// Copy constructor
 	CAStreamBasicDescription(const CAStreamBasicDescription& rhs) noexcept = default;

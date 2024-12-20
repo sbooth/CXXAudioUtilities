@@ -49,7 +49,7 @@ public:
 
 
 	/// Creates a @c CAAudioObject with the specified objectID
-	CAAudioObject(AudioObjectID objectID) noexcept
+	constexpr CAAudioObject(AudioObjectID objectID) noexcept
 	: mObjectID{objectID}
 	{}
 

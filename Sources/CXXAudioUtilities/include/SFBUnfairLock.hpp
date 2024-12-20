@@ -27,7 +27,7 @@ public:
 #pragma mark Creation and Destruction
 
 	/// Creates a new @c UnfairLock
-	UnfairLock() noexcept
+	constexpr UnfairLock() noexcept
 	: mLock{OS_UNFAIR_LOCK_INIT}
 	{}
 
