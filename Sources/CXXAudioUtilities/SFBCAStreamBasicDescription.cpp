@@ -224,7 +224,7 @@ CFStringRef SFB::CAStreamBasicDescription::CopyFormatDescription() const noexcep
 
 		// Format flags
 		if(mFormatFlags != 0)
-			CFStringAppendFormat(result, nullptr, CFSTR(" (0x%.08x)"), mFormatFlags);
+			CFStringAppendFormat(result, nullptr, CFSTR(" (%#x)"), mFormatFlags);
 
 		CFStringAppendFormat(result, nullptr, CFSTR(", %u bits/channel, %u bytes/packet, %u frames/packet, %u bytes/frame"), mBitsPerChannel, mBytesPerPacket, mFramesPerPacket, mBytesPerFrame);
 	}
