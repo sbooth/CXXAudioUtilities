@@ -344,9 +344,9 @@ CFStringRef SFB::CopyAudioChannelLayoutDescription(const AudioChannelLayout *cha
 		return result;
 	}
 	else if(channelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap)
-		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Channel Bitmap: %u ch 0x%x, %@"), __builtin_popcount(channelLayout->mChannelBitmap), channelLayout->mChannelBitmap, layoutName.get());
+		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Channel Bitmap: 0x%x (%u ch), %@"), channelLayout->mChannelBitmap, __builtin_popcount(channelLayout->mChannelBitmap), layoutName.get());
 	else
-		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Layout Tag: %s 0x%x, %u ch, %@"), GetChannelLayoutTagName(channelLayout->mChannelLayoutTag), channelLayout->mChannelLayoutTag, channelLayout->mChannelLayoutTag & 0xffff, layoutName.get());
+		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Layout Tag: %s (0x%x, %u ch), %@"), GetChannelLayoutTagName(channelLayout->mChannelLayoutTag), channelLayout->mChannelLayoutTag, channelLayout->mChannelLayoutTag & 0xffff, layoutName.get());
 }
 
 // Constants
