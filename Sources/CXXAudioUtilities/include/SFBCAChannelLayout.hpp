@@ -178,7 +178,11 @@ public:
 
 	/// Creates and returns a string representation of this channel layout
 	/// - note: The caller is responsible for releasing the returned string
-	CFStringRef _Nullable CreateDescription() const noexcept CF_RETURNS_RETAINED;
+	CFStringRef _Nullable CopyLayoutName(bool simpleName = false) const noexcept CF_RETURNS_RETAINED;
+
+	/// Creates and returns a string representation of this channel layout
+	/// - note: The caller is responsible for releasing the returned string
+	CFStringRef _Nullable CopyLayoutDescription() const noexcept CF_RETURNS_RETAINED;
 
 
 #ifdef __OBJC__
