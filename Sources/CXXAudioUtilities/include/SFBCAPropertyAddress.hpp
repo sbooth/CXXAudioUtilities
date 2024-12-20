@@ -19,7 +19,7 @@ class CAPropertyAddress : public AudioObjectPropertyAddress
 public:
 
 	/// Creates an empty @c CAPropertyAddress
-	CAPropertyAddress() noexcept = default;
+	constexpr CAPropertyAddress() noexcept : AudioObjectPropertyAddress{0} {};
 
 	/// Copy constructor
 	CAPropertyAddress(const CAPropertyAddress& rhs) noexcept = default;

@@ -21,7 +21,7 @@ public:
 #pragma mark Creation and Destruction
 
 	/// Creates an empty @c CATimeStamp
-	CATimeStamp() noexcept = default;
+	constexpr CATimeStamp() noexcept : AudioTimeStamp{0} {};
 
 	/// Copy constructor
 	CATimeStamp(const CATimeStamp& rhs) noexcept = default;

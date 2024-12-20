@@ -30,7 +30,7 @@ public:
 #pragma mark Creation and Destruction
 
 	/// Creates an unknown @c CAAudioObject
-	CAAudioObject() noexcept = default;
+	constexpr CAAudioObject() noexcept = default;
 
 	/// Copy constructor
 	CAAudioObject(const CAAudioObject& rhs) noexcept = default;

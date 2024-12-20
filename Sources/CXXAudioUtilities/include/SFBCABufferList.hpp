@@ -31,7 +31,7 @@ public:
 
 	/// Creates an empty @c CABufferList
 	/// @note @c Allocate() must be called before the object may be used.
-	CABufferList() noexcept = default;
+	constexpr CABufferList() noexcept = default;
 
 	// This class is non-copyable
 	CABufferList(const CABufferList& rhs) = delete;

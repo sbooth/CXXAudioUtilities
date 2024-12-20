@@ -17,7 +17,7 @@ class CAAudioDevice : public CAAudioObject
 public:
 
 	/// Creates an unknown @c SFBCAAudioObject
-	CAAudioDevice() noexcept = default;
+	constexpr CAAudioDevice() noexcept = default;
 
 	/// Copy constructor
 	CAAudioDevice(const CAAudioDevice& rhs) noexcept = default;

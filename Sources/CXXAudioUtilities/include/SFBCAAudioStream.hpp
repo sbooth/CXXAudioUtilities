@@ -17,7 +17,7 @@ class CAAudioStream : public CAAudioObject
 public:
 
 	/// Creates an unknown @c CAAudioStream
-	CAAudioStream() noexcept = default;
+	constexpr CAAudioStream() noexcept = default;
 
 	/// Copy constructor
 	CAAudioStream(const CAAudioStream& rhs) noexcept = default;

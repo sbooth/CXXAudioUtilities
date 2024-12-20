@@ -37,7 +37,7 @@ private:
 public:
 
 	/// Creates a @c CAExtAudioFile
-	CAExtAudioFile() noexcept = default;
+	constexpr CAExtAudioFile() noexcept = default;
 
 	// This class is non-copyable
 	CAExtAudioFile(const CAExtAudioFile& rhs) = delete;

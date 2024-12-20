@@ -25,7 +25,7 @@ class CAAUGraph
 public:
 
 	/// Creates a @c CAAUGraph
-	CAAUGraph() noexcept = default;
+	constexpr CAAUGraph() noexcept = default;
 
 	// This class is non-copyable
 	CAAUGraph(const CAAUGraph& rhs) = delete;
