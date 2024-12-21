@@ -432,6 +432,9 @@ bool SFB::CAChannelLayout::operator==(const CAChannelLayout& rhs) const noexcept
 	if(!mChannelLayout && !rhs.mChannelLayout)
 		return true;
 
+	if((!mChannelLayout && rhs.ChannelCount() <= 2) || (!rhs && ChannelCount() <= 2))
+		return true;
+
 	if(!mChannelLayout || !rhs.mChannelLayout)
 		return false;
 
@@ -446,7 +449,6 @@ bool SFB::CAChannelLayout::operator==(const CAChannelLayout& rhs) const noexcept
 
 	if(noErr != result)
 		return false;
-	//os_log_error(OS_LOG_DEFAULT, "AudioFormatGetProperty (kAudioFormatProperty_AreChannelLayoutsEquivalent) failed: %d", result);
 
 	return layoutsEqual;
 }
