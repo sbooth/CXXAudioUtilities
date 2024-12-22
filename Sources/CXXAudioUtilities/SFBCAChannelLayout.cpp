@@ -302,16 +302,18 @@ CFStringRef SFB::CopyAudioChannelLayoutDescription(const AudioChannelLayout *cha
 	if(!channelLayout)
 		return nullptr;
 
+	CFMutableStringRef result = CFStringCreateMutable(kCFAllocatorDefault, 0);
+	if(!result)
+		return nullptr;
+
 	cf_string_unique_ptr layoutName{CopyAudioChannelLayoutName(channelLayout)};
 
 	if(channelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelDescriptions){
 		// kAudioFormatProperty_ChannelLayoutName returns '!fmt' for kAudioChannelLabel_UseCoordinates
-		if(layoutName)
-			return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("%u channel descriptions, %@"), channelLayout->mNumberChannelDescriptions, layoutName.get());
-
-		CFMutableStringRef result = CFStringCreateMutable(kCFAllocatorDefault, 0);
-		if(!result)
-			return nullptr;
+		if(layoutName) {
+			CFStringAppendFormat(result, nullptr, CFSTR("%u channel descriptions, %@"), channelLayout->mNumberChannelDescriptions, layoutName.get());
+			return result;
+		}
 
 		CFStringAppendFormat(result, nullptr, CFSTR("%u channel descriptions"), channelLayout->mNumberChannelDescriptions);
 
@@ -340,13 +342,19 @@ CFStringRef SFB::CopyAudioChannelLayoutDescription(const AudioChannelLayout *cha
 
 		auto channelNamesString = JoinStringArray(array.get(), CFSTR(" "));
 		CFStringAppendFormat(result, nullptr, CFSTR(", %@"), channelNamesString.get());
-
-		return result;
 	}
-	else if(channelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap)
-		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Bitmap %#x (%u ch), %@"), channelLayout->mChannelBitmap, __builtin_popcount(channelLayout->mChannelBitmap), layoutName.get());
-	else
-		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("%s (0x%x, %u ch), %@"), GetChannelLayoutTagName(channelLayout->mChannelLayoutTag), channelLayout->mChannelLayoutTag, channelLayout->mChannelLayoutTag & 0xffff, layoutName.get());
+	else if(channelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap) {
+		CFStringAppendFormat(result, nullptr, CFSTR("Bitmap %#x (%u ch)"), channelLayout->mChannelBitmap, __builtin_popcount(channelLayout->mChannelBitmap));
+		if(layoutName)
+			CFStringAppendFormat(result, nullptr, CFSTR(", %@"), layoutName.get());
+	}
+	else {
+		CFStringAppendFormat(result, nullptr, CFSTR("%s (0x%x, %u ch)"), GetChannelLayoutTagName(channelLayout->mChannelLayoutTag), channelLayout->mChannelLayoutTag, channelLayout->mChannelLayoutTag & 0xffff);
+		if(layoutName)
+			CFStringAppendFormat(result, nullptr, CFSTR(", %@"), layoutName.get());
+	}
+
+	return result;
 }
 
 // Constants
