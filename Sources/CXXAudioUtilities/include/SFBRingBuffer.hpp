@@ -25,7 +25,7 @@ public:
 
 	/// Creates a new @c RingBuffer
 	/// @note @c Allocate() must be called before the object may be used.
-	RingBuffer() noexcept = default;
+	constexpr RingBuffer() noexcept = default;
 
 	// This class is non-copyable
 	RingBuffer(const RingBuffer& rhs) = delete;
@@ -34,7 +34,7 @@ public:
 	RingBuffer& operator=(const RingBuffer& rhs) = delete;
 
 	/// Destroys the @c RingBuffer and releases all associated resources.
-	inline ~RingBuffer()
+	~RingBuffer()
 	{
 		std::free(mBuffer);
 	}
@@ -66,7 +66,7 @@ public:
 #pragma mark Buffer Information
 
 	/// Returns the capacity of this RingBuffer in bytes.
-	inline constexpr uint32_t CapacityBytes() const noexcept
+	constexpr uint32_t CapacityBytes() const noexcept
 	{
 		return mCapacityBytes;
 	}

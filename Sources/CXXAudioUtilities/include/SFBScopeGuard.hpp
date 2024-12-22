@@ -33,7 +33,7 @@ public:
 
 	/// Creates a new @c ScopeGuard executing @c cleanup when the destructor is called
 	template <typename F>
-	inline ScopeGuard(const F& cleanup) noexcept
+	ScopeGuard(const F& cleanup) noexcept
 	: mCleanup{cleanup}
 	{}
 
@@ -44,7 +44,7 @@ public:
 	ScopeGuard& operator=(const ScopeGuard& rhs) = delete;
 
 	/// Executes the cleanup function
-	inline ~ScopeGuard()
+	~ScopeGuard()
 	{
 		mCleanup();
 	}

@@ -17,7 +17,7 @@ class CAAudioSystemObject : public CAAudioObject
 public:
 
 	/// Creates a @c CAAudioSystemObject
-	inline CAAudioSystemObject() noexcept
+	constexpr CAAudioSystemObject() noexcept
 	: CAAudioObject{kAudioObjectSystemObject}
 	{}
 
@@ -37,7 +37,7 @@ public:
 	CAAudioSystemObject& operator=(CAAudioSystemObject&& rhs) noexcept = default;
 
 
-	inline std::vector<AudioObjectID> DeviceIDs() const
+	std::vector<AudioObjectID> DeviceIDs() const
 	{
 		return ArrayProperty<AudioObjectID>(CAPropertyAddress(kAudioHardwarePropertyDevices));
 	}
@@ -50,32 +50,32 @@ public:
 		return result;
 	}
 
-	inline AudioObjectID DefaultInputDeviceID() const
+	AudioObjectID DefaultInputDeviceID() const
 	{
 		return ArithmeticProperty<AudioObjectID>(CAPropertyAddress(kAudioHardwarePropertyDefaultInputDevice));
 	}
 
-	inline CAAudioObject DefaultInputDevice() const
+	CAAudioObject DefaultInputDevice() const
 	{
 		return CAAudioObject(DefaultInputDeviceID());
 	}
 
-	inline AudioObjectID DefaultOutputDeviceID() const
+	AudioObjectID DefaultOutputDeviceID() const
 	{
 		return ArithmeticProperty<AudioObjectID>(CAPropertyAddress(kAudioHardwarePropertyDefaultOutputDevice));
 	}
 
-	inline CAAudioObject DefaultOutputDevice() const
+	CAAudioObject DefaultOutputDevice() const
 	{
 		return CAAudioObject(DefaultOutputDeviceID());
 	}
 
-	inline AudioObjectID DefaultSystemOutputDeviceID() const
+	AudioObjectID DefaultSystemOutputDeviceID() const
 	{
 		return ArithmeticProperty<AudioObjectID>(CAPropertyAddress(kAudioHardwarePropertyDefaultSystemOutputDevice));
 	}
 
-	inline CAAudioObject DefaultSystemOutputDevice() const
+	CAAudioObject DefaultSystemOutputDevice() const
 	{
 		return CAAudioObject(DefaultSystemOutputDeviceID());
 	}
@@ -90,7 +90,7 @@ public:
 		return deviceID;
 	}
 
-	inline CAAudioDevice AudioDeviceForUID(CFStringRef _Nonnull inUID) const
+	CAAudioDevice AudioDeviceForUID(CFStringRef _Nonnull inUID) const
 	{
 		return CAAudioDevice(AudioDeviceIDForUID(inUID));
 	}

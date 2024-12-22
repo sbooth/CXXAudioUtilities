@@ -26,7 +26,7 @@ public:
 
 	/// Creates a new @c CARingBuffer
 	/// @note @c Allocate() must be called before the object may be used.
-	CARingBuffer() noexcept = default;
+	constexpr CARingBuffer() noexcept = default;
 
 	// This class is non-copyable
 	CARingBuffer(const CARingBuffer& rhs) = delete;
@@ -35,7 +35,7 @@ public:
 	CARingBuffer& operator=(const CARingBuffer& rhs) = delete;
 
 	/// Destroys the @c CARingBuffer and release all associated resources.
-	inline ~CARingBuffer()
+	~CARingBuffer()
 	{
 		std::free(mBuffers);
 	}
@@ -63,13 +63,13 @@ public:
 
 
 	/// Returns the capacity in frames of this @c CARingBuffer
-	inline uint32_t CapacityFrames() const noexcept
+	uint32_t CapacityFrames() const noexcept
 	{
 		return mCapacityFrames;
 	}
 
 	/// Returns the format of this @c CARingBuffer
-	inline const CAStreamBasicDescription& Format() const noexcept
+	const CAStreamBasicDescription& Format() const noexcept
 	{
 		return mFormat;
 	}
@@ -105,7 +105,7 @@ public:
 protected:
 
 	/// Returns the byte offset of @c frameNumber
-	inline uint32_t FrameByteOffset(int64_t frameNumber) const noexcept
+	uint32_t FrameByteOffset(int64_t frameNumber) const noexcept
 	{
 		return (static_cast<uint64_t>(frameNumber) & mCapacityFramesMask) * mFormat.mBytesPerFrame;
 	}
@@ -115,14 +115,14 @@ protected:
 
 	/// Returns the buffer's starting sample time
 	/// @note This should only be called from @c Write()
-	inline int64_t StartTime() const noexcept
+	int64_t StartTime() const noexcept
 	{
 		return mTimeBoundsQueue[mTimeBoundsQueueCounter.load(std::memory_order_acquire) & sTimeBoundsQueueMask].mStartTime;
 	}
 
 	/// Returns the buffer's ending sample time
 	/// @note This should only be called from @c Write()
-	inline int64_t EndTime() const noexcept
+	int64_t EndTime() const noexcept
 	{
 		return mTimeBoundsQueue[mTimeBoundsQueueCounter.load(std::memory_order_acquire) & sTimeBoundsQueueMask].mEndTime;
 	}
