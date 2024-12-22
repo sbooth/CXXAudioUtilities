@@ -5,6 +5,7 @@
 //
 
 #import <cctype>
+#import <memory>
 
 #import "SFBStringFormatting.hpp"
 
@@ -89,6 +90,16 @@ std::string SFB::string_from_cfstring(CFStringRef str)
 	}
 
 	return result;
+}
+
+std::string string_from_cftype(CFTypeRef cf)
+{
+	struct cf_type_ref_deleter {
+		void operator()(CFTypeRef cf) { CFRelease(cf); }
+	};
+
+	auto description = std::unique_ptr<std::remove_pointer_t<CFStringRef>, cf_type_ref_deleter>{CFCopyDescription(cf)};
+	return SFB::string_from_cfstring(description.get());
 }
 
 std::string SFB::fourcc_string(uint32_t fourcc)

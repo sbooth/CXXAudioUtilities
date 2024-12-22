@@ -30,6 +30,14 @@ std::string concat(std::initializer_list<std::string_view> il);
 /// @return A @c std::string containing the contents of @c str in UTF-8
 std::string string_from_cfstring(CFStringRef str);
 
+/// Creates a @c std::string from the description of a @c CFType using UTF-8 and returns the result
+/// @throw @c std::length_error
+/// @throw @c std::bad_alloc
+/// @throw @c std::bad_array_new_length
+/// @param cf A @c CFType object
+/// @return A @c std::string containing the description of @c cf in UTF-8
+std::string string_from_cftype(CFTypeRef cf);
+
 /// Creates a string representation of a four-character code and returns the result
 /// @throw @c std::length_error
 /// @throw @c std::bad_alloc
