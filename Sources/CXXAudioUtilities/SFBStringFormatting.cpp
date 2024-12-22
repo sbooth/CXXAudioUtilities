@@ -94,6 +94,9 @@ std::string SFB::string_from_cfstring(CFStringRef str)
 
 std::string string_from_cftype(CFTypeRef cf)
 {
+	if(!cf)
+		return {};
+
 	struct cf_type_ref_deleter {
 		void operator()(CFTypeRef cf) { CFRelease(cf); }
 	};
