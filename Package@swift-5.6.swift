@@ -1,4 +1,4 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 5.6
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -15,9 +15,6 @@ let package = Package(
 	targets: [
 		.target(
 			name: "CXXAudioUtilities",
-			swiftSettings: [
-				.interoperabilityMode(.Cxx),
-			],
 			linkerSettings: [
 				.linkedFramework("CoreAudio"),
 				.linkedFramework("AudioToolbox"),
@@ -26,9 +23,6 @@ let package = Package(
 			name: "CXXAudioUtilitiesTests",
 			dependencies: [
 				"CXXAudioUtilities",
-			],
-			swiftSettings: [
-				.interoperabilityMode(.Cxx),
 			]),
 	],
 	cxxLanguageStandard: .cxx17
