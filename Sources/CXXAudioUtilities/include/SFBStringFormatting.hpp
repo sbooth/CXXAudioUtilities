@@ -28,7 +28,7 @@ std::string concat(std::initializer_list<std::string_view> il);
 /// @throw @c std::bad_array_new_length
 /// @param str A @c CFString containing the characters to copy
 /// @return A @c std::string containing the contents of @c str in UTF-8
-std::string string_from_cfstring(CFStringRef str);
+std::string string_from_cfstring(CFStringRef _Nullable str);
 
 /// Creates a @c std::string from the description of a @c CFType using UTF-8 and returns the result
 /// @throw @c std::length_error
@@ -36,7 +36,7 @@ std::string string_from_cfstring(CFStringRef str);
 /// @throw @c std::bad_array_new_length
 /// @param cf A @c CFType object
 /// @return A @c std::string containing the description of @c cf in UTF-8
-std::string string_from_cftype(CFTypeRef cf);
+std::string string_from_cftype(CFTypeRef _Nullable cf);
 
 /// Creates a string representation of a four-character code and returns the result
 /// @throw @c std::length_error
