@@ -34,6 +34,22 @@ CFStringRef _Nullable CopyAudioChannelLayoutName(const AudioChannelLayout * _Nul
 /// - note: The caller is responsible for releasing the returned string
 CFStringRef _Nullable CopyAudioChannelLayoutDescription(const AudioChannelLayout * _Nullable channelLayout) noexcept CF_RETURNS_RETAINED;
 
+#ifdef __OBJC__
+/// Returns the name of @c channelLayout
+///
+/// This is the value of @c kAudioFormatProperty_ChannelLayoutName or @c kAudioFormatProperty_ChannelLayoutSimpleName
+inline NSString * _Nullable AudioChannelLayoutName(const AudioChannelLayout * _Nullable channelLayout, bool simpleName = false) noexcept
+{
+	return (__bridge_transfer NSString *)CopyAudioChannelLayoutName(channelLayout, simpleName);
+}
+
+/// Returns a string representation of @c channelLayout
+inline NSString * _Nullable AudioChannelLayoutDescription(const AudioChannelLayout * _Nullable channelLayout) noexcept
+{
+	return (__bridge_transfer NSString *)CopyAudioChannelLayoutDescription(channelLayout);
+}
+#endif /* __OBJC__ */
+
 /// A class wrapping a Core Audio @c AudioChannelLayout
 class CAChannelLayout
 {
@@ -214,9 +230,9 @@ public:
 	/// Returns the name of this channel layout
 	///
 	/// This is the value of @c kAudioFormatProperty_ChannelLayoutName or @c kAudioFormatProperty_ChannelLayoutSimpleName
-	NSString * _Nullable LayoutName() const noexcept
+	NSString * _Nullable LayoutName(bool simpleName = false) const noexcept
 	{
-		return (__bridge_transfer NSString *)CopyLayoutName();
+		return (__bridge_transfer NSString *)CopyLayoutName(simpleName);
 	}
 
 	/// Returns a string representation of this channel layout
