@@ -1,10 +1,12 @@
 //
-// Copyright (c) 2021 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
 
 #pragma once
+
+#import <utility>
 
 #import <AudioToolbox/AudioFile.h>
 
@@ -26,18 +28,18 @@ public:
 	AudioFileWrapper& operator=(const AudioFileWrapper& rhs) = delete;
 
 	/// Calls @c AudioFileClose on the managed @c AudioFile
-	inline ~AudioFileWrapper()
+	~AudioFileWrapper()
 	{
 		reset();
 	}
 
 	/// Move constructor
-	inline AudioFileWrapper(AudioFileWrapper&& rhs) noexcept
+	AudioFileWrapper(AudioFileWrapper&& rhs) noexcept
 	: mAudioFile{rhs.release()}
 	{}
 
 	// Move assignment operator
-	inline AudioFileWrapper& operator=(AudioFileWrapper&& rhs)
+	AudioFileWrapper& operator=(AudioFileWrapper&& rhs) noexcept
 	{
 		if(this != &rhs)
 			reset(rhs.release());
@@ -45,51 +47,45 @@ public:
 	}
 
 	/// Creates an @c AudioFileWrapper managing @c audioFile
-	inline AudioFileWrapper(AudioFileID audioFile) noexcept
+	AudioFileWrapper(AudioFileID audioFile) noexcept
 	: mAudioFile{audioFile}
 	{}
 
 	/// Returns @c true if the managed @c AudioFile is not @c nullptr
-	inline explicit operator bool() const noexcept
+	explicit operator bool() const noexcept
 	{
 		return mAudioFile != nullptr;
 	}
 
 	/// Returns the managed @c AudioFile
-	inline operator AudioFileID() const noexcept
+	operator AudioFileID() const noexcept
 	{
 		return mAudioFile;
 	}
 
 	/// Returns the managed @c AudioFile
-	inline AudioFileID get() const noexcept
+	AudioFileID get() const noexcept
 	{
 		return mAudioFile;
 	}
 
 	/// Closes the managed @c AudioFile and replaces it with @c audioFile
-	inline void reset(AudioFileID audioFile = nullptr) noexcept
+	void reset(AudioFileID audioFile = nullptr) noexcept
 	{
-		auto oldAudioFile = mAudioFile;
-		mAudioFile = audioFile;
-		if(oldAudioFile)
-			AudioFileClose(oldAudioFile);
+		if(auto old = std::exchange(mAudioFile, audioFile); old)
+			AudioFileClose(old);
 	}
 
 	/// Swaps the managed @c AudioFile of @c *this and @c other
-	inline void swap(AudioFileWrapper& other) noexcept
+	void swap(AudioFileWrapper& other) noexcept
 	{
-		auto audioFile = mAudioFile;
-		mAudioFile = other.mAudioFile;
-		other.mAudioFile = audioFile;
+		std::swap(mAudioFile, other.mAudioFile);
 	}
 
 	/// Releases ownership of the managed @c AudioFile and returns it
-	inline AudioFileID release() noexcept
+	AudioFileID release() noexcept
 	{
-		auto oldAudioFile = mAudioFile;
-		mAudioFile = nullptr;
-		return oldAudioFile;
+		return std::exchange(mAudioFile, nullptr);
 	}
 
 private:

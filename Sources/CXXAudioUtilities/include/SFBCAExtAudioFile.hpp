@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -35,8 +35,9 @@ private:
 	};
 
 public:
+
 	/// Creates a @c CAExtAudioFile
-	CAExtAudioFile() noexcept = default;
+	constexpr CAExtAudioFile() noexcept = default;
 
 	// This class is non-copyable
 	CAExtAudioFile(const CAExtAudioFile& rhs) = delete;
@@ -45,7 +46,7 @@ public:
 	CAExtAudioFile& operator=(const CAExtAudioFile& rhs) = delete;
 
 	/// Destroys the @c CAExtAudioFile and release all associated resources.
-	inline ~CAExtAudioFile()
+	~CAExtAudioFile()
 	{
 		if(mExtAudioFile)
 			ExtAudioFileDispose(mExtAudioFile);
@@ -71,25 +72,25 @@ public:
 	}
 
 	/// Returns @c true if this object's internal @c ExtAudioFileRef is not @c nullptr
-	inline explicit operator bool() const noexcept
+	explicit operator bool() const noexcept
 	{
 		return mExtAudioFile != nullptr;
 	}
 
 	/// Returns @c true if this object's internal @c ExtAudioFileRef is @c nullptr
-	inline bool operator!() const noexcept
+	bool operator!() const noexcept
 	{
 		return !operator bool();
 	}
 
 	/// Returns @c true if this object's internal @c ExtAudioFileRef is not @c nullptr
-	inline bool IsValid() const noexcept
+	bool IsValid() const noexcept
 	{
 		return operator bool();
 	}
 
 	/// Returns the file's internal @c ExtAudioFileRef
-	inline operator ExtAudioFileRef const _Nullable () const noexcept
+	operator ExtAudioFileRef const _Nullable () const noexcept
 	{
 		return mExtAudioFile;
 	}

@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -17,27 +17,27 @@ class CAAudioSystemObject : public CAAudioObject
 public:
 
 	/// Creates a @c CAAudioSystemObject
-	inline CAAudioSystemObject() noexcept
+	constexpr CAAudioSystemObject() noexcept
 	: CAAudioObject{kAudioObjectSystemObject}
 	{}
 
 	/// Copy constructor
-	CAAudioSystemObject(const CAAudioSystemObject& rhs) = default;
+	CAAudioSystemObject(const CAAudioSystemObject& rhs) noexcept = default;
 
 	/// Assignment operator
-	CAAudioSystemObject& operator=(const CAAudioSystemObject& rhs) = default;
+	CAAudioSystemObject& operator=(const CAAudioSystemObject& rhs) noexcept = default;
 
 	/// Destructor
 	virtual ~CAAudioSystemObject() = default;
 
 	// Move constructor
-	CAAudioSystemObject(CAAudioSystemObject&& rhs) = default;
+	CAAudioSystemObject(CAAudioSystemObject&& rhs) noexcept = default;
 
 	// Move assignment operator
-	CAAudioSystemObject& operator=(CAAudioSystemObject&& rhs) = default;
+	CAAudioSystemObject& operator=(CAAudioSystemObject&& rhs) noexcept = default;
 
 
-	inline std::vector<AudioObjectID> DeviceIDs() const
+	std::vector<AudioObjectID> DeviceIDs() const
 	{
 		return ArrayProperty<AudioObjectID>(CAPropertyAddress(kAudioHardwarePropertyDevices));
 	}
@@ -50,32 +50,32 @@ public:
 		return result;
 	}
 
-	inline AudioObjectID DefaultInputDeviceID() const
+	AudioObjectID DefaultInputDeviceID() const
 	{
 		return ArithmeticProperty<AudioObjectID>(CAPropertyAddress(kAudioHardwarePropertyDefaultInputDevice));
 	}
 
-	inline CAAudioObject DefaultInputDevice() const
+	CAAudioObject DefaultInputDevice() const
 	{
 		return CAAudioObject(DefaultInputDeviceID());
 	}
 
-	inline AudioObjectID DefaultOutputDeviceID() const
+	AudioObjectID DefaultOutputDeviceID() const
 	{
 		return ArithmeticProperty<AudioObjectID>(CAPropertyAddress(kAudioHardwarePropertyDefaultOutputDevice));
 	}
 
-	inline CAAudioObject DefaultOutputDevice() const
+	CAAudioObject DefaultOutputDevice() const
 	{
 		return CAAudioObject(DefaultOutputDeviceID());
 	}
 
-	inline AudioObjectID DefaultSystemOutputDeviceID() const
+	AudioObjectID DefaultSystemOutputDeviceID() const
 	{
 		return ArithmeticProperty<AudioObjectID>(CAPropertyAddress(kAudioHardwarePropertyDefaultSystemOutputDevice));
 	}
 
-	inline CAAudioObject DefaultSystemOutputDevice() const
+	CAAudioObject DefaultSystemOutputDevice() const
 	{
 		return CAAudioObject(DefaultSystemOutputDeviceID());
 	}
@@ -90,7 +90,7 @@ public:
 		return deviceID;
 	}
 
-	inline CAAudioDevice AudioDeviceForUID(CFStringRef _Nonnull inUID) const
+	CAAudioDevice AudioDeviceForUID(CFStringRef _Nonnull inUID) const
 	{
 		return CAAudioDevice(AudioDeviceIDForUID(inUID));
 	}

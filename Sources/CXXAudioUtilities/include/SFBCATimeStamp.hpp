@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -21,7 +21,9 @@ public:
 #pragma mark Creation and Destruction
 
 	/// Creates an empty @c CATimeStamp
-	CATimeStamp() noexcept = default;
+	constexpr CATimeStamp() noexcept
+	: AudioTimeStamp{0}
+	{}
 
 	/// Copy constructor
 	CATimeStamp(const CATimeStamp& rhs) noexcept = default;
@@ -40,7 +42,7 @@ public:
 
 
 	/// Creates a new @c CATimeStamp with the specified sample time
-	inline CATimeStamp(Float64 sampleTime) noexcept
+	CATimeStamp(Float64 sampleTime) noexcept
 	: AudioTimeStamp{}
 	{
 		mSampleTime = sampleTime;
@@ -48,7 +50,7 @@ public:
 	}
 
 	/// Creates a new @c CATimeStamp with the specified host time
-	inline CATimeStamp(UInt64 hostTime) noexcept
+	CATimeStamp(UInt64 hostTime) noexcept
 	: AudioTimeStamp{}
 	{
 		mHostTime = hostTime;
@@ -56,7 +58,7 @@ public:
 	}
 
 	/// Creates a new @c CATimeStamp with the specified sample and host times
-	inline CATimeStamp(Float64 sampleTime, UInt64 hostTime) noexcept
+	CATimeStamp(Float64 sampleTime, UInt64 hostTime) noexcept
 	: AudioTimeStamp{}
 	{
 		mSampleTime = sampleTime;
@@ -65,7 +67,7 @@ public:
 	}
 
 	/// Creates a new @c CATimeStamp with the specified sample and host times and rate scalar
-	inline CATimeStamp(Float64 sampleTime, UInt64 hostTime, Float64 rateScalar) noexcept
+	CATimeStamp(Float64 sampleTime, UInt64 hostTime, Float64 rateScalar) noexcept
 	: AudioTimeStamp{}
 	{
 		mSampleTime = sampleTime;
@@ -77,12 +79,12 @@ public:
 	// Native overloads
 
 	/// Creates a new @c CATimeStamp for the specified @c AudioTimeStamp
-	inline CATimeStamp(const AudioTimeStamp& rhs) noexcept
+	CATimeStamp(const AudioTimeStamp& rhs) noexcept
 	: AudioTimeStamp{rhs}
 	{}
 
 	/// Assignment operator
-	inline CATimeStamp& operator=(const AudioTimeStamp& rhs) noexcept
+	CATimeStamp& operator=(const AudioTimeStamp& rhs) noexcept
 	{
 		AudioTimeStamp::operator=(rhs);
 		return *this;
@@ -106,7 +108,7 @@ public:
 	}
 
 	/// Returns @c true if @c rhs is not equal to @c this
-	inline bool operator!=(const AudioTimeStamp& rhs) const noexcept
+	bool operator!=(const AudioTimeStamp& rhs) const noexcept
 	{
 		return !operator==(rhs);
 	}
@@ -127,19 +129,19 @@ public:
 	}
 
 	/// Returns @c true if @c rhs is less than or equal to @c this
-	inline bool operator<=(const AudioTimeStamp& rhs) const noexcept
+	bool operator<=(const AudioTimeStamp& rhs) const noexcept
 	{
 		return operator<(rhs) || operator==(rhs);
 	}
 
 	/// Returns @c true if @c rhs is greater than or equal to @c this
-	inline bool operator>=(const AudioTimeStamp& rhs) const noexcept
+	bool operator>=(const AudioTimeStamp& rhs) const noexcept
 	{
 		return !operator<(rhs);
 	}
 
 	/// Returns @c true if @c rhs is greater than @c this
-	inline bool operator>(const AudioTimeStamp& rhs) const noexcept
+	bool operator>(const AudioTimeStamp& rhs) const noexcept
 	{
 		return !(operator<(rhs) || operator==(rhs));
 	}
@@ -147,49 +149,49 @@ public:
 #pragma mark Flags
 
 	/// Returns @c true if the @c CATimeStamp is valid
-	inline explicit operator bool() const noexcept
+	explicit operator bool() const noexcept
 	{
 		return mFlags != kAudioTimeStampNothingValid;
 	}
 
 	/// Returns @c true if the @c CATimeStamp is not valid
-	inline bool operator!() const noexcept
+	bool operator!() const noexcept
 	{
 		return !operator bool();
 	}
 
 	/// Returns @c true if the @c CATimeStamp is valid
-	inline bool IsValid() const noexcept
+	bool IsValid() const noexcept
 	{
 		return operator bool();
 	}
 
 	/// Returns @c true if @c mSampleTime is valid
-	inline bool SampleTimeIsValid() const noexcept
+	bool SampleTimeIsValid() const noexcept
 	{
 		return (mFlags & kAudioTimeStampSampleTimeValid) == kAudioTimeStampSampleTimeValid;
 	}
 
 	/// Returns @c true if @c mHostTime is valid
-	inline bool HostTimeIsValid() const noexcept
+	bool HostTimeIsValid() const noexcept
 	{
 		return (mFlags & kAudioTimeStampHostTimeValid) == kAudioTimeStampHostTimeValid;
 	}
 
 	/// Returns @c true if @c mRateScalar is valid
-	inline bool RateScalarIsValid() const noexcept
+	bool RateScalarIsValid() const noexcept
 	{
 		return (mFlags & kAudioTimeStampRateScalarValid) == kAudioTimeStampRateScalarValid;
 	}
 
 	/// Returns @c true if @c mWordClockTime is valid
-	inline bool WordClockTimeIsValid() const noexcept
+	bool WordClockTimeIsValid() const noexcept
 	{
 		return (mFlags & kAudioTimeStampWordClockTimeValid) == kAudioTimeStampWordClockTimeValid;
 	}
 
 	/// Returns @c true if @c mSMPTETime is valid
-	inline bool SMPTETimeIsValid() const noexcept
+	bool SMPTETimeIsValid() const noexcept
 	{
 		return (mFlags & kAudioTimeStampSMPTETimeValid) == kAudioTimeStampSMPTETimeValid;
 	}

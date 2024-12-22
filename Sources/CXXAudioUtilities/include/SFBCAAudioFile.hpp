@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -23,6 +23,7 @@ class CAAudioFile
 {
 
 public:
+
 	/// Creates a @c CAAudioFile
 	constexpr CAAudioFile() noexcept = default;
 
@@ -33,7 +34,7 @@ public:
 	CAAudioFile& operator=(const CAAudioFile& rhs) = delete;
 
 	/// Destroys the @c CAAudioFile and release all associated resources.
-	inline ~CAAudioFile()
+	~CAAudioFile()
 	{
 		if(mAudioFileID)
 			AudioFileClose(mAudioFileID);
@@ -59,25 +60,25 @@ public:
 	}
 
 	/// Returns @c true if this object's internal @c AudioFileID is not @c nullptr
-	inline explicit operator bool() const noexcept
+	explicit operator bool() const noexcept
 	{
 		return mAudioFileID != nullptr;
 	}
 
 	/// Returns @c true if this object's internal @c AudioFileID is @c nullptr
-	inline bool operator!() const noexcept
+	bool operator!() const noexcept
 	{
 		return !operator bool();
 	}
 
 	/// Returns @c true if this object's internal @c AudioFileID is not @c nullptr
-	inline bool IsValid() const noexcept
+	bool IsValid() const noexcept
 	{
 		return operator bool();
 	}
 
 	/// Returns the object's internal @c AudioFileID
-	inline operator AudioFileID const _Nullable () const noexcept
+	operator AudioFileID const _Nullable () const noexcept
 	{
 		return mAudioFileID;
 	}

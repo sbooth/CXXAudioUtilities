@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -33,7 +33,7 @@ public:
 
 	/// Creates a new @c ScopeGuard executing @c cleanup when the destructor is called
 	template <typename F>
-	inline ScopeGuard(const F& cleanup) noexcept
+	ScopeGuard(const F& cleanup) noexcept
 	: mCleanup{cleanup}
 	{}
 
@@ -44,7 +44,7 @@ public:
 	ScopeGuard& operator=(const ScopeGuard& rhs) = delete;
 
 	/// Executes the cleanup function
-	inline ~ScopeGuard()
+	~ScopeGuard()
 	{
 		mCleanup();
 	}

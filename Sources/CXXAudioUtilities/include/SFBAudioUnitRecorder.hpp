@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2021 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -25,22 +25,22 @@ class AudioUnitRecorder
 public:
 
 	/// Default constructor
-	AudioUnitRecorder() noexcept = delete;
+	AudioUnitRecorder() = delete;
 
 	/// Copy constructor
-	AudioUnitRecorder(const AudioUnitRecorder& rhs) noexcept = delete;
+	AudioUnitRecorder(const AudioUnitRecorder& rhs) = delete;
 
 	/// Assignment operator
-	AudioUnitRecorder& operator=(const AudioUnitRecorder& rhs) noexcept = delete;
+	AudioUnitRecorder& operator=(const AudioUnitRecorder& rhs) = delete;
 
 	/// Destructor
 	~AudioUnitRecorder() = default;
 
 	/// Move constructor
-	AudioUnitRecorder(AudioUnitRecorder&& rhs) noexcept = delete;
+	AudioUnitRecorder(AudioUnitRecorder&& rhs) = delete;
 
 	/// Move assignment operator
-	AudioUnitRecorder& operator=(AudioUnitRecorder&& rhs) noexcept = delete;
+	AudioUnitRecorder& operator=(AudioUnitRecorder&& rhs) = delete;
 
 	/// Creates a new @c AudioUnitRecorder that asynchronously writes the output from an @c AudioUnit to a file
 	/// @param au The @c AudioUnit to record

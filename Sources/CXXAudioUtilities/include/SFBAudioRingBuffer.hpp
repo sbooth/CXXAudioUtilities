@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2013 - 2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2013-2024 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -36,7 +36,7 @@ public:
 	AudioRingBuffer& operator=(const AudioRingBuffer& rhs) = delete;
 
 	/// Destroys the @c AudioRingBuffer and releases all associated resources.
-	inline ~AudioRingBuffer()
+	~AudioRingBuffer()
 	{
 		std::free(mBuffers);
 	}
@@ -69,13 +69,13 @@ public:
 
 
 	/// Returns the capacity in frames of this @c AudioRingBuffer
-	inline uint32_t CapacityFrames() const noexcept
+	uint32_t CapacityFrames() const noexcept
 	{
 		return mCapacityFrames;
 	}
 
 	/// Returns the format of this @c AudioRingBuffer
-	inline const CAStreamBasicDescription& Format() const noexcept
+	const CAStreamBasicDescription& Format() const noexcept
 	{
 		return mFormat;
 	}
