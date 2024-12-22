@@ -337,7 +337,7 @@ public:
 	CFStringRef _Nullable CopyFormatDescription() const noexcept CF_RETURNS_RETAINED;
 
 #ifdef __OBJC__
-	/// Returns an  @c AVAudioFormat object initialized with this format and no channel layout
+	/// Returns an @c AVAudioFormat object initialized with this format and no channel layout
 	operator AVAudioFormat * _Nullable () const noexcept
 	{
 		return [[AVAudioFormat alloc] initWithStreamDescription:this];

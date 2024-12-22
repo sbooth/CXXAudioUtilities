@@ -221,7 +221,7 @@ public:
 
 
 #ifdef __OBJC__
-	/// Returns an  @c AVAudioChannelLayout object initialized with this object's internal @c AudioChannelLayout
+	/// Returns an @c AVAudioChannelLayout object initialized with this object's internal @c AudioChannelLayout
 	operator AVAudioChannelLayout * _Nullable () const noexcept
 	{
 		return [[AVAudioChannelLayout alloc] initWithLayout:mChannelLayout];
