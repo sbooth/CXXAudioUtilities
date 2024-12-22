@@ -431,6 +431,14 @@ bool SFB::CAChannelLayout::operator==(const CAChannelLayout& rhs) const noexcept
 	// Two empty channel layouts are considered equivalent
 	if(!mChannelLayout && !rhs.mChannelLayout)
 		return true;
+	else if(mChannelLayout && !rhs.mChannelLayout) {
+		if(mChannelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_Mono || mChannelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_Stereo)
+			return true;
+	}
+	else if(!mChannelLayout && rhs.mChannelLayout) {
+		if(rhs.mChannelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_Mono || rhs.mChannelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_Stereo)
+			return true;
+	}
 
 	if(!mChannelLayout || !rhs.mChannelLayout)
 		return false;
