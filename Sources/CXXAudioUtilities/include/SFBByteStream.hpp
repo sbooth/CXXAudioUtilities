@@ -120,7 +120,7 @@ public:
 	/// Reads a value and advances the read position.
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
-	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_default_constructible_v<T>>>
 	std::optional<T> Read() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
@@ -160,7 +160,7 @@ public:
 	/// Reads a little endian value, converts it to host byte ordering, and advances the read position.
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
-	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_default_constructible_v<T>>>
 	std::optional<T> ReadLE() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
@@ -200,7 +200,7 @@ public:
 	/// Reads a big endian value, converts it to host byte ordering, and advances the read position.
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
-	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_default_constructible_v<T>>>
 	std::optional<T> ReadBE() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
@@ -240,7 +240,7 @@ public:
 	/// Reads a value, swaps its byte ordering, and advances the read position.
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
-	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_default_constructible_v<T>>>
 	std::optional<T> ReadSwapped() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};

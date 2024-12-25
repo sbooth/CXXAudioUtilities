@@ -119,8 +119,8 @@ public:
 	/// Reads a value from the @c RingBuffer and advances the read pointer.
 	/// @tparam T The type to read
 	/// @return A @c std::optional containing an instance of @c T if sufficient bytes were available for reading
-	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
-	std::optional<T> ReadValue() noexcept
+	template <typename T, typename = std::enable_if_t<std::is_default_constructible_v<T>>>
+	std::optional<T> ReadValue() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
 		if(!ReadValue(value))
@@ -145,8 +145,8 @@ public:
 	/// Reads a value from the @c RingBuffer without advancing the read pointer.
 	/// @tparam T The type to read
 	/// @return A @c std::optional containing an instance of @c T if sufficient bytes were available for reading
-	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
-	std::optional<T> PeekValue() const noexcept
+	template <typename T, typename = std::enable_if_t<std::is_default_constructible_v<T>>>
+	std::optional<T> PeekValue() const noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
 		if(!PeekValue(value))
