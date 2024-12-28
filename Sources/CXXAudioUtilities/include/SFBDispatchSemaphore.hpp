@@ -27,7 +27,7 @@ public:
 	{
 		mSemaphore = dispatch_semaphore_create(value);
 		if(!mSemaphore)
-			throw std::runtime_error("Unable to create the semaphore");
+			throw std::runtime_error("Unable to create dispatch semaphore");
 	}
 
 	// This class is non-copyable
