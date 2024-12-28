@@ -38,10 +38,10 @@ public:
 	{}
 
 	// This class is non-copyable
-	ScopeGuard(const ScopeGuard& rhs) = delete;
+	ScopeGuard(const ScopeGuard&) = delete;
 
 	// This class is non-assignable
-	ScopeGuard& operator=(const ScopeGuard& rhs) = delete;
+	ScopeGuard& operator=(const ScopeGuard&) = delete;
 
 	/// Executes the cleanup function
 	~ScopeGuard()
@@ -50,10 +50,10 @@ public:
 	}
 
 	// This class is non-movable
-	ScopeGuard(const ScopeGuard&& rhs) = delete;
+	ScopeGuard(const ScopeGuard&&) = delete;
 
 	// This class is non-move assignable
-	ScopeGuard& operator=(const ScopeGuard&& rhs) = delete;
+	ScopeGuard& operator=(const ScopeGuard&&) = delete;
 
 private:
 

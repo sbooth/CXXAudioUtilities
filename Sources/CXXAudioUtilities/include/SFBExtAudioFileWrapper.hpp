@@ -22,10 +22,10 @@ public:
 	constexpr ExtAudioFileWrapper() noexcept = default;
 
 	// This class is non-copyable
-	ExtAudioFileWrapper(const ExtAudioFileWrapper& rhs) = delete;
+	ExtAudioFileWrapper(const ExtAudioFileWrapper&) = delete;
 
 	// This class is non-assignable
-	ExtAudioFileWrapper& operator=(const ExtAudioFileWrapper& rhs) = delete;
+	ExtAudioFileWrapper& operator=(const ExtAudioFileWrapper&) = delete;
 
 	/// Calls @c ExtAudioFileDispose on the managed @c ExtAudioFile
 	~ExtAudioFileWrapper()
@@ -91,7 +91,7 @@ public:
 private:
 
 	/// The managed @c ExtAudioFile
-	ExtAudioFileRef mExtAudioFile = nullptr;
+	ExtAudioFileRef _Nullable mExtAudioFile = nullptr;
 
 };
 

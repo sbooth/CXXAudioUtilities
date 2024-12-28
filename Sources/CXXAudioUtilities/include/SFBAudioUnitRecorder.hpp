@@ -28,19 +28,19 @@ public:
 	AudioUnitRecorder() = delete;
 
 	/// Copy constructor
-	AudioUnitRecorder(const AudioUnitRecorder& rhs) = delete;
+	AudioUnitRecorder(const AudioUnitRecorder&) = delete;
 
 	/// Assignment operator
-	AudioUnitRecorder& operator=(const AudioUnitRecorder& rhs) = delete;
+	AudioUnitRecorder& operator=(const AudioUnitRecorder&) = delete;
 
 	/// Destructor
 	~AudioUnitRecorder() = default;
 
 	/// Move constructor
-	AudioUnitRecorder(AudioUnitRecorder&& rhs) = delete;
+	AudioUnitRecorder(AudioUnitRecorder&&) = delete;
 
 	/// Move assignment operator
-	AudioUnitRecorder& operator=(AudioUnitRecorder&& rhs) = delete;
+	AudioUnitRecorder& operator=(AudioUnitRecorder&&) = delete;
 
 	/// Creates a new @c AudioUnitRecorder that asynchronously writes the output from an @c AudioUnit to a file
 	/// @param au The @c AudioUnit to record

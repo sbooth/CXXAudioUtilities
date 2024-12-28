@@ -32,19 +32,19 @@ public:
 	{}
 
 	// This class is non-copyable
-	UnfairLock(const UnfairLock& rhs) = delete;
+	UnfairLock(const UnfairLock&) = delete;
 
 	// This class is non-assignable
-	UnfairLock& operator=(const UnfairLock& rhs) = delete;
+	UnfairLock& operator=(const UnfairLock&) = delete;
 
 	// Destructor
 	~UnfairLock() = default;
 
 	// This class is non-movable
-	UnfairLock(const UnfairLock&& rhs) = delete;
+	UnfairLock(const UnfairLock&&) = delete;
 
 	// This class is non-move assignable
-	UnfairLock& operator=(const UnfairLock&& rhs) = delete;
+	UnfairLock& operator=(const UnfairLock&&) = delete;
 
 #pragma mark Lockable
 

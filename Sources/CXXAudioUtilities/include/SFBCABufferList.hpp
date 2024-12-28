@@ -34,10 +34,10 @@ public:
 	constexpr CABufferList() noexcept = default;
 
 	// This class is non-copyable
-	CABufferList(const CABufferList& rhs) = delete;
+	CABufferList(const CABufferList&) = delete;
 
 	// This class is non-assignable
-	CABufferList& operator=(const CABufferList& rhs) = delete;
+	CABufferList& operator=(const CABufferList&) = delete;
 
 	/// Destroys the @c CABufferList and release all associated resources.
 	~CABufferList()

@@ -22,10 +22,10 @@ public:
 	constexpr AudioFileWrapper() noexcept = default;
 
 	// This class is non-copyable
-	AudioFileWrapper(const AudioFileWrapper& rhs) = delete;
+	AudioFileWrapper(const AudioFileWrapper&) = delete;
 
 	// This class is non-assignable
-	AudioFileWrapper& operator=(const AudioFileWrapper& rhs) = delete;
+	AudioFileWrapper& operator=(const AudioFileWrapper&) = delete;
 
 	/// Calls @c AudioFileClose on the managed @c AudioFile
 	~AudioFileWrapper()
@@ -91,7 +91,7 @@ public:
 private:
 
 	/// The managed @c AudioFile
-	AudioFileID mAudioFile = nullptr;
+	AudioFileID _Nullable mAudioFile = nullptr;
 
 };
 
