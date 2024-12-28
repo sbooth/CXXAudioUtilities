@@ -40,10 +40,10 @@ public:
 	constexpr CAExtAudioFile() noexcept = default;
 
 	// This class is non-copyable
-	CAExtAudioFile(const CAExtAudioFile& rhs) = delete;
+	CAExtAudioFile(const CAExtAudioFile&) = delete;
 
 	// This class is non-assignable
-	CAExtAudioFile& operator=(const CAExtAudioFile& rhs) = delete;
+	CAExtAudioFile& operator=(const CAExtAudioFile&) = delete;
 
 	/// Destroys the @c CAExtAudioFile and release all associated resources.
 	~CAExtAudioFile()

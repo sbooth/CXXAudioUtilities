@@ -28,10 +28,10 @@ public:
 	constexpr CAAUGraph() noexcept = default;
 
 	// This class is non-copyable
-	CAAUGraph(const CAAUGraph& rhs) = delete;
+	CAAUGraph(const CAAUGraph&) = delete;
 
 	// This class is non-assignable
-	CAAUGraph& operator=(const CAAUGraph& rhs) = delete;
+	CAAUGraph& operator=(const CAAUGraph&) = delete;
 
 	/// Destroys the @c CAAUGraph and releases all associated resources.
 	~CAAUGraph()

@@ -31,10 +31,10 @@ public:
 	}
 
 	// This class is non-copyable
-	DispatchSemaphore(const DispatchSemaphore& rhs) = delete;
+	DispatchSemaphore(const DispatchSemaphore&) = delete;
 
 	// This class is non-assignable
-	DispatchSemaphore& operator=(const DispatchSemaphore& rhs) = delete;
+	DispatchSemaphore& operator=(const DispatchSemaphore&) = delete;
 
 	// Destructor
 	~DispatchSemaphore()
@@ -45,10 +45,10 @@ public:
 	}
 
 	// This class is non-movable
-	DispatchSemaphore(const DispatchSemaphore&& rhs) = delete;
+	DispatchSemaphore(const DispatchSemaphore&&) = delete;
 
 	// This class is non-move assignable
-	DispatchSemaphore& operator=(const DispatchSemaphore&& rhs) = delete;
+	DispatchSemaphore& operator=(const DispatchSemaphore&&) = delete;
 
 #pragma mark Signaling and Waiting
 
@@ -80,7 +80,7 @@ public:
 private:
 
 	/// The libdispatch semaphore
-	dispatch_semaphore_t mSemaphore;
+	dispatch_semaphore_t _Nonnull mSemaphore;
 
 };
 

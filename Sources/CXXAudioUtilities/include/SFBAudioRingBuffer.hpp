@@ -30,10 +30,10 @@ public:
 	constexpr AudioRingBuffer() noexcept = default;
 
 	// This class is non-copyable
-	AudioRingBuffer(const AudioRingBuffer& rhs) = delete;
+	AudioRingBuffer(const AudioRingBuffer&) = delete;
 
 	// This class is non-assignable
-	AudioRingBuffer& operator=(const AudioRingBuffer& rhs) = delete;
+	AudioRingBuffer& operator=(const AudioRingBuffer&) = delete;
 
 	/// Destroys the @c AudioRingBuffer and releases all associated resources.
 	~AudioRingBuffer()
@@ -42,10 +42,10 @@ public:
 	}
 
 	// This class is non-movable
-	AudioRingBuffer(AudioRingBuffer&& rhs) = delete;
+	AudioRingBuffer(AudioRingBuffer&&) = delete;
 
 	// This class is non-move assignable
-	AudioRingBuffer& operator=(AudioRingBuffer&& rhs) = delete;
+	AudioRingBuffer& operator=(AudioRingBuffer&&) = delete;
 
 #pragma mark Buffer management
 

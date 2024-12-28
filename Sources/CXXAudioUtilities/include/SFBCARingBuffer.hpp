@@ -29,10 +29,10 @@ public:
 	constexpr CARingBuffer() noexcept = default;
 
 	// This class is non-copyable
-	CARingBuffer(const CARingBuffer& rhs) = delete;
+	CARingBuffer(const CARingBuffer&) = delete;
 
 	// This class is non-assignable
-	CARingBuffer& operator=(const CARingBuffer& rhs) = delete;
+	CARingBuffer& operator=(const CARingBuffer&) = delete;
 
 	/// Destroys the @c CARingBuffer and release all associated resources.
 	~CARingBuffer()
@@ -41,10 +41,10 @@ public:
 	}
 
 	// This class is non-movable
-	CARingBuffer(CARingBuffer&& rhs) = delete;
+	CARingBuffer(CARingBuffer&&) = delete;
 
 	// This class is non-move assignable
-	CARingBuffer& operator=(CARingBuffer&& rhs) = delete;
+	CARingBuffer& operator=(CARingBuffer&&) = delete;
 
 #pragma mark Buffer management
 

@@ -24,10 +24,10 @@ public:
 	constexpr CAAudioConverter() noexcept = default;
 
 	// This class is non-copyable
-	CAAudioConverter(const CAAudioConverter& rhs) = delete;
+	CAAudioConverter(const CAAudioConverter&) = delete;
 
 	// This class is non-assignable
-	CAAudioConverter& operator=(const CAAudioConverter& rhs) = delete;
+	CAAudioConverter& operator=(const CAAudioConverter&) = delete;
 
 	/// Destroys the @c CAAudioConverter and release all associated resources.
 	~CAAudioConverter()

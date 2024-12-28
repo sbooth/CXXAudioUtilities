@@ -28,10 +28,10 @@ public:
 	constexpr RingBuffer() noexcept = default;
 
 	// This class is non-copyable
-	RingBuffer(const RingBuffer& rhs) = delete;
+	RingBuffer(const RingBuffer&) = delete;
 
 	// This class is non-assignable
-	RingBuffer& operator=(const RingBuffer& rhs) = delete;
+	RingBuffer& operator=(const RingBuffer&) = delete;
 
 	/// Destroys the @c RingBuffer and releases all associated resources.
 	~RingBuffer()
@@ -40,10 +40,10 @@ public:
 	}
 
 	// This class is non-movable
-	RingBuffer(RingBuffer&& rhs) = delete;
+	RingBuffer(RingBuffer&&) = delete;
 
 	// This class is non-move assignable
-	RingBuffer& operator=(RingBuffer&& rhs) = delete;
+	RingBuffer& operator=(RingBuffer&&) = delete;
 
 #pragma mark Buffer Management
 
