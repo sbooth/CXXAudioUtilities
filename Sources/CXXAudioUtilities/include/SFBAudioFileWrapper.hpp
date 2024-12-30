@@ -47,7 +47,7 @@ public:
 	}
 
 	/// Creates an @c AudioFileWrapper managing @c audioFile
-	AudioFileWrapper(AudioFileID audioFile) noexcept
+	AudioFileWrapper(AudioFileID _Nullable audioFile) noexcept
 	: mAudioFile{audioFile}
 	{}
 
@@ -58,19 +58,19 @@ public:
 	}
 
 	/// Returns the managed @c AudioFile
-	operator AudioFileID() const noexcept
+	operator AudioFileID _Nullable() const noexcept
 	{
 		return mAudioFile;
 	}
 
 	/// Returns the managed @c AudioFile
-	AudioFileID get() const noexcept
+	AudioFileID _Nullable get() const noexcept
 	{
 		return mAudioFile;
 	}
 
 	/// Closes the managed @c AudioFile and replaces it with @c audioFile
-	void reset(AudioFileID audioFile = nullptr) noexcept
+	void reset(AudioFileID _Nullable audioFile = nullptr) noexcept
 	{
 		if(auto old = std::exchange(mAudioFile, audioFile); old)
 			AudioFileClose(old);
@@ -83,7 +83,7 @@ public:
 	}
 
 	/// Releases ownership of the managed @c AudioFile and returns it
-	AudioFileID release() noexcept
+	AudioFileID _Nullable release() noexcept
 	{
 		return std::exchange(mAudioFile, nullptr);
 	}
