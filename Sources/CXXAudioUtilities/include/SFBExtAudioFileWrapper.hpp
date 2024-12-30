@@ -47,7 +47,7 @@ public:
 	}
 
 	/// Creates an @c ExtAudioFileWrapper managing @c extAudioFile
-	ExtAudioFileWrapper(ExtAudioFileRef _Nullable extAudioFile) noexcept
+	ExtAudioFileWrapper(ExtAudioFileRef _Nonnull extAudioFile) noexcept
 	: mExtAudioFile{extAudioFile}
 	{}
 
