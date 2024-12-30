@@ -26,8 +26,8 @@ constexpr size_t ChannelLayoutSize(UInt32 numberChannelDescriptions) noexcept
 /// @throws @c std::bad_alloc
 AudioChannelLayout * CreateChannelLayout(UInt32 numberChannelDescriptions)
 {
-	size_t layoutSize = ChannelLayoutSize(numberChannelDescriptions);
-	AudioChannelLayout *channelLayout = static_cast<AudioChannelLayout *>(std::malloc(layoutSize));
+	const auto layoutSize = ChannelLayoutSize(numberChannelDescriptions);
+	auto channelLayout = static_cast<AudioChannelLayout *>(std::malloc(layoutSize));
 	if(!channelLayout)
 		throw std::bad_alloc();
 
@@ -47,8 +47,8 @@ AudioChannelLayout * CopyChannelLayout(const AudioChannelLayout * _Nullable rhs)
 	if(!rhs)
 		return nullptr;
 
-	size_t layoutSize = ChannelLayoutSize(rhs->mNumberChannelDescriptions);
-	AudioChannelLayout *channelLayout = static_cast<AudioChannelLayout *>(std::malloc(layoutSize));
+	const auto layoutSize = ChannelLayoutSize(rhs->mNumberChannelDescriptions);
+	auto channelLayout = static_cast<AudioChannelLayout *>(std::malloc(layoutSize));
 	if(!channelLayout)
 		throw std::bad_alloc();
 
@@ -333,7 +333,7 @@ CFStringRef SFB::CopyAudioChannelLayoutDescription(const AudioChannelLayout *cha
 				CFArrayAppendValue(array.get(), reinterpret_cast<const void *>(coordinateString.get()));
 			}
 			else {
-				if(auto channelName = CopyChannelLabelName(desc->mChannelLabel, true); channelName)
+				if(const auto channelName = CopyChannelLabelName(desc->mChannelLabel, true); channelName)
 					CFArrayAppendValue(array.get(), reinterpret_cast<const void *>(channelName.get()));
 				else
 					CFArrayAppendValue(array.get(), CFSTR("?"));
