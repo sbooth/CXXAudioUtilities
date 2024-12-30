@@ -137,7 +137,7 @@ private:
 	CAStreamBasicDescription mFormat = {};
 
 	/// The channel pointers and buffers allocated in one chunk of memory
-	uint8_t * _Nonnull * _Nullable mBuffers = nullptr;
+	void * _Nonnull * _Nullable mBuffers = nullptr;
 
 	/// The frame capacity per channel
 	uint32_t mCapacityFrames = 0;
