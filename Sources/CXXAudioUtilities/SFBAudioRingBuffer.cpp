@@ -23,9 +23,11 @@ namespace {
 void StoreABL(uint8_t * const _Nonnull * const _Nonnull buffers, uint32_t dstOffset, const AudioBufferList * const _Nonnull bufferList, uint32_t srcOffset, uint32_t byteCount) noexcept
 {
 	for(UInt32 i = 0; i < bufferList->mNumberBuffers; ++i) {
-		if(srcOffset > bufferList->mBuffers[i].mDataByteSize)
-			continue;
-		std::memcpy(buffers[i] + dstOffset, static_cast<const uint8_t *>(bufferList->mBuffers[i].mData) + srcOffset, std::min(byteCount, bufferList->mBuffers[i].mDataByteSize - srcOffset));
+		assert(srcOffset <= bufferList->mBuffers[i].mDataByteSize);
+		auto dst = buffers[i];
+		const auto src = reinterpret_cast<uintptr_t>(bufferList->mBuffers[i].mData);
+		const auto n = std::min(byteCount, bufferList->mBuffers[i].mDataByteSize - srcOffset);
+		std::memcpy(dst + dstOffset, reinterpret_cast<const void *>(src + srcOffset), n);
 	}
 }
 
@@ -38,9 +40,11 @@ void StoreABL(uint8_t * const _Nonnull * const _Nonnull buffers, uint32_t dstOff
 void FetchABL(AudioBufferList * const _Nonnull bufferList, uint32_t dstOffset, const uint8_t * const _Nonnull * const _Nonnull buffers, uint32_t srcOffset, uint32_t byteCount) noexcept
 {
 	for(UInt32 i = 0; i < bufferList->mNumberBuffers; ++i) {
-		if(dstOffset > bufferList->mBuffers[i].mDataByteSize)
-			continue;
-		std::memcpy(static_cast<uint8_t *>(bufferList->mBuffers[i].mData) + dstOffset, buffers[i] + srcOffset, std::min(byteCount, bufferList->mBuffers[i].mDataByteSize - dstOffset));
+		assert(dstOffset <= bufferList->mBuffers[i].mDataByteSize);
+		auto dst = reinterpret_cast<uintptr_t>(bufferList->mBuffers[i].mData);
+		const auto src = buffers[i];
+		const auto n = std::min(byteCount, bufferList->mBuffers[i].mDataByteSize - dstOffset);
+		std::memcpy(reinterpret_cast<void *>(dst + dstOffset), src + srcOffset, n);
 	}
 }
 
@@ -164,7 +168,7 @@ uint32_t SFB::AudioRingBuffer::Read(AudioBufferList * const bufferList, uint32_t
 	if(framesAvailable == 0 || (framesAvailable < frameCount && !allowPartial))
 		return 0;
 
-	auto framesToRead = std::min(framesAvailable, frameCount);
+	const auto framesToRead = std::min(framesAvailable, frameCount);
 	if(readPointer + framesToRead > mCapacityFrames) {
 		const auto framesAfterReadPointer = mCapacityFrames - readPointer;
 		const auto bytesAfterReadPointer = framesAfterReadPointer * mFormat.mBytesPerFrame;
