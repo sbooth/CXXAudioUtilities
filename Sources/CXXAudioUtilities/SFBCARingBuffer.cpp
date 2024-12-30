@@ -22,8 +22,8 @@ namespace {
 void ZeroRange(void * const _Nonnull * const _Nonnull buffers, uint32_t bufferCount, uint32_t byteOffset, uint32_t byteCount)
 {
 	for(uint32_t i = 0; i < bufferCount; ++i) {
-		const auto s = reinterpret_cast<uintptr_t>(buffers[i]);
-		std::memset(reinterpret_cast<void *>(s + byteOffset), 0, byteCount);
+		const auto s = reinterpret_cast<uintptr_t>(buffers[i]) + byteOffset;
+		std::memset(reinterpret_cast<void *>(s), 0, byteCount);
 	}
 }
 
@@ -35,9 +35,9 @@ void ZeroABL(AudioBufferList * const _Nonnull bufferList, uint32_t byteOffset, u
 {
 	for(UInt32 i = 0; i < bufferList->mNumberBuffers; ++i) {
 		assert(byteOffset <= bufferList->mBuffers[i].mDataByteSize);
-		const auto s = reinterpret_cast<uintptr_t>(bufferList->mBuffers[i].mData);
+		const auto s = reinterpret_cast<uintptr_t>(bufferList->mBuffers[i].mData) + byteOffset;
 		const auto n = std::min(byteCount, bufferList->mBuffers[i].mDataByteSize - byteOffset);
-		std::memset(reinterpret_cast<void *>(s + byteOffset), 0, n);
+		std::memset(reinterpret_cast<void *>(s), 0, n);
 	}
 }
 
@@ -51,10 +51,10 @@ void StoreABL(void * const _Nonnull * const _Nonnull buffers, uint32_t dstOffset
 {
 	for(UInt32 i = 0; i < bufferList->mNumberBuffers; ++i) {
 		assert(srcOffset <= bufferList->mBuffers[i].mDataByteSize);
-		const auto dst = reinterpret_cast<uintptr_t>(buffers[i]);
-		const auto src = reinterpret_cast<uintptr_t>(bufferList->mBuffers[i].mData);
+		const auto dst = reinterpret_cast<uintptr_t>(buffers[i]) + dstOffset;
+		const auto src = reinterpret_cast<uintptr_t>(bufferList->mBuffers[i].mData) + srcOffset;
 		const auto n = std::min(byteCount, bufferList->mBuffers[i].mDataByteSize - srcOffset);
-		std::memcpy(reinterpret_cast<void *>(dst + dstOffset), reinterpret_cast<const void *>(src + srcOffset), n);
+		std::memcpy(reinterpret_cast<void *>(dst), reinterpret_cast<const void *>(src), n);
 	}
 }
 
@@ -68,10 +68,10 @@ void FetchABL(AudioBufferList * const _Nonnull bufferList, uint32_t dstOffset, c
 {
 	for(UInt32 i = 0; i < bufferList->mNumberBuffers; ++i) {
 		assert(dstOffset <= bufferList->mBuffers[i].mDataByteSize);
-		const auto dst = reinterpret_cast<uintptr_t>(bufferList->mBuffers[i].mData);
-		const auto src = reinterpret_cast<uintptr_t>(buffers[i]);
+		const auto dst = reinterpret_cast<uintptr_t>(bufferList->mBuffers[i].mData) + dstOffset;
+		const auto src = reinterpret_cast<uintptr_t>(buffers[i]) + srcOffset;
 		const auto n = std::min(byteCount, bufferList->mBuffers[i].mDataByteSize - dstOffset);
-		std::memcpy(reinterpret_cast<void *>(dst + dstOffset), reinterpret_cast<const void *>(src + srcOffset), n);
+		std::memcpy(reinterpret_cast<void *>(dst), reinterpret_cast<const void *>(src), n);
 	}
 }
 

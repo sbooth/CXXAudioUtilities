@@ -24,10 +24,10 @@ void StoreABL(void * const _Nonnull * const _Nonnull buffers, uint32_t dstOffset
 {
 	for(UInt32 i = 0; i < bufferList->mNumberBuffers; ++i) {
 		assert(srcOffset <= bufferList->mBuffers[i].mDataByteSize);
-		const auto dst = reinterpret_cast<uintptr_t>(buffers[i]);
-		const auto src = reinterpret_cast<uintptr_t>(bufferList->mBuffers[i].mData);
+		const auto dst = reinterpret_cast<uintptr_t>(buffers[i]) + dstOffset;
+		const auto src = reinterpret_cast<uintptr_t>(bufferList->mBuffers[i].mData) + srcOffset;
 		const auto n = std::min(byteCount, bufferList->mBuffers[i].mDataByteSize - srcOffset);
-		std::memcpy(reinterpret_cast<void *>(dst + dstOffset), reinterpret_cast<const void *>(src + srcOffset), n);
+		std::memcpy(reinterpret_cast<void *>(dst), reinterpret_cast<const void *>(src), n);
 	}
 }
 
@@ -41,10 +41,10 @@ void FetchABL(AudioBufferList * const _Nonnull bufferList, uint32_t dstOffset, c
 {
 	for(UInt32 i = 0; i < bufferList->mNumberBuffers; ++i) {
 		assert(dstOffset <= bufferList->mBuffers[i].mDataByteSize);
-		const auto dst = reinterpret_cast<uintptr_t>(bufferList->mBuffers[i].mData);
-		const auto src = reinterpret_cast<uintptr_t>(buffers[i]);
+		const auto dst = reinterpret_cast<uintptr_t>(bufferList->mBuffers[i].mData) + dstOffset;
+		const auto src = reinterpret_cast<uintptr_t>(buffers[i]) + srcOffset;
 		const auto n = std::min(byteCount, bufferList->mBuffers[i].mDataByteSize - dstOffset);
-		std::memcpy(reinterpret_cast<void *>(dst + dstOffset), reinterpret_cast<const void *>(src + srcOffset), n);
+		std::memcpy(reinterpret_cast<void *>(dst), reinterpret_cast<const void *>(src), n);
 	}
 }
 
