@@ -74,10 +74,10 @@ bool SFB::AudioRingBuffer::Allocate(const CAStreamBasicDescription& format, uint
 	mCapacityFrames = capacityFrames;
 	mCapacityFramesMask = capacityFrames - 1;
 
-	uint32_t capacityBytes = capacityFrames * format.mBytesPerFrame;
+	const uint32_t capacityBytes = capacityFrames * format.mBytesPerFrame;
 
 	// One memory allocation holds everything- first the pointers followed by the deinterleaved channels
-	uint32_t allocationSize = (capacityBytes + sizeof(uint8_t *)) * format.mChannelsPerFrame;
+	const uint32_t allocationSize = (capacityBytes + sizeof(uint8_t *)) * format.mChannelsPerFrame;
 	uint8_t *memoryChunk = static_cast<uint8_t *>(std::malloc(allocationSize));
 	if(!memoryChunk)
 		return false;
@@ -123,8 +123,8 @@ void SFB::AudioRingBuffer::Reset() noexcept
 
 uint32_t SFB::AudioRingBuffer::FramesAvailableToRead() const noexcept
 {
-	auto writePointer = mWritePointer.load(std::memory_order_acquire);
-	auto readPointer = mReadPointer.load(std::memory_order_acquire);
+	const auto writePointer = mWritePointer.load(std::memory_order_acquire);
+	const auto readPointer = mReadPointer.load(std::memory_order_acquire);
 
 	if(writePointer > readPointer)
 		return writePointer - readPointer;
@@ -134,8 +134,8 @@ uint32_t SFB::AudioRingBuffer::FramesAvailableToRead() const noexcept
 
 uint32_t SFB::AudioRingBuffer::FramesAvailableToWrite() const noexcept
 {
-	auto writePointer = mWritePointer.load(std::memory_order_acquire);
-	auto readPointer = mReadPointer.load(std::memory_order_acquire);
+	const auto writePointer = mWritePointer.load(std::memory_order_acquire);
+	const auto readPointer = mReadPointer.load(std::memory_order_acquire);
 
 	if(writePointer > readPointer)
 		return ((readPointer - writePointer + mCapacityFrames) & mCapacityFramesMask) - 1;
@@ -152,8 +152,8 @@ uint32_t SFB::AudioRingBuffer::Read(AudioBufferList * const bufferList, uint32_t
 	if(!bufferList || frameCount == 0)
 		return 0;
 
-	auto writePointer = mWritePointer.load(std::memory_order_acquire);
-	auto readPointer = mReadPointer.load(std::memory_order_acquire);
+	const auto writePointer = mWritePointer.load(std::memory_order_acquire);
+	const auto readPointer = mReadPointer.load(std::memory_order_acquire);
 
 	uint32_t framesAvailable;
 	if(writePointer > readPointer)
@@ -166,8 +166,8 @@ uint32_t SFB::AudioRingBuffer::Read(AudioBufferList * const bufferList, uint32_t
 
 	auto framesToRead = std::min(framesAvailable, frameCount);
 	if(readPointer + framesToRead > mCapacityFrames) {
-		auto framesAfterReadPointer = mCapacityFrames - readPointer;
-		auto bytesAfterReadPointer = framesAfterReadPointer * mFormat.mBytesPerFrame;
+		const auto framesAfterReadPointer = mCapacityFrames - readPointer;
+		const auto bytesAfterReadPointer = framesAfterReadPointer * mFormat.mBytesPerFrame;
 		FetchABL(bufferList, 0, mBuffers, readPointer * mFormat.mBytesPerFrame, bytesAfterReadPointer);
 		FetchABL(bufferList, bytesAfterReadPointer, mBuffers, 0, (framesToRead - framesAfterReadPointer) * mFormat.mBytesPerFrame);
 	}
@@ -177,7 +177,7 @@ uint32_t SFB::AudioRingBuffer::Read(AudioBufferList * const bufferList, uint32_t
 	mReadPointer.store((readPointer + framesToRead) & mCapacityFramesMask, std::memory_order_release);
 
 	// Set the ABL buffer sizes
-	auto byteSize = static_cast<UInt32>(framesToRead) * mFormat.mBytesPerFrame;
+	const auto byteSize = static_cast<UInt32>(framesToRead) * mFormat.mBytesPerFrame;
 	for(UInt32 bufferIndex = 0; bufferIndex < bufferList->mNumberBuffers; ++bufferIndex)
 		bufferList->mBuffers[bufferIndex].mDataByteSize = byteSize;
 
@@ -189,8 +189,8 @@ uint32_t SFB::AudioRingBuffer::Write(const AudioBufferList * const bufferList, u
 	if(!bufferList || frameCount == 0)
 		return 0;
 
-	auto writePointer = mWritePointer.load(std::memory_order_acquire);
-	auto readPointer = mReadPointer.load(std::memory_order_acquire);
+	const auto writePointer = mWritePointer.load(std::memory_order_acquire);
+	const auto readPointer = mReadPointer.load(std::memory_order_acquire);
 
 	uint32_t framesAvailable;
 	if(writePointer > readPointer)
@@ -203,7 +203,7 @@ uint32_t SFB::AudioRingBuffer::Write(const AudioBufferList * const bufferList, u
 	if(framesAvailable == 0 || (framesAvailable < frameCount && !allowPartial))
 		return 0;
 
-	auto framesToWrite = std::min(framesAvailable, frameCount);
+	const auto framesToWrite = std::min(framesAvailable, frameCount);
 	if(writePointer + framesToWrite > mCapacityFrames) {
 		auto framesAfterWritePointer = mCapacityFrames - writePointer;
 		auto bytesAfterWritePointer = framesAfterWritePointer * mFormat.mBytesPerFrame;
