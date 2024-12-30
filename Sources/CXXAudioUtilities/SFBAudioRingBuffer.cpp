@@ -20,14 +20,14 @@ namespace {
 /// @param bufferList The source buffers
 /// @param srcOffset The byte offset in @c bufferList to begin reading
 /// @param byteCount The maximum number of bytes per non-interleaved buffer to read and write
-void StoreABL(uint8_t * const _Nonnull * const _Nonnull buffers, uint32_t dstOffset, const AudioBufferList * const _Nonnull bufferList, uint32_t srcOffset, uint32_t byteCount) noexcept
+void StoreABL(void * const _Nonnull * const _Nonnull buffers, uint32_t dstOffset, const AudioBufferList * const _Nonnull bufferList, uint32_t srcOffset, uint32_t byteCount) noexcept
 {
 	for(UInt32 i = 0; i < bufferList->mNumberBuffers; ++i) {
 		assert(srcOffset <= bufferList->mBuffers[i].mDataByteSize);
-		auto dst = buffers[i];
+		auto dst = reinterpret_cast<uintptr_t>(buffers[i]);
 		const auto src = reinterpret_cast<uintptr_t>(bufferList->mBuffers[i].mData);
 		const auto n = std::min(byteCount, bufferList->mBuffers[i].mDataByteSize - srcOffset);
-		std::memcpy(dst + dstOffset, reinterpret_cast<const void *>(src + srcOffset), n);
+		std::memcpy(reinterpret_cast<void *>(dst + dstOffset), reinterpret_cast<const void *>(src + srcOffset), n);
 	}
 }
 
@@ -37,14 +37,14 @@ void StoreABL(uint8_t * const _Nonnull * const _Nonnull buffers, uint32_t dstOff
 /// @param buffers The source buffers
 /// @param srcOffset The byte offset in @c bufferList to begin reading
 /// @param byteCount The maximum number of bytes per non-interleaved buffer to read and write
-void FetchABL(AudioBufferList * const _Nonnull bufferList, uint32_t dstOffset, const uint8_t * const _Nonnull * const _Nonnull buffers, uint32_t srcOffset, uint32_t byteCount) noexcept
+void FetchABL(AudioBufferList * const _Nonnull bufferList, uint32_t dstOffset, const void * const _Nonnull * const _Nonnull buffers, uint32_t srcOffset, uint32_t byteCount) noexcept
 {
 	for(UInt32 i = 0; i < bufferList->mNumberBuffers; ++i) {
 		assert(dstOffset <= bufferList->mBuffers[i].mDataByteSize);
 		auto dst = reinterpret_cast<uintptr_t>(bufferList->mBuffers[i].mData);
-		const auto src = buffers[i];
+		const auto src = reinterpret_cast<uintptr_t>(buffers[i]);
 		const auto n = std::min(byteCount, bufferList->mBuffers[i].mDataByteSize - dstOffset);
-		std::memcpy(reinterpret_cast<void *>(dst + dstOffset), src + srcOffset, n);
+		std::memcpy(reinterpret_cast<void *>(dst + dstOffset), reinterpret_cast<const void *>(src + srcOffset), n);
 	}
 }
 
@@ -78,23 +78,25 @@ bool SFB::AudioRingBuffer::Allocate(const CAStreamBasicDescription& format, uint
 	mCapacityFrames = capacityFrames;
 	mCapacityFramesMask = capacityFrames - 1;
 
-	const uint32_t capacityBytes = capacityFrames * format.mBytesPerFrame;
+	const auto capacityBytes = capacityFrames * format.mBytesPerFrame;
 
 	// One memory allocation holds everything- first the pointers followed by the deinterleaved channels
-	const uint32_t allocationSize = (capacityBytes + sizeof(uint8_t *)) * format.mChannelsPerFrame;
-	auto memoryChunk = static_cast<uint8_t *>(std::malloc(allocationSize));
-	if(!memoryChunk)
+	const auto allocationSize = (capacityBytes + sizeof(void *)) * format.mChannelsPerFrame;
+	auto allocation = std::malloc(allocationSize);
+	if(!allocation)
 		return false;
 
 	// Zero the entire allocation
-	std::memset(memoryChunk, 0, allocationSize);
+	std::memset(allocation, 0, allocationSize);
 
 	// Assign the pointers and channel buffers
-	mBuffers = reinterpret_cast<uint8_t **>(memoryChunk);
-	memoryChunk += format.mChannelsPerFrame * sizeof(uint8_t *);
+	auto address = reinterpret_cast<uintptr_t>(allocation);
+
+	mBuffers = reinterpret_cast<void **>(address);
+	address += format.mChannelsPerFrame * sizeof(void *);
 	for(UInt32 i = 0; i < format.mChannelsPerFrame; ++i) {
-		mBuffers[i] = memoryChunk;
-		memoryChunk += capacityBytes;
+		mBuffers[i] = reinterpret_cast<void *>(address);
+		address += capacityBytes;
 	}
 
 	mReadPointer = 0;
