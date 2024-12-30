@@ -203,8 +203,8 @@ void SFB::RingBuffer::AdvanceWritePosition(uint32_t byteCount) noexcept
 
 const SFB::RingBuffer::ReadBufferPair SFB::RingBuffer::ReadVector() const noexcept
 {
-	auto writePosition = mWritePosition.load(std::memory_order_acquire);
-	auto readPosition = mReadPosition.load(std::memory_order_acquire);
+	const auto writePosition = mWritePosition.load(std::memory_order_acquire);
+	const auto readPosition = mReadPosition.load(std::memory_order_acquire);
 
 	uint32_t bytesAvailable;
 	if(writePosition > readPosition)

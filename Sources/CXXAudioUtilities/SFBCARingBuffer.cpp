@@ -98,11 +98,11 @@ bool SFB::CARingBuffer::Allocate(const CAStreamBasicDescription& format, uint32_
 	mCapacityFrames = capacityFrames;
 	mCapacityFramesMask = capacityFrames - 1;
 
-	uint32_t capacityBytes = capacityFrames * format.mBytesPerFrame;
+	const uint32_t capacityBytes = capacityFrames * format.mBytesPerFrame;
 
 	// One memory allocation holds everything- first the pointers followed by the deinterleaved channels
-	uint32_t allocationSize = (capacityBytes + sizeof(uint8_t *)) * format.mChannelsPerFrame;
-	uint8_t *memoryChunk = static_cast<uint8_t *>(std::malloc(allocationSize));
+	const uint32_t allocationSize = (capacityBytes + sizeof(uint8_t *)) * format.mChannelsPerFrame;
+	auto memoryChunk = static_cast<uint8_t *>(std::malloc(allocationSize));
 	if(!memoryChunk)
 		return false;
 
@@ -153,15 +153,15 @@ void SFB::CARingBuffer::Deallocate() noexcept
 bool SFB::CARingBuffer::GetTimeBounds(int64_t& startTime, int64_t& endTime) const noexcept
 {
 	for(auto i = 0; i < 8; ++i) {
-		auto currentCounter = mTimeBoundsQueueCounter.load(std::memory_order_acquire);
-		auto currentIndex = currentCounter & sTimeBoundsQueueMask;
+		const auto currentCounter = mTimeBoundsQueueCounter.load(std::memory_order_acquire);
+		const auto currentIndex = currentCounter & sTimeBoundsQueueMask;
 
 		const SFB::CARingBuffer::TimeBounds * const bounds = mTimeBoundsQueue + currentIndex;
 
 		startTime = bounds->mStartTime;
 		endTime = bounds->mEndTime;
 
-		auto counter = bounds->mUpdateCounter.load(std::memory_order_acquire);
+		const auto counter = bounds->mUpdateCounter.load(std::memory_order_acquire);
 		if(counter == currentCounter)
 			return true;
 	}
@@ -181,8 +181,8 @@ bool SFB::CARingBuffer::Read(AudioBufferList * const bufferList, uint32_t frameC
 
 	auto endRead = startRead + static_cast<int64_t>(frameCount);
 
-	auto startRead0 = startRead;
-	auto endRead0 = endRead;
+	const auto startRead0 = startRead;
+	const auto endRead0 = endRead;
 
 	if(!ClampTimesToBounds(startRead, endRead))
 		return false;
@@ -192,18 +192,18 @@ bool SFB::CARingBuffer::Read(AudioBufferList * const bufferList, uint32_t frameC
 		return true;
 	}
 
-	auto byteSize = static_cast<uint32_t>(endRead - startRead) * mFormat.mBytesPerFrame;
+	const auto byteSize = static_cast<uint32_t>(endRead - startRead) * mFormat.mBytesPerFrame;
 
-	auto destStartByteOffset = static_cast<uint32_t>(std::max(static_cast<int64_t>(0), (startRead - startRead0) * mFormat.mBytesPerFrame));
+	const auto destStartByteOffset = static_cast<uint32_t>(std::max(static_cast<int64_t>(0), (startRead - startRead0) * mFormat.mBytesPerFrame));
 	if(destStartByteOffset > 0)
 		ZeroABL(bufferList, 0, std::min(frameCount * mFormat.mBytesPerFrame, destStartByteOffset));
 
-	auto destEndSize = static_cast<uint32_t>(std::max(static_cast<int64_t>(0), endRead0 - endRead));
+	const auto destEndSize = static_cast<uint32_t>(std::max(static_cast<int64_t>(0), endRead0 - endRead));
 	if(destEndSize > 0)
 		ZeroABL(bufferList, destStartByteOffset + byteSize, destEndSize * mFormat.mBytesPerFrame);
 
-	auto offset0 = FrameByteOffset(startRead);
-	auto offset1 = FrameByteOffset(endRead);
+	const auto offset0 = FrameByteOffset(startRead);
+	const auto offset1 = FrameByteOffset(endRead);
 	uint32_t byteCount;
 
 	if(offset0 < offset1) {
@@ -231,7 +231,7 @@ bool SFB::CARingBuffer::Write(const AudioBufferList * const bufferList, uint32_t
 	if(!bufferList || frameCount > mCapacityFrames || startWrite < 0)
 		return false;
 
-	auto endWrite = startWrite + static_cast<int64_t>(frameCount);
+	const auto endWrite = startWrite + static_cast<int64_t>(frameCount);
 
 	// Going backwards, throw everything out
 	if(startWrite < EndTime())
@@ -241,13 +241,13 @@ bool SFB::CARingBuffer::Write(const AudioBufferList * const bufferList, uint32_t
 		;
 	// Advance the start time past the region about to be overwritten
 	else {
-		int64_t newStart = endWrite - static_cast<int64_t>(mCapacityFrames);	// one buffer of time behind the write position
-		int64_t newEnd = std::max(newStart, EndTime());
+		const int64_t newStart = endWrite - static_cast<int64_t>(mCapacityFrames);	// one buffer of time behind the write position
+		const int64_t newEnd = std::max(newStart, EndTime());
 		SetTimeBounds(newStart, newEnd);
 	}
 
 	uint32_t offset0, offset1;
-	auto curEnd = EndTime();
+	const auto curEnd = EndTime();
 
 	if(startWrite > curEnd) {
 		// Zero the range of samples being skipped
@@ -284,8 +284,8 @@ bool SFB::CARingBuffer::Write(const AudioBufferList * const bufferList, uint32_t
 
 void SFB::CARingBuffer::SetTimeBounds(int64_t startTime, int64_t endTime) noexcept
 {
-	auto nextCounter = mTimeBoundsQueueCounter.load(std::memory_order_acquire) + 1;
-	auto nextIndex = nextCounter & sTimeBoundsQueueMask;
+	const auto nextCounter = mTimeBoundsQueueCounter.load(std::memory_order_acquire) + 1;
+	const auto nextIndex = nextCounter & sTimeBoundsQueueMask;
 
 	mTimeBoundsQueue[nextIndex].mStartTime = startTime;
 	mTimeBoundsQueue[nextIndex].mEndTime = endTime;

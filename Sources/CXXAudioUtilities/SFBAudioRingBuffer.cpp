@@ -78,7 +78,7 @@ bool SFB::AudioRingBuffer::Allocate(const CAStreamBasicDescription& format, uint
 
 	// One memory allocation holds everything- first the pointers followed by the deinterleaved channels
 	const uint32_t allocationSize = (capacityBytes + sizeof(uint8_t *)) * format.mChannelsPerFrame;
-	uint8_t *memoryChunk = static_cast<uint8_t *>(std::malloc(allocationSize));
+	auto memoryChunk = static_cast<uint8_t *>(std::malloc(allocationSize));
 	if(!memoryChunk)
 		return false;
 

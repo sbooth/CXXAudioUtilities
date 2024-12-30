@@ -19,10 +19,10 @@ AudioBufferList * SFB::AllocateAudioBufferList(const CAStreamBasicDescription& f
 	if(format.mBytesPerFrame == 0 || frameCapacity > (std::numeric_limits<UInt32>::max() / format.mBytesPerFrame))
 		return nullptr;
 
-	auto bufferDataSize = format.FrameCountToByteSize(frameCapacity);
-	auto bufferCount = format.ChannelStreamCount();
-	auto bufferListSize = offsetof(AudioBufferList, mBuffers) + (sizeof(AudioBuffer) * bufferCount);
-	auto allocationSize = bufferListSize + (bufferDataSize * bufferCount);
+	const auto bufferDataSize = format.FrameCountToByteSize(frameCapacity);
+	const auto bufferCount = format.ChannelStreamCount();
+	const auto bufferListSize = offsetof(AudioBufferList, mBuffers) + (sizeof(AudioBuffer) * bufferCount);
+	const auto allocationSize = bufferListSize + (bufferDataSize * bufferCount);
 
 	auto abl = static_cast<AudioBufferList *>(std::malloc(allocationSize));
 	if(!abl)
@@ -127,13 +127,13 @@ bool SFB::CABufferList::InferFrameLengthFromABL()
 	if(!mBufferList)
 		return false;
 
-	auto buffer0ByteSize = mBufferList->mBuffers[0].mDataByteSize;
+	const auto buffer0ByteSize = mBufferList->mBuffers[0].mDataByteSize;
 	for(UInt32 i = 0; i < mBufferList->mNumberBuffers; ++i) {
 		if(mBufferList->mBuffers[i].mDataByteSize != buffer0ByteSize)
 			throw std::logic_error("inconsistent values for mBufferList->mBuffers[].mBytesPerFrame");
 	}
 
-	auto frameLength = buffer0ByteSize / mFormat.mBytesPerFrame;
+	const auto frameLength = buffer0ByteSize / mFormat.mBytesPerFrame;
 	if(frameLength > mFrameCapacity)
 		throw std::logic_error("mBufferList->mBuffers[0].mBytesPerFrame / mFormat.mBytesPerFrame > mFrameCapacity");
 
@@ -153,9 +153,9 @@ UInt32 SFB::CABufferList::InsertFromBuffer(const CABufferList& buffer, UInt32 re
 	if(readOffset > buffer.mFrameLength || writeOffset > mFrameLength || frameLength == 0 || buffer.mFrameLength == 0)
 		return 0;
 
-	auto framesToInsert = std::min(mFrameCapacity - mFrameLength, std::min(frameLength, buffer.mFrameLength - readOffset));
+	const auto framesToInsert = std::min(mFrameCapacity - mFrameLength, std::min(frameLength, buffer.mFrameLength - readOffset));
 
-	auto framesToMove = mFrameLength - writeOffset;
+	const auto framesToMove = mFrameLength - writeOffset;
 	if(framesToMove) {
 		auto moveToOffset = writeOffset + framesToInsert;
 		for(UInt32 i = 0; i < mBufferList->mNumberBuffers; ++i) {
@@ -183,9 +183,9 @@ UInt32 SFB::CABufferList::TrimAtOffset(UInt32 offset, UInt32 frameLength) noexce
 	if(offset > mFrameLength || frameLength == 0)
 		return 0;
 
-	auto framesToTrim = std::min(frameLength, mFrameLength - offset);
+	const auto framesToTrim = std::min(frameLength, mFrameLength - offset);
 
-	auto framesToMove = mFrameLength - (offset + framesToTrim);
+	const auto framesToMove = mFrameLength - (offset + framesToTrim);
 	if(framesToMove) {
 		auto moveFromOffset = offset + framesToTrim;
 		for(UInt32 i = 0; i < mBufferList->mNumberBuffers; ++i) {
@@ -209,9 +209,9 @@ UInt32 SFB::CABufferList::InsertSilence(UInt32 offset, UInt32 frameLength) noexc
 	if(offset > mFrameLength || frameLength == 0)
 		return 0;
 
-	auto framesToZero = std::min(mFrameCapacity - mFrameLength, frameLength);
+	const auto framesToZero = std::min(mFrameCapacity - mFrameLength, frameLength);
 
-	auto framesToMove = mFrameLength - offset;
+	const auto framesToMove = mFrameLength - offset;
 	if(framesToMove) {
 		auto moveToOffset = offset + framesToZero;
 		for(UInt32 i = 0; i < mBufferList->mNumberBuffers; ++i) {
