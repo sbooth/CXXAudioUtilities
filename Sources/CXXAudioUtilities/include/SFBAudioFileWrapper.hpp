@@ -47,7 +47,7 @@ public:
 	}
 
 	/// Creates an @c AudioFileWrapper managing @c audioFile
-	AudioFileWrapper(AudioFileID _Nonnull audioFile) noexcept
+	AudioFileWrapper(AudioFileID _Nullable audioFile) noexcept
 	: mAudioFile{audioFile}
 	{}
 
