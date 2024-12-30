@@ -114,17 +114,13 @@ uint32_t SFB::RingBuffer::Read(void * const destinationBuffer, uint32_t byteCoun
 		return 0;
 
 	const auto bytesToRead = std::min(bytesAvailable, byteCount);
-	const auto bufferAtReadPosition = reinterpret_cast<uintptr_t>(mBuffer) + readPosition;
 	if(readPosition + bytesToRead > mCapacityBytes) {
 		const auto bytesAfterReadPointer = mCapacityBytes - readPosition;
-
-		std::memcpy(destinationBuffer, reinterpret_cast<const void *>(bufferAtReadPosition), bytesAfterReadPointer);
-
-		const auto dst = reinterpret_cast<uintptr_t>(destinationBuffer) + bytesAfterReadPointer;
-		std::memcpy(reinterpret_cast<void *>(dst), mBuffer, bytesToRead - bytesAfterReadPointer);
+		std::memcpy(destinationBuffer, reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(mBuffer) + readPosition), bytesAfterReadPointer);
+		std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(destinationBuffer) + bytesAfterReadPointer), mBuffer, bytesToRead - bytesAfterReadPointer);
 	}
 	else
-		std::memcpy(destinationBuffer, reinterpret_cast<const void *>(bufferAtReadPosition), bytesToRead);
+		std::memcpy(destinationBuffer, reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(mBuffer) + readPosition), bytesToRead);
 
 	mReadPosition.store((readPosition + bytesToRead) & mCapacityBytesMask, std::memory_order_release);
 
@@ -149,17 +145,13 @@ uint32_t SFB::RingBuffer::Peek(void * const destinationBuffer, uint32_t byteCoun
 		return 0;
 
 	const auto bytesToRead = std::min(bytesAvailable, byteCount);
-	const auto bufferAtReadPosition = reinterpret_cast<uintptr_t>(mBuffer) + readPosition;
 	if(readPosition + bytesToRead > mCapacityBytes) {
 		auto bytesAfterReadPointer = mCapacityBytes - readPosition;
-
-		std::memcpy(destinationBuffer, reinterpret_cast<const void *>(bufferAtReadPosition), bytesAfterReadPointer);
-
-		const auto dst = reinterpret_cast<uintptr_t>(destinationBuffer) + bytesAfterReadPointer;
-		std::memcpy(reinterpret_cast<void *>(dst), mBuffer, bytesToRead - bytesAfterReadPointer);
+		std::memcpy(destinationBuffer, reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(mBuffer) + readPosition), bytesAfterReadPointer);
+		std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(destinationBuffer) + bytesAfterReadPointer), mBuffer, bytesToRead - bytesAfterReadPointer);
 	}
 	else
-		std::memcpy(destinationBuffer, reinterpret_cast<const void *>(bufferAtReadPosition), bytesToRead);
+		std::memcpy(destinationBuffer, reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(mBuffer) + readPosition), bytesToRead);
 
 	return bytesToRead;
 }
@@ -184,17 +176,13 @@ uint32_t SFB::RingBuffer::Write(const void * const sourceBuffer, uint32_t byteCo
 		return 0;
 
 	const auto bytesToWrite = std::min(bytesAvailable, byteCount);
-	const auto bufferAtWritePosition = reinterpret_cast<uintptr_t>(mBuffer) + writePosition;
 	if(writePosition + bytesToWrite > mCapacityBytes) {
 		auto bytesAfterWritePointer = mCapacityBytes - writePosition;
-
-		std::memcpy(reinterpret_cast<void *>(bufferAtWritePosition), sourceBuffer, bytesAfterWritePointer);
-
-		const auto src = reinterpret_cast<uintptr_t>(sourceBuffer) + bytesAfterWritePointer;
-		std::memcpy(mBuffer, reinterpret_cast<const void *>(src), bytesToWrite - bytesAfterWritePointer);
+		std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(mBuffer) + writePosition), sourceBuffer, bytesAfterWritePointer);
+		std::memcpy(mBuffer, reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(sourceBuffer) + bytesAfterWritePointer), bytesToWrite - bytesAfterWritePointer);
 	}
 	else
-		std::memcpy(reinterpret_cast<void *>(bufferAtWritePosition), sourceBuffer, bytesToWrite);
+		std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(mBuffer) + writePosition), sourceBuffer, bytesToWrite);
 
 	mWritePosition.store((writePosition + bytesToWrite) & mCapacityBytesMask, std::memory_order_release);
 
@@ -226,11 +214,10 @@ const SFB::RingBuffer::ReadBufferPair SFB::RingBuffer::ReadVector() const noexce
 
 	const auto endOfRead = readPosition + bytesAvailable;
 
-	const auto bufferAtReadPosition = reinterpret_cast<uintptr_t>(mBuffer) + readPosition;
 	if(endOfRead > mCapacityBytes)
-		return { { reinterpret_cast<const void *>(bufferAtReadPosition), mCapacityBytes - readPosition }, { mBuffer, endOfRead & mCapacityBytes } };
+		return { { reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(mBuffer) + readPosition), mCapacityBytes - readPosition }, { mBuffer, endOfRead & mCapacityBytes } };
 	else
-		return { { reinterpret_cast<const void *>(bufferAtReadPosition), bytesAvailable }, {} };
+		return { { reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(mBuffer) + readPosition), bytesAvailable }, {} };
 }
 
 const SFB::RingBuffer::WriteBufferPair SFB::RingBuffer::WriteVector() const noexcept
@@ -248,9 +235,8 @@ const SFB::RingBuffer::WriteBufferPair SFB::RingBuffer::WriteVector() const noex
 
 	const auto endOfWrite = writePosition + bytesAvailable;
 
-	const auto bufferAtWritePosition = reinterpret_cast<uintptr_t>(mBuffer) + writePosition;
 	if(endOfWrite > mCapacityBytes)
-		return { { reinterpret_cast<void *>(bufferAtWritePosition), mCapacityBytes - writePosition }, { mBuffer, endOfWrite & mCapacityBytes } };
+		return { { reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(mBuffer) + writePosition), mCapacityBytes - writePosition }, { mBuffer, endOfWrite & mCapacityBytes } };
 	else
-		return { { reinterpret_cast<void *>(bufferAtWritePosition), bytesAvailable }, {} };
+		return { { reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(mBuffer) + writePosition), bytesAvailable }, {} };
 }
