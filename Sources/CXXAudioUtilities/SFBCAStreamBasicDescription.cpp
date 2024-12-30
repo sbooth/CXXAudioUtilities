@@ -127,7 +127,7 @@ CFStringRef SFB::CAStreamBasicDescription::CopyFormatDescription() const noexcep
 	CFStringAppendFormat(result, nullptr, CFSTR("%u ch @ %g Hz, "), mChannelsPerFrame, mSampleRate);
 
 	// Shorter description for common formats
-	if(auto commonFormat = CommonFormat(); commonFormat.has_value()) {
+	if(const auto commonFormat = CommonFormat(); commonFormat.has_value()) {
 		switch(commonFormat.value()) {
 			case CommonPCMFormat::int16:
 				CFStringAppendCString(result, "Int16, ", kCFStringEncodingASCII);
