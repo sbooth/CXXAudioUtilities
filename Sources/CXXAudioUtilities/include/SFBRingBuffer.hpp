@@ -180,7 +180,7 @@ public:
 	/// A read-only memory buffer
 	struct ReadBuffer {
 		/// The memory buffer location
-		const uint8_t * const _Nullable mBuffer = nullptr;
+		const void * const _Nullable mBuffer = nullptr;
 		/// The number of bytes of valid data in @c mBuffer
 		const uint32_t mBufferSize = 0;
 
@@ -190,7 +190,7 @@ public:
 		/// Construct a @c ReadBuffer for the specified location and size
 		/// @param buffer The memory buffer location
 		/// @param bufferSize The number of bytes of valid data in @c buffer
-		ReadBuffer(const uint8_t * const _Nullable buffer, uint32_t bufferSize) noexcept
+		ReadBuffer(const void * const _Nullable buffer, uint32_t bufferSize) noexcept
 		: mBuffer{buffer}, mBufferSize{bufferSize}
 		{}
 	};
@@ -205,7 +205,7 @@ public:
 	/// A write-only memory buffer
 	struct WriteBuffer {
 		/// The memory buffer location
-		uint8_t * const _Nullable mBuffer = nullptr;
+		void * const _Nullable mBuffer = nullptr;
 		/// The capacity of @c mBuffer in bytes
 		const uint32_t mBufferCapacity = 0;
 
@@ -215,7 +215,7 @@ public:
 		/// Construct a @c WriteBuffer for the specified location and capacity
 		/// @param buffer The memory buffer location
 		/// @param bufferCapacity The capacity of @c buffer in bytes
-		WriteBuffer(uint8_t * const _Nullable buffer, uint32_t bufferCapacity) noexcept
+		WriteBuffer(void * const _Nullable buffer, uint32_t bufferCapacity) noexcept
 		: mBuffer{buffer}, mBufferCapacity{bufferCapacity}
 		{}
 	};
@@ -229,7 +229,7 @@ public:
 private:
 
 	/// The memory buffer holding the data
-	uint8_t * _Nullable mBuffer = nullptr;
+	void * _Nullable mBuffer = nullptr;
 
 	/// The capacity of @c mBuffer in bytes
 	uint32_t mCapacityBytes = 0;
