@@ -17,7 +17,7 @@ namespace {
 /// Returns the smallest power of two value greater than @c x
 /// @param x A value in the range [2..2147483648]
 /// @return The smallest power of two greater than @c x
-inline constexpr uint32_t NextPowerOfTwo(uint32_t x) noexcept
+constexpr uint32_t NextPowerOfTwo(uint32_t x) noexcept
 {
 	assert(x > 1);
 	assert(x <= ((std::numeric_limits<uint32_t>::max() / 2) + 1));

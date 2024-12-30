@@ -19,7 +19,7 @@ namespace {
 /// @param bufferCount The number of buffers
 /// @param byteOffset The byte offset in @c buffers to begin writing
 /// @param byteCount The number of bytes per non-interleaved buffer to write
-inline void ZeroRange(uint8_t * const _Nonnull * const _Nonnull buffers, uint32_t bufferCount, uint32_t byteOffset, uint32_t byteCount)
+void ZeroRange(uint8_t * const _Nonnull * const _Nonnull buffers, uint32_t bufferCount, uint32_t byteOffset, uint32_t byteCount)
 {
 	for(uint32_t i = 0; i < bufferCount; ++i)
 		std::memset(buffers[i] + byteOffset, 0, byteCount);
@@ -29,7 +29,7 @@ inline void ZeroRange(uint8_t * const _Nonnull * const _Nonnull buffers, uint32_
 /// @param bufferList The destination buffers
 /// @param byteOffset The byte offset in @c bufferList to begin writing
 /// @param byteCount The maximum number of bytes per non-interleaved buffer to write
-inline void ZeroABL(AudioBufferList * const _Nonnull bufferList, uint32_t byteOffset, uint32_t byteCount)
+void ZeroABL(AudioBufferList * const _Nonnull bufferList, uint32_t byteOffset, uint32_t byteCount)
 {
 	for(UInt32 i = 0; i < bufferList->mNumberBuffers; ++i) {
 		if(byteOffset > bufferList->mBuffers[i].mDataByteSize)
@@ -44,7 +44,7 @@ inline void ZeroABL(AudioBufferList * const _Nonnull bufferList, uint32_t byteOf
 /// @param bufferList The source buffers
 /// @param srcOffset The byte offset in @c bufferList to begin reading
 /// @param byteCount The maximum number of bytes per non-interleaved buffer to read and write
-inline void StoreABL(uint8_t * const _Nonnull * const _Nonnull buffers, uint32_t dstOffset, const AudioBufferList * const _Nonnull bufferList, uint32_t srcOffset, uint32_t byteCount) noexcept
+void StoreABL(uint8_t * const _Nonnull * const _Nonnull buffers, uint32_t dstOffset, const AudioBufferList * const _Nonnull bufferList, uint32_t srcOffset, uint32_t byteCount) noexcept
 {
 	for(UInt32 i = 0; i < bufferList->mNumberBuffers; ++i) {
 		if(srcOffset > bufferList->mBuffers[i].mDataByteSize)
@@ -59,7 +59,7 @@ inline void StoreABL(uint8_t * const _Nonnull * const _Nonnull buffers, uint32_t
 /// @param buffers The source buffers
 /// @param srcOffset The byte offset in @c bufferList to begin reading
 /// @param byteCount The maximum number of bytes per non-interleaved buffer to read and write
-inline void FetchABL(AudioBufferList * const _Nonnull bufferList, uint32_t dstOffset, const uint8_t * const _Nonnull * const _Nonnull buffers, uint32_t srcOffset, uint32_t byteCount) noexcept
+void FetchABL(AudioBufferList * const _Nonnull bufferList, uint32_t dstOffset, const uint8_t * const _Nonnull * const _Nonnull buffers, uint32_t srcOffset, uint32_t byteCount) noexcept
 {
 	for(UInt32 i = 0; i < bufferList->mNumberBuffers; ++i) {
 		if(dstOffset > bufferList->mBuffers[i].mDataByteSize)
@@ -71,7 +71,7 @@ inline void FetchABL(AudioBufferList * const _Nonnull bufferList, uint32_t dstOf
 /// Returns the smallest power of two value greater than @c x
 /// @param x A value in the range [2..2147483648]
 /// @return The smallest power of two greater than @c x
-inline constexpr uint32_t NextPowerOfTwo(uint32_t x) noexcept
+constexpr uint32_t NextPowerOfTwo(uint32_t x) noexcept
 {
 	assert(x > 1);
 	assert(x <= ((std::numeric_limits<uint32_t>::max() / 2) + 1));
