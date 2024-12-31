@@ -24,17 +24,22 @@ AudioBufferList * SFB::AllocateAudioBufferList(const CAStreamBasicDescription& f
 	const auto bufferListSize = offsetof(AudioBufferList, mBuffers) + (sizeof(AudioBuffer) * bufferCount);
 	const auto allocationSize = bufferListSize + (bufferDataSize * bufferCount);
 
-	auto abl = static_cast<AudioBufferList *>(std::malloc(allocationSize));
-	if(!abl)
+	auto allocation = std::malloc(allocationSize);
+	if(!allocation)
 		return nullptr;
 
-	std::memset(abl, 0, allocationSize);
+	// Zero the entire allocation
+	std::memset(allocation, 0, allocationSize);
 
+	// Assign the pointers and buffers
+	auto address = reinterpret_cast<uintptr_t>(allocation);
+
+	auto abl = reinterpret_cast<AudioBufferList *>(address);
 	abl->mNumberBuffers = bufferCount;
 
 	for(UInt32 i = 0; i < bufferCount; ++i) {
 		abl->mBuffers[i].mNumberChannels = format.InterleavedChannelCount();
-		abl->mBuffers[i].mData = reinterpret_cast<uint8_t *>(abl) + bufferListSize + (bufferDataSize * i);
+		abl->mBuffers[i].mData = reinterpret_cast<void *>(address + bufferListSize + (bufferDataSize * i));
 		abl->mBuffers[i].mDataByteSize = bufferDataSize;
 	}
 
@@ -159,18 +164,18 @@ UInt32 SFB::CABufferList::InsertFromBuffer(const CABufferList& buffer, UInt32 re
 	if(framesToMove) {
 		auto moveToOffset = writeOffset + framesToInsert;
 		for(UInt32 i = 0; i < mBufferList->mNumberBuffers; ++i) {
-			auto dst = static_cast<uint8_t *>(mBufferList->mBuffers[i].mData) + (moveToOffset * mFormat.mBytesPerFrame);
-			const auto src = static_cast<const uint8_t *>(mBufferList->mBuffers[i].mData) + (writeOffset * mFormat.mBytesPerFrame);
-			std::memmove(dst, src, framesToMove * mFormat.mBytesPerFrame);
+			const auto data = reinterpret_cast<uintptr_t>(mBufferList->mBuffers[i].mData);
+			std::memmove(reinterpret_cast<void *>(data + (moveToOffset * mFormat.mBytesPerFrame)),
+						 reinterpret_cast<const void *>(data + (writeOffset * mFormat.mBytesPerFrame)),
+						 framesToMove * mFormat.mBytesPerFrame);
 		}
 	}
 
 	if(framesToInsert) {
-		for(UInt32 i = 0; i < buffer.mBufferList->mNumberBuffers; ++i) {
-			auto dst = static_cast<uint8_t *>(mBufferList->mBuffers[i].mData) + (writeOffset * mFormat.mBytesPerFrame);
-			const auto src = static_cast<const uint8_t *>(buffer.mBufferList->mBuffers[i].mData) + (readOffset * mFormat.mBytesPerFrame);
-			std::memcpy(dst, src, framesToInsert * mFormat.mBytesPerFrame);
-		}
+		for(UInt32 i = 0; i < buffer.mBufferList->mNumberBuffers; ++i)
+			std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(mBufferList->mBuffers[i].mData) + (writeOffset * mFormat.mBytesPerFrame)),
+						reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(buffer.mBufferList->mBuffers[i].mData) + (readOffset * mFormat.mBytesPerFrame)),
+						framesToInsert * mFormat.mBytesPerFrame);
 
 		SetFrameLength(mFrameLength + framesToInsert);
 	}
@@ -189,9 +194,10 @@ UInt32 SFB::CABufferList::TrimAtOffset(UInt32 offset, UInt32 frameLength) noexce
 	if(framesToMove) {
 		auto moveFromOffset = offset + framesToTrim;
 		for(UInt32 i = 0; i < mBufferList->mNumberBuffers; ++i) {
-			auto dst = static_cast<uint8_t *>(mBufferList->mBuffers[i].mData) + (offset * mFormat.mBytesPerFrame);
-			const auto src = static_cast<const uint8_t *>(mBufferList->mBuffers[i].mData) + (moveFromOffset * mFormat.mBytesPerFrame);
-			std::memmove(dst, src, framesToMove * mFormat.mBytesPerFrame);
+			const auto data = reinterpret_cast<uintptr_t>(mBufferList->mBuffers[i].mData);
+			std::memmove(reinterpret_cast<void *>(data + (offset * mFormat.mBytesPerFrame)),
+						 reinterpret_cast<const void *>(data + (moveFromOffset * mFormat.mBytesPerFrame)),
+						 framesToMove * mFormat.mBytesPerFrame);
 		}
 	}
 
@@ -215,9 +221,10 @@ UInt32 SFB::CABufferList::InsertSilence(UInt32 offset, UInt32 frameLength) noexc
 	if(framesToMove) {
 		auto moveToOffset = offset + framesToZero;
 		for(UInt32 i = 0; i < mBufferList->mNumberBuffers; ++i) {
-			auto dst = static_cast<uint8_t *>(mBufferList->mBuffers[i].mData) + (moveToOffset * mFormat.mBytesPerFrame);
-			const auto src = static_cast<const uint8_t *>(mBufferList->mBuffers[i].mData) + (offset * mFormat.mBytesPerFrame);
-			std::memmove(dst, src, framesToMove * mFormat.mBytesPerFrame);
+			const auto data = reinterpret_cast<uintptr_t>(mBufferList->mBuffers[i].mData);
+			std::memmove(reinterpret_cast<void *>(data + (moveToOffset * mFormat.mBytesPerFrame)),
+						 reinterpret_cast<const void *>(data + (offset * mFormat.mBytesPerFrame)),
+						 framesToMove * mFormat.mBytesPerFrame);
 		}
 	}
 
@@ -225,8 +232,8 @@ UInt32 SFB::CABufferList::InsertSilence(UInt32 offset, UInt32 frameLength) noexc
 		// For floating-point numbers this code is non-portable: the C standard doesn't require IEEE 754 compliance
 		// However, setting all bits to 0 using memset() on macOS results in a floating-point value of 0
 		for(UInt32 i = 0; i < mBufferList->mNumberBuffers; ++i) {
-			auto dst = static_cast<uint8_t *>(mBufferList->mBuffers[i].mData) + (offset * mFormat.mBytesPerFrame);
-			std::memset(dst, 0, framesToZero * mFormat.mBytesPerFrame);
+			auto s = reinterpret_cast<uintptr_t>(mBufferList->mBuffers[i].mData) + (offset * mFormat.mBytesPerFrame);
+			std::memset(reinterpret_cast<void *>(s), 0, framesToZero * mFormat.mBytesPerFrame);
 		}
 
 		SetFrameLength(mFrameLength + framesToZero);
