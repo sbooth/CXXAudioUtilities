@@ -325,7 +325,7 @@ public:
 
 private:
 
-	/// The underlying @c AudioChannelLayout struct
+	/// The underlying @c AudioBufferList struct
 	AudioBufferList * _Nullable mBufferList = nullptr;
 	/// The format of @c mBufferList
 	CAStreamBasicDescription mFormat = {};
