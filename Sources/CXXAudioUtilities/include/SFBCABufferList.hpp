@@ -105,23 +105,25 @@ public:
 	/// @throws @c std::logic_error if the @c mDataByteSize values are inconsistent
 	bool InferFrameLengthFromABL();
 
+	/// Returns @c true if the frame length is zero
 	bool IsEmpty() const noexcept
 	{
 		return mFrameLength == 0;
 	}
 
+	/// Returns @c true if the frame length is equal to the audio frame capacity
 	bool IsFull() const noexcept
 	{
 		return mFrameLength == mFrameCapacity;
 	}
 
-	/// Returns the audio frame capacity of this @c CABufferList
+	/// Returns the audio frame capacity
 	UInt32 FrameCapacity() const noexcept
 	{
 		return mFrameCapacity;
 	}
 
-	/// Returns the format of this @c CABufferList
+	/// Returns the audio format of the buffer list
 	const CAStreamBasicDescription& Format() const noexcept
 	{
 		return mFormat;
@@ -325,7 +327,7 @@ public:
 
 private:
 
-	/// The underlying @c AudioChannelLayout struct
+	/// The underlying @c AudioBufferList struct
 	AudioBufferList * _Nullable mBufferList = nullptr;
 	/// The format of @c mBufferList
 	CAStreamBasicDescription mFormat = {};
