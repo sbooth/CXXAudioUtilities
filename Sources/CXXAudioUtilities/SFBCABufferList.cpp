@@ -31,7 +31,7 @@ AudioBufferList * SFB::AllocateAudioBufferList(const CAStreamBasicDescription& f
 	// Zero the entire allocation
 	std::memset(allocation, 0, allocationSize);
 
-	// Assign the pointers and buffers
+	// Assign the buffers
 	auto address = reinterpret_cast<uintptr_t>(allocation);
 
 	auto abl = reinterpret_cast<AudioBufferList *>(address);
