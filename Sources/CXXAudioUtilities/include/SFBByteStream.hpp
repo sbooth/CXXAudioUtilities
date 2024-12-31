@@ -258,7 +258,7 @@ public:
 	{
 		auto bytesToCopy = std::min(count, mBufferLength - mReadPosition);
 		if(buf)
-			std::memcpy(buf, static_cast<const uint8_t *>(mBuffer) + mReadPosition, bytesToCopy);
+			std::memcpy(buf, reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(mBuffer) + mReadPosition), bytesToCopy);
 		mReadPosition += bytesToCopy;
 		return bytesToCopy;
 	}
