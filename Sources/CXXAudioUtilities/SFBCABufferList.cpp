@@ -34,7 +34,7 @@ AudioBufferList * SFB::AllocateAudioBufferList(const CAStreamBasicDescription& f
 	// Assign the buffers
 	auto address = reinterpret_cast<uintptr_t>(allocation);
 
-	auto abl = reinterpret_cast<AudioBufferList *>(address);
+	auto abl = static_cast<AudioBufferList *>(reinterpret_cast<void *>(address));
 	abl->mNumberBuffers = bufferCount;
 
 	for(UInt32 i = 0; i < bufferCount; ++i) {
