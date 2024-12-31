@@ -213,8 +213,6 @@ struct cf_type_ref_deleter {
 template <typename T>
 using cf_type_ref_unique_ptr = std::unique_ptr<std::remove_pointer_t<T>, cf_type_ref_deleter>;
 
-/// A @c std::unique_ptr holding a @c CFArrayRef
-using cf_array_unique_ptr = cf_type_ref_unique_ptr<CFArrayRef>;
 /// A @c std::unique_ptr holding a @c CFStringRef
 using cf_string_unique_ptr = cf_type_ref_unique_ptr<CFStringRef>;
 
@@ -230,26 +228,6 @@ cf_string_unique_ptr CopyChannelLabelName(AudioChannelLabel channelLabel, bool s
 		return nullptr;
 
 	return cf_string_unique_ptr{channelName};
-}
-
-/// Returns an array of channel names for @c channelDescriptions
-cf_array_unique_ptr CreateChannelNameArrayForChannelDescriptions(const AudioChannelDescription *channelDescriptions, UInt32 count, bool shortNames) noexcept
-{
-	if(!channelDescriptions || count == 0)
-		return nullptr;
-
-	cf_type_ref_unique_ptr<CFMutableArrayRef> array{CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks)};
-
-	const auto property = shortNames ? kAudioFormatProperty_ChannelShortName : kAudioFormatProperty_ChannelName;
-
-	for(UInt32 i = 0; i < count; ++i) {
-		if(auto channelName = CopyChannelLabelName(channelDescriptions[i].mChannelLabel, shortNames); channelName)
-			CFArrayAppendValue(array.get(), reinterpret_cast<const void *>(channelName.get()));
-		else
-			CFArrayAppendValue(array.get(), CFSTR("?"));
-	}
-
-	return array;
 }
 
 /// Joins strings from @c array separated by @c delimiter
