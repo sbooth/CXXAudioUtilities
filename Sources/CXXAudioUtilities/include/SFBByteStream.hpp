@@ -99,7 +99,7 @@ public:
 	/// @return @c true if the objects are not equal, @c false otherwise
 	bool operator!=(const ByteStream& rhs) noexcept
 	{
-		return mBuffer != rhs.mBuffer || mBufferLength != rhs.mBufferLength || mReadPosition != rhs.mReadPosition;
+		return !operator==(rhs);
 	}
 
 

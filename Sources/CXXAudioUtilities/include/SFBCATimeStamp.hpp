@@ -131,7 +131,7 @@ public:
 	/// Returns @c true if @c rhs is less than or equal to @c this
 	bool operator<=(const AudioTimeStamp& rhs) const noexcept
 	{
-		return operator<(rhs) || operator==(rhs);
+		return !operator>(rhs);
 	}
 
 	/// Returns @c true if @c rhs is greater than or equal to @c this
@@ -143,7 +143,7 @@ public:
 	/// Returns @c true if @c rhs is greater than @c this
 	bool operator>(const AudioTimeStamp& rhs) const noexcept
 	{
-		return !(operator<(rhs) || operator==(rhs));
+		return rhs < lhs;
 	}
 
 #pragma mark Flags
