@@ -294,12 +294,6 @@ public:
 		return mBufferList != nullptr;
 	}
 
-	/// Returns @c true if this object's internal @c AudioBufferList is @c nullptr
-	bool operator!() const noexcept
-	{
-		return !operator bool();
-	}
-
 
 	/// Returns a pointer to this object's internal @c AudioBufferList
 	AudioBufferList * _Nullable operator->() noexcept

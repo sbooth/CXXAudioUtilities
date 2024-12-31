@@ -183,12 +183,6 @@ public:
 		return mChannelLayout != nullptr;
 	}
 
-	/// Returns @c true if this object's internal @c AudioChannelLayout is @c nullptr
-	bool operator!() const noexcept
-	{
-		return !operator bool();
-	}
-
 
 	/// Retrieve a const pointer to this object's internal @c AudioChannelLayout
 	const AudioChannelLayout * _Nullable operator->() const noexcept

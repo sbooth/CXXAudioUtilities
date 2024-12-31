@@ -61,12 +61,6 @@ public:
 		return mObjectID != kAudioObjectUnknown;
 	}
 
-	/// Returns @c true if this object's @c AudioObjectID is @c kAudioObjectUnknown
-	bool operator!() const noexcept
-	{
-		return !operator bool();
-	}
-
 	/// Returns @c true if @c rhs is equal to @c this
 	bool operator==(AudioObjectID rhs) const noexcept
 	{

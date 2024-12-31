@@ -61,12 +61,6 @@ public:
 		return mConverter != nullptr;
 	}
 
-	/// Returns @c true if this object's internal @c AudioConverterRef is @c nullptr
-	bool operator!() const noexcept
-	{
-		return !operator bool();
-	}
-
 	/// Returns @c true if this object's internal @c AudioConverterRef is not @c nullptr
 	bool IsValid() const noexcept
 	{

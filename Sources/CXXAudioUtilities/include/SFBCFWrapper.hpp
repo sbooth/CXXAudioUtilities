@@ -169,12 +169,6 @@ public:
 		return mObject != nullptr;
 	}
 
-	/// Returns @c true if the wrapped object is @c nullptr
-	bool operator!() const noexcept
-	{
-		return !operator bool();
-	}
-
 	/// Returns the wrapped object
 	operator T() const noexcept
 	{
