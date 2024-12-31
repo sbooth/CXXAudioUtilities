@@ -143,7 +143,16 @@ public:
 	/// Returns @c true if @c rhs is greater than @c this
 	bool operator>(const AudioTimeStamp& rhs) const noexcept
 	{
-		return rhs < lhs;
+		if(SampleTimeIsValid() && (rhs.mFlags & kAudioTimeStampSampleTimeValid))
+			return mSampleTime > rhs.mSampleTime;
+
+		if(HostTimeIsValid() && (rhs.mFlags & kAudioTimeStampHostTimeValid))
+			return mHostTime > rhs.mHostTime;
+
+		if(WordClockTimeIsValid() && (rhs.mFlags & kAudioTimeStampWordClockTimeValid))
+			return mWordClockTime > rhs.mWordClockTime;
+
+		return false;
 	}
 
 #pragma mark Flags
@@ -152,12 +161,6 @@ public:
 	explicit operator bool() const noexcept
 	{
 		return mFlags != kAudioTimeStampNothingValid;
-	}
-
-	/// Returns @c true if the @c CATimeStamp is not valid
-	bool operator!() const noexcept
-	{
-		return !operator bool();
 	}
 
 	/// Returns @c true if the @c CATimeStamp is valid
