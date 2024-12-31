@@ -213,8 +213,6 @@ struct cf_type_ref_deleter {
 template <typename T>
 using cf_type_ref_unique_ptr = std::unique_ptr<std::remove_pointer_t<T>, cf_type_ref_deleter>;
 
-/// A @c std::unique_ptr holding a @c CFArrayRef
-using cf_array_unique_ptr = cf_type_ref_unique_ptr<CFArrayRef>;
 /// A @c std::unique_ptr holding a @c CFStringRef
 using cf_string_unique_ptr = cf_type_ref_unique_ptr<CFStringRef>;
 
