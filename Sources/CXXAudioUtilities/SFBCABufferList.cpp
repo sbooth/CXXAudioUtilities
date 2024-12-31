@@ -39,8 +39,8 @@ AudioBufferList * SFB::AllocateAudioBufferList(const CAStreamBasicDescription& f
 
 	for(UInt32 i = 0; i < bufferCount; ++i) {
 		abl->mBuffers[i].mNumberChannels = format.InterleavedChannelCount();
-		abl->mBuffers[i].mData = reinterpret_cast<void *>(address + bufferListSize + (bufferDataSize * i));
 		abl->mBuffers[i].mDataByteSize = bufferDataSize;
+		abl->mBuffers[i].mData = reinterpret_cast<void *>(address + bufferListSize + (bufferDataSize * i));
 	}
 
 	return abl;
