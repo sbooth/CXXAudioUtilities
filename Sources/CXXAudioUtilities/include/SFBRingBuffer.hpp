@@ -184,32 +184,32 @@ public:
 		if(wvec.first.mBufferCapacity + wvec.second.mBufferCapacity < totalSize)
 			return false;
 
-		uint32_t written = 0;
+		uint32_t bytesWritten = 0;
 
 		([&]
 		 {
 			uint32_t bytesRemaining = sizeof(args);
 
 			// Write to wvec.first if space is available
-			if(wvec.first.mBufferCapacity > written) {
-				const auto n = std::min(bytesRemaining, wvec.first.mBufferCapacity - written);
-				std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(wvec.first.mBuffer) + written),
+			if(wvec.first.mBufferCapacity > bytesWritten) {
+				const auto n = std::min(bytesRemaining, wvec.first.mBufferCapacity - bytesWritten);
+				std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(wvec.first.mBuffer) + bytesWritten),
 							static_cast<const void *>(&args),
 							n);
 				bytesRemaining -= n;
-				written += n;
+				bytesWritten += n;
 			}
 			// Write to wvec.second
 			if(bytesRemaining > 0){
 				const auto n = bytesRemaining;
-				std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(wvec.second.mBuffer) + (written - wvec.first.mBufferCapacity)),
+				std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(wvec.second.mBuffer) + (bytesWritten - wvec.first.mBufferCapacity)),
 							static_cast<const void *>(&args),
 							n);
-				written += n;
+				bytesWritten += n;
 			}
 		}(), ...);
 
-		AdvanceWritePosition(written);
+		AdvanceWritePosition(bytesWritten);
 
 		return true;
 	}
