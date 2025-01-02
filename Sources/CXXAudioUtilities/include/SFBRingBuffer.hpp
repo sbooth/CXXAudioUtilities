@@ -6,6 +6,7 @@
 
 #pragma once
 
+#import <algorithm>
 #import <atomic>
 #import <optional>
 #import <type_traits>
@@ -172,13 +173,46 @@ public:
 	/// @tparam Args The types to write
 	/// @param args The values to write
 	/// @return @c true if the values were successfully written
-	template <typename... Args>
+	template <typename... Args/*, typename = std::enable_if_t<std::conjunction_v<std::is_trivially_copyable<Args>...>>*/>
 	bool WriteValues(Args&&... args) noexcept
 	{
-		auto size = static_cast<uint32_t>((sizeof(args) + ...));
-		if(BytesAvailableToWrite() < size)
+		const uint32_t totalSize = (sizeof(args) + ...);
+
+		auto wvec = WriteVector();
+
+		// Don't write anything if there is insufficient space
+		if(wvec.first.mBufferCapacity + wvec.second.mBufferCapacity < totalSize)
 			return false;
-		return (WriteValue(args) && ...);
+
+		uint32_t written = 0;
+
+		([&]
+		 {
+			const uint32_t size = sizeof(args);
+			uint32_t bytesRemaining = size;
+
+			// Write to wvec.first if space is available
+			if(wvec.first.mBufferCapacity > written) {
+				const auto n = std::min(size, wvec.first.mBufferCapacity - written);
+				std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(wvec.first.mBuffer) + written),
+							static_cast<const void *>(&args),
+							n);
+				bytesRemaining -= n;
+				written += n;
+			}
+			// Write to wvec.second
+			if(bytesRemaining > 0){
+				const auto n = bytesRemaining;
+				std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(wvec.second.mBuffer) + (written - wvec.first.mBufferCapacity)),
+							static_cast<const void *>(&args),
+							n);
+				written += n;
+			}
+		}(), ...);
+
+		AdvanceWritePosition(written);
+
+		return true;
 	}
 	
 #pragma mark Advanced Reading and Writing
