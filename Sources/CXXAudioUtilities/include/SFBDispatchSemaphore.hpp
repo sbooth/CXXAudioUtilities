@@ -41,7 +41,7 @@ public:
 	{
 #if !__has_feature(objc_arc)
 		dispatch_release(mSemaphore);
-#endif
+#endif /* !__has_feature(objc_arc) */
 	}
 
 	// This class is non-movable

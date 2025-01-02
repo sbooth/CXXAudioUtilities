@@ -178,7 +178,7 @@ public:
 		ThrowIfCAAUGraphError(result, "AUGraphIsNodeSubGraph");
 		return flag != 0;
 	}
-#endif
+#endif /* !TARGET_OS_IPHONE */
 
 	// MARK: - Node Interactions
 

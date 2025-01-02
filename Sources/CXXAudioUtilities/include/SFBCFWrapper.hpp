@@ -16,7 +16,7 @@
 
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
-#endif
+#endif /* __OBJC__ */
 
 namespace SFB {
 
@@ -288,7 +288,7 @@ public:
 		return (__bridge ::NSDictionary *)mObject;
 	}
 
-#endif
+#endif /* __OBJC__ */
 
 private:
 
@@ -384,6 +384,6 @@ using CMSDecoder = CFWrapper<CMSDecoderRef>;
 using SecKeychainItem = CFWrapper<SecKeychainItemRef>;
 /// A wrapped @c SecTransformRef
 using SecTransform = CFWrapper<SecTransformRef>;
-#endif
+#endif /* !TARGET_OS_IPHONE */
 
 } /* namespace SFB */
