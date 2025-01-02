@@ -110,11 +110,9 @@ public:
 	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 	bool ReadValue(T& value) noexcept
 	{
-		auto size = static_cast<uint32_t>(sizeof(T));
-		auto bytesRead = Read(static_cast<void *>(&value), size, false);
-		if(bytesRead != size)
-			return false;
-		return true;
+		const auto size = static_cast<uint32_t>(sizeof(T));
+		const auto bytesRead = Read(static_cast<void *>(&value), size, false);
+		return bytesRead == size;
 	}
 
 	/// Reads a value from the @c RingBuffer and advances the read pointer.
@@ -136,11 +134,9 @@ public:
 	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 	bool PeekValue(T& value) const noexcept
 	{
-		auto size = static_cast<uint32_t>(sizeof(T));
-		auto bytesRead = Peek(static_cast<void *>(&value), size, false);
-		if(bytesRead != size)
-			return false;
-		return true;
+		const auto size = static_cast<uint32_t>(sizeof(T));
+		const auto bytesRead = Peek(static_cast<void *>(&value), size, false);
+		return bytesRead == size;
 	}
 
 	/// Reads a value from the @c RingBuffer without advancing the read pointer.
@@ -162,11 +158,9 @@ public:
 	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 	bool WriteValue(const T& value) noexcept
 	{
-		auto size = static_cast<uint32_t>(sizeof(T));
-		auto bytesWritten = Write(static_cast<const void *>(&value), size, false);
-		if(bytesWritten != size)
-			return false;
-		return true;
+		const auto size = static_cast<uint32_t>(sizeof(T));
+		const auto bytesWritten = Write(static_cast<const void *>(&value), size, false);
+		return bytesWritten == size;
 	}
 
 	/// Writes values to the @c RingBuffer and advances the write pointer.
@@ -176,7 +170,7 @@ public:
 	template <typename... Args, typename = std::enable_if_t<std::conjunction_v<std::is_trivially_copyable<Args>...>>>
 	bool WriteValues(const Args&... args) noexcept
 	{
-		const uint32_t totalSize = (sizeof(args) + ...);
+		const auto totalSize = static_cast<uint32_t>((sizeof(args) + ...));
 
 		auto wvec = WriteVector();
 
@@ -188,7 +182,7 @@ public:
 
 		([&]
 		 {
-			uint32_t bytesRemaining = sizeof(args);
+			auto bytesRemaining = static_cast<uint32_t>(sizeof(args));
 
 			// Write to wvec.first if space is available
 			if(wvec.first.mBufferCapacity > bytesWritten) {
