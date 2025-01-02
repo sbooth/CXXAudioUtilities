@@ -188,12 +188,11 @@ public:
 
 		([&]
 		 {
-			const uint32_t size = sizeof(args);
-			uint32_t bytesRemaining = size;
+			uint32_t bytesRemaining = sizeof(args);
 
 			// Write to wvec.first if space is available
 			if(wvec.first.mBufferCapacity > written) {
-				const auto n = std::min(size, wvec.first.mBufferCapacity - written);
+				const auto n = std::min(bytesRemaining, wvec.first.mBufferCapacity - written);
 				std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(wvec.first.mBuffer) + written),
 							static_cast<const void *>(&args),
 							n);
