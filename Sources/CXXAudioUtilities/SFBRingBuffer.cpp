@@ -1,5 +1,5 @@
 //
-// Copyright © 2014-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2014-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -24,7 +24,7 @@ constexpr uint32_t NextPowerOfTwo(uint32_t x) noexcept
 	return static_cast<uint32_t>(1 << (32 - __builtin_clz(x - 1)));
 }
 
-}
+} /* namespace */
 
 #pragma mark Buffer Management
 

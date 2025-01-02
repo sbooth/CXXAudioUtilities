@@ -1,5 +1,5 @@
 //
-// Copyright © 2014-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2014-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -245,4 +245,4 @@ private:
 
 };
 
-} // namespace SFB
+} /* namespace SFB */

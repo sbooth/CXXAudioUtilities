@@ -1,5 +1,5 @@
 //
-// Copyright © 2010-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2010-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -41,7 +41,7 @@ public:
 	{
 #if !__has_feature(objc_arc)
 		dispatch_release(mSemaphore);
-#endif
+#endif /* !__has_feature(objc_arc) */
 	}
 
 	// This class is non-movable
@@ -84,4 +84,4 @@ private:
 
 };
 
-} // namespace SFB
+} /* namespace SFB */
