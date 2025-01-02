@@ -173,7 +173,7 @@ public:
 	/// @tparam Args The types to write
 	/// @param args The values to write
 	/// @return @c true if the values were successfully written
-	template <typename... Args/*, typename = std::enable_if_t<std::conjunction_v<std::is_trivially_copyable<Args>...>>*/>
+	template <typename... Args, typename = std::enable_if_t<std::conjunction_v<std::is_trivially_copyable<Args>...>>>
 	bool WriteValues(const Args&... args) noexcept
 	{
 		const uint32_t totalSize = (sizeof(args) + ...);
