@@ -115,6 +115,51 @@ public:
 		return bytesRead == size;
 	}
 
+	/// Reads values from the @c RingBuffer and advances the read pointer.
+	/// @tparam Args The types to read
+	/// @param args The destination values
+	/// @return @c true if the values were successfully written
+	template <typename... Args, typename = std::enable_if_t<std::conjunction_v<std::is_trivially_copyable<Args>...>>>
+	bool ReadValues(Args&... args) noexcept
+	{
+		const auto totalSize = static_cast<uint32_t>((sizeof(args) + ...));
+
+		auto rvec = ReadVector();
+
+		// Don't read anything if there is insufficient data
+		if(rvec.first.mBufferSize + rvec.second.mBufferSize < totalSize)
+			return false;
+
+		uint32_t bytesRead = 0;
+
+		([&]
+		 {
+			auto bytesRemaining = static_cast<uint32_t>(sizeof(args));
+
+			// Read from rvec.first if data is available
+			if(rvec.first.mBufferSize > bytesRead) {
+				const auto n = std::min(bytesRemaining, rvec.first.mBufferSize - bytesRead);
+				std::memcpy(static_cast<void *>(&args),
+							reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(rvec.first.mBuffer) + bytesRead),
+							n);
+				bytesRemaining -= n;
+				bytesRead += n;
+			}
+			// Read from rvec.second
+			if(bytesRemaining > 0){
+				const auto n = bytesRemaining;
+				std::memcpy(static_cast<void *>(&args),
+							reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(rvec.second.mBuffer) + (bytesRead - rvec.first.mBufferSize)),
+							n);
+				bytesRead += n;
+			}
+		}(), ...);
+
+		AdvanceReadPosition(bytesRead);
+
+		return true;
+	}
+
 	/// Reads a value from the @c RingBuffer and advances the read pointer.
 	/// @tparam T The type to read
 	/// @return A @c std::optional containing an instance of @c T if sufficient bytes were available for reading
