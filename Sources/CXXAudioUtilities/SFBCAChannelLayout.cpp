@@ -1,5 +1,5 @@
 //
-// Copyright © 2013-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2013-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -252,7 +252,7 @@ cf_string_unique_ptr JoinStringArray(CFArrayRef array, CFStringRef delimiter) no
 	return result;
 }
 
-} // namespace
+} /* namespace */
 
 size_t SFB::AudioChannelLayoutSize(const AudioChannelLayout *channelLayout) noexcept
 {

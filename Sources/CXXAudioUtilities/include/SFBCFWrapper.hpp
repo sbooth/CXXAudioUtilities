@@ -1,5 +1,5 @@
 //
-// Copyright © 2012-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2012-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -386,4 +386,4 @@ using SecKeychainItem = CFWrapper<SecKeychainItemRef>;
 using SecTransform = CFWrapper<SecTransformRef>;
 #endif
 
-} // namespace SFB
+} /* namespace SFB */

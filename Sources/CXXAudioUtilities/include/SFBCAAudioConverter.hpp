@@ -165,6 +165,6 @@ private:
 
 };
 
-} // namespace SFB
+} /* namespace SFB */
 
 CF_ASSUME_NONNULL_END
