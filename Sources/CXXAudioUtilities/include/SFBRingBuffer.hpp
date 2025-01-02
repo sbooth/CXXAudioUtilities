@@ -6,6 +6,7 @@
 
 #pragma once
 
+#import <algorithm>
 #import <atomic>
 #import <optional>
 #import <type_traits>
@@ -155,7 +156,7 @@ public:
 	}
 
 	/// Writes a value to the @c RingBuffer and advances the write pointer.
-	/// @tparam T The type to read
+	/// @tparam T The type to write
 	/// @param value The value to write
 	/// @return @c true if @c value was successfully written
 	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
@@ -168,6 +169,51 @@ public:
 		return true;
 	}
 
+	/// Writes values to the @c RingBuffer and advances the write pointer.
+	/// @tparam Args The types to write
+	/// @param args The values to write
+	/// @return @c true if the values were successfully written
+	template <typename... Args, typename = std::enable_if_t<std::conjunction_v<std::is_trivially_copyable<Args>...>>>
+	bool WriteValues(const Args&... args) noexcept
+	{
+		const uint32_t totalSize = (sizeof(args) + ...);
+
+		auto wvec = WriteVector();
+
+		// Don't write anything if there is insufficient space
+		if(wvec.first.mBufferCapacity + wvec.second.mBufferCapacity < totalSize)
+			return false;
+
+		uint32_t bytesWritten = 0;
+
+		([&]
+		 {
+			uint32_t bytesRemaining = sizeof(args);
+
+			// Write to wvec.first if space is available
+			if(wvec.first.mBufferCapacity > bytesWritten) {
+				const auto n = std::min(bytesRemaining, wvec.first.mBufferCapacity - bytesWritten);
+				std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(wvec.first.mBuffer) + bytesWritten),
+							static_cast<const void *>(&args),
+							n);
+				bytesRemaining -= n;
+				bytesWritten += n;
+			}
+			// Write to wvec.second
+			if(bytesRemaining > 0){
+				const auto n = bytesRemaining;
+				std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(wvec.second.mBuffer) + (bytesWritten - wvec.first.mBufferCapacity)),
+							static_cast<const void *>(&args),
+							n);
+				bytesWritten += n;
+			}
+		}(), ...);
+
+		AdvanceWritePosition(bytesWritten);
+
+		return true;
+	}
+	
 #pragma mark Advanced Reading and Writing
 
 	/// Advances the read position by the specified number of bytes.
