@@ -118,7 +118,7 @@ public:
 	/// Reads values from the @c RingBuffer and advances the read pointer.
 	/// @tparam Args The types to read
 	/// @param args The destination values
-	/// @return @c true if the values were successfully written
+	/// @return @c true if the values were successfully read
 	template <typename... Args, typename = std::enable_if_t<std::conjunction_v<std::is_trivially_copyable<Args>...>>>
 	bool ReadValues(Args&... args) noexcept
 	{
