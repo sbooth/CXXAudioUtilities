@@ -124,7 +124,7 @@ public:
 	{
 		const auto totalSize = static_cast<uint32_t>((sizeof(args) + ...));
 
-		auto rvec = ReadVector();
+		const auto rvec = ReadVector();
 
 		// Don't read anything if there is insufficient data
 		if(rvec.first.mBufferSize + rvec.second.mBufferSize < totalSize)
