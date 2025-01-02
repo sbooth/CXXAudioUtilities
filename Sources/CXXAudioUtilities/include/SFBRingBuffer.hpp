@@ -155,7 +155,7 @@ public:
 	}
 
 	/// Writes a value to the @c RingBuffer and advances the write pointer.
-	/// @tparam T The type to read
+	/// @tparam T The type to write
 	/// @param value The value to write
 	/// @return @c true if @c value was successfully written
 	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
@@ -168,6 +168,19 @@ public:
 		return true;
 	}
 
+	/// Writes values to the @c RingBuffer and advances the write pointer.
+	/// @tparam Args The types to write
+	/// @param args The values to write
+	/// @return @c true if the values were successfully written
+	template <typename... Args>
+	bool WriteValues(Args&&... args) noexcept
+	{
+		auto size = static_cast<uint32_t>((sizeof(args) + ...));
+		if(BytesAvailableToWrite() < size)
+			return false;
+		return (WriteValue(args) && ...);
+	}
+	
 #pragma mark Advanced Reading and Writing
 
 	/// Advances the read position by the specified number of bytes.
