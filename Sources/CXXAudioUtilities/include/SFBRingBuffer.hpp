@@ -207,7 +207,7 @@ public:
 
 		return true;
 	}
-	
+
 #pragma mark Advanced Reading and Writing
 
 	/// Advances the read position by the specified number of bytes.
