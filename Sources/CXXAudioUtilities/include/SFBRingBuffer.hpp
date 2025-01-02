@@ -184,6 +184,9 @@ public:
 		/// The number of bytes of valid data in @c mBuffer
 		const uint32_t mBufferSize = 0;
 
+	private:
+		friend class RingBuffer;
+
 		/// Construct an empty @c ReadBuffer
 		ReadBuffer() noexcept = default;
 
@@ -208,6 +211,9 @@ public:
 		void * const _Nullable mBuffer = nullptr;
 		/// The capacity of @c mBuffer in bytes
 		const uint32_t mBufferCapacity = 0;
+
+	private:
+		friend class RingBuffer;
 
 		/// Construct an empty @c WriteBuffer
 		WriteBuffer() noexcept = default;
