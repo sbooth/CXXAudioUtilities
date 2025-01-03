@@ -42,10 +42,8 @@ public:
 
 	/// Move constructor
 	CAAUGraph(CAAUGraph&& rhs) noexcept
-	: mAUGraph{rhs.mAUGraph}
-	{
-		rhs.mAUGraph = nullptr;
-	}
+	: mAUGraph{std::exchange(rhs.mAUGraph, nullptr)}
+	{}
 
 	/// Move assignment operator
 	CAAUGraph& operator=(CAAUGraph&& rhs) noexcept
@@ -53,8 +51,7 @@ public:
 		if(this != &rhs) {
 			if(mAUGraph)
 				DisposeAUGraph(mAUGraph);
-			mAUGraph = rhs.mAUGraph;
-			rhs.mAUGraph = nullptr;
+			mAUGraph = std::exchange(rhs.mAUGraph, nullptr);
 		}
 		return *this;
 	}

@@ -54,10 +54,8 @@ public:
 
 	/// Move constructor
 	CAExtAudioFile(CAExtAudioFile&& rhs) noexcept
-	: mExtAudioFile{rhs.mExtAudioFile}
-	{
-		rhs.mExtAudioFile = nullptr;
-	}
+	: mExtAudioFile{std::exchange(rhs.mExtAudioFile, nullptr)}
+	{}
 
 	/// Move assignment operator
 	CAExtAudioFile& operator=(CAExtAudioFile&& rhs) noexcept
@@ -65,8 +63,7 @@ public:
 		if(this != &rhs) {
 			if(mExtAudioFile)
 				ExtAudioFileDispose(mExtAudioFile);
-			mExtAudioFile = rhs.mExtAudioFile;
-			rhs.mExtAudioFile = nullptr;
+			mExtAudioFile = std::exchange(rhs.mExtAudioFile, nullptr);
 		}
 		return *this;
 	}
