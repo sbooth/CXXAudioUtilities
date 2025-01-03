@@ -119,8 +119,8 @@ public:
 	{
 		if(mAudioFileID) {
 			auto result = AudioFileClose(mAudioFileID);
-			ThrowIfCAAudioFileError(result, "AudioFileClose");
 			mAudioFileID = nullptr;
+			ThrowIfCAAudioFileError(result, "AudioFileClose");
 		}
 	}
 
