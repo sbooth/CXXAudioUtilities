@@ -148,8 +148,8 @@ public:
 	{
 		if(mExtAudioFile) {
 			auto result = ExtAudioFileDispose(mExtAudioFile);
-			ThrowIfCAExtAudioFileError(result, "ExtAudioFileDispose");
 			mExtAudioFile = nullptr;
+			ThrowIfCAExtAudioFileError(result, "ExtAudioFileDispose");
 		}
 	}
 
