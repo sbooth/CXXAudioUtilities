@@ -167,12 +167,12 @@ bool SFB::CARingBuffer::GetTimeBounds(int64_t& startTime, int64_t& endTime) cons
 
 		const SFB::CARingBuffer::TimeBounds * const bounds = mTimeBoundsQueue + currentIndex;
 
-		startTime = bounds->mStartTime;
-		endTime = bounds->mEndTime;
-
 		const auto counter = bounds->mUpdateCounter.load(std::memory_order_acquire);
-		if(counter == currentCounter)
+		if(counter == currentCounter) {
+			startTime = bounds->mStartTime;
+			endTime = bounds->mEndTime;
 			return true;
+		}
 	}
 
 	return false;
