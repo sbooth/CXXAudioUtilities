@@ -327,9 +327,9 @@ private:
 	/// The capacity of @c mBuffer in bytes minus one
 	uint32_t mCapacityBytesMask = 0;
 
-	/// The offset into @c mBuffer of the read location
-	std::atomic_uint32_t mWritePosition = 0;
 	/// The offset into @c mBuffer of the write location
+	std::atomic_uint32_t mWritePosition = 0;
+	/// The offset into @c mBuffer of the read location
 	std::atomic_uint32_t mReadPosition = 0;
 
 	static_assert(std::atomic_uint32_t::is_always_lock_free, "Lock-free std::atomic_uint32_t required");
