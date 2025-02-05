@@ -60,19 +60,11 @@ public:
 		return dispatch_semaphore_signal(mSemaphore) != 0;
 	}
 
-	/// Waits for (decrements) the semaphore.
-	/// If the resulting value is less than zero this function waits for a signal to occur before returning.
-	/// @return \c true if successful, \c false if the timeout occurred
-	bool Wait() noexcept
-	{
-		return Wait(DISPATCH_TIME_FOREVER);
-	}
-
 	 /// Waits for (decrements) the semaphore.
 	 /// If the resulting value is less than zero this function waits for a signal to occur before returning.
 	 /// @param duration The maximum duration to block
 	 /// @return \c true if successful, \c false if the timeout occurred
-	bool Wait(dispatch_time_t duration) noexcept
+	bool Wait(dispatch_time_t duration = DISPATCH_TIME_FOREVER) noexcept
 	{
 		return dispatch_semaphore_wait(mSemaphore, duration) == 0;
 	}
