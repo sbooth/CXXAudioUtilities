@@ -1,5 +1,5 @@
 //
-// Copyright © 2020-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2020-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -32,19 +32,19 @@ public:
 	{}
 
 	// This class is non-copyable
-	UnfairLock(const UnfairLock& rhs) = delete;
+	UnfairLock(const UnfairLock&) = delete;
 
 	// This class is non-assignable
-	UnfairLock& operator=(const UnfairLock& rhs) = delete;
+	UnfairLock& operator=(const UnfairLock&) = delete;
 
 	// Destructor
 	~UnfairLock() = default;
 
 	// This class is non-movable
-	UnfairLock(const UnfairLock&& rhs) = delete;
+	UnfairLock(const UnfairLock&&) = delete;
 
 	// This class is non-move assignable
-	UnfairLock& operator=(const UnfairLock&& rhs) = delete;
+	UnfairLock& operator=(const UnfairLock&&) = delete;
 
 #pragma mark Lockable
 
@@ -98,4 +98,4 @@ private:
 
 };
 
-} // namespace SFB
+} /* namespace SFB */

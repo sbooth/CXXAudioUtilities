@@ -1,5 +1,5 @@
 //
-// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -40,10 +40,10 @@ public:
 	constexpr CAExtAudioFile() noexcept = default;
 
 	// This class is non-copyable
-	CAExtAudioFile(const CAExtAudioFile& rhs) = delete;
+	CAExtAudioFile(const CAExtAudioFile&) = delete;
 
 	// This class is non-assignable
-	CAExtAudioFile& operator=(const CAExtAudioFile& rhs) = delete;
+	CAExtAudioFile& operator=(const CAExtAudioFile&) = delete;
 
 	/// Destroys the @c CAExtAudioFile and release all associated resources.
 	~CAExtAudioFile()
@@ -54,10 +54,8 @@ public:
 
 	/// Move constructor
 	CAExtAudioFile(CAExtAudioFile&& rhs) noexcept
-	: mExtAudioFile{rhs.mExtAudioFile}
-	{
-		rhs.mExtAudioFile = nullptr;
-	}
+	: mExtAudioFile{std::exchange(rhs.mExtAudioFile, nullptr)}
+	{}
 
 	/// Move assignment operator
 	CAExtAudioFile& operator=(CAExtAudioFile&& rhs) noexcept
@@ -65,8 +63,7 @@ public:
 		if(this != &rhs) {
 			if(mExtAudioFile)
 				ExtAudioFileDispose(mExtAudioFile);
-			mExtAudioFile = rhs.mExtAudioFile;
-			rhs.mExtAudioFile = nullptr;
+			mExtAudioFile = std::exchange(rhs.mExtAudioFile, nullptr);
 		}
 		return *this;
 	}
@@ -75,12 +72,6 @@ public:
 	explicit operator bool() const noexcept
 	{
 		return mExtAudioFile != nullptr;
-	}
-
-	/// Returns @c true if this object's internal @c ExtAudioFileRef is @c nullptr
-	bool operator!() const noexcept
-	{
-		return !operator bool();
 	}
 
 	/// Returns @c true if this object's internal @c ExtAudioFileRef is not @c nullptr
@@ -154,8 +145,8 @@ public:
 	{
 		if(mExtAudioFile) {
 			auto result = ExtAudioFileDispose(mExtAudioFile);
-			ThrowIfCAExtAudioFileError(result, "ExtAudioFileDispose");
 			mExtAudioFile = nullptr;
+			ThrowIfCAExtAudioFileError(result, "ExtAudioFileDispose");
 		}
 	}
 
@@ -466,6 +457,6 @@ private:
 
 };
 
-} // namespace SFB
+} /* namespace SFB */
 
 CF_ASSUME_NONNULL_END

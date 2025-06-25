@@ -1,5 +1,5 @@
 //
-// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -28,10 +28,10 @@ public:
 	constexpr CAAUGraph() noexcept = default;
 
 	// This class is non-copyable
-	CAAUGraph(const CAAUGraph& rhs) = delete;
+	CAAUGraph(const CAAUGraph&) = delete;
 
 	// This class is non-assignable
-	CAAUGraph& operator=(const CAAUGraph& rhs) = delete;
+	CAAUGraph& operator=(const CAAUGraph&) = delete;
 
 	/// Destroys the @c CAAUGraph and releases all associated resources.
 	~CAAUGraph()
@@ -42,10 +42,8 @@ public:
 
 	/// Move constructor
 	CAAUGraph(CAAUGraph&& rhs) noexcept
-	: mAUGraph{rhs.mAUGraph}
-	{
-		rhs.mAUGraph = nullptr;
-	}
+	: mAUGraph{std::exchange(rhs.mAUGraph, nullptr)}
+	{}
 
 	/// Move assignment operator
 	CAAUGraph& operator=(CAAUGraph&& rhs) noexcept
@@ -53,8 +51,7 @@ public:
 		if(this != &rhs) {
 			if(mAUGraph)
 				DisposeAUGraph(mAUGraph);
-			mAUGraph = rhs.mAUGraph;
-			rhs.mAUGraph = nullptr;
+			mAUGraph = std::exchange(rhs.mAUGraph, nullptr);
 		}
 		return *this;
 	}
@@ -63,12 +60,6 @@ public:
 	explicit operator bool() const noexcept
 	{
 		return mAUGraph != nullptr;
-	}
-
-	/// Returns @c true if this object's internal @c AUGraph is @c nullptr
-	bool operator!() const noexcept
-	{
-		return !operator bool();
 	}
 
 	/// Returns @c true if this object's internal @c AUGraph is not @c nullptr
@@ -184,7 +175,7 @@ public:
 		ThrowIfCAAUGraphError(result, "AUGraphIsNodeSubGraph");
 		return flag != 0;
 	}
-#endif
+#endif /* !TARGET_OS_IPHONE */
 
 	// MARK: - Node Interactions
 
@@ -475,6 +466,6 @@ private:
 
 };
 
-} // namespace SFB
+} /* namespace SFB */
 
 CF_ASSUME_NONNULL_END

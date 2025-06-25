@@ -360,4 +360,4 @@ public:
 
 };
 
-} // namespace SFB
+} /* namespace SFB */

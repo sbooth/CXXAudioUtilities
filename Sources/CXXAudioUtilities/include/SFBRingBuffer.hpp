@@ -1,11 +1,12 @@
 //
-// Copyright © 2014-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2014-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
 
 #pragma once
 
+#import <algorithm>
 #import <atomic>
 #import <optional>
 #import <type_traits>
@@ -28,10 +29,10 @@ public:
 	constexpr RingBuffer() noexcept = default;
 
 	// This class is non-copyable
-	RingBuffer(const RingBuffer& rhs) = delete;
+	RingBuffer(const RingBuffer&) = delete;
 
 	// This class is non-assignable
-	RingBuffer& operator=(const RingBuffer& rhs) = delete;
+	RingBuffer& operator=(const RingBuffer&) = delete;
 
 	/// Destroys the @c RingBuffer and releases all associated resources.
 	~RingBuffer()
@@ -40,10 +41,10 @@ public:
 	}
 
 	// This class is non-movable
-	RingBuffer(RingBuffer&& rhs) = delete;
+	RingBuffer(RingBuffer&&) = delete;
 
 	// This class is non-move assignable
-	RingBuffer& operator=(RingBuffer&& rhs) = delete;
+	RingBuffer& operator=(RingBuffer&&) = delete;
 
 #pragma mark Buffer Management
 
@@ -109,18 +110,61 @@ public:
 	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 	bool ReadValue(T& value) noexcept
 	{
-		auto size = static_cast<uint32_t>(sizeof(T));
-		auto bytesRead = Read(static_cast<void *>(&value), size, false);
-		if(bytesRead != size)
+		const auto size = static_cast<uint32_t>(sizeof(T));
+		const auto bytesRead = Read(static_cast<void *>(&value), size, false);
+		return bytesRead == size;
+	}
+
+	/// Reads values from the @c RingBuffer and advances the read pointer.
+	/// @tparam Args The types to read
+	/// @param args The destination values
+	/// @return @c true if the values were successfully read
+	template <typename... Args, typename = std::enable_if_t<std::conjunction_v<std::is_trivially_copyable<Args>...>>>
+	bool ReadValues(Args&... args) noexcept
+	{
+		const auto totalSize = static_cast<uint32_t>((sizeof(args) + ...));
+
+		const auto rvec = ReadVector();
+
+		// Don't read anything if there is insufficient data
+		if(rvec.first.mBufferSize + rvec.second.mBufferSize < totalSize)
 			return false;
+
+		uint32_t bytesRead = 0;
+
+		([&]
+		 {
+			auto bytesRemaining = static_cast<uint32_t>(sizeof(args));
+
+			// Read from rvec.first if data is available
+			if(rvec.first.mBufferSize > bytesRead) {
+				const auto n = std::min(bytesRemaining, rvec.first.mBufferSize - bytesRead);
+				std::memcpy(static_cast<void *>(&args),
+							reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(rvec.first.mBuffer) + bytesRead),
+							n);
+				bytesRemaining -= n;
+				bytesRead += n;
+			}
+			// Read from rvec.second
+			if(bytesRemaining > 0){
+				const auto n = bytesRemaining;
+				std::memcpy(static_cast<void *>(&args),
+							reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(rvec.second.mBuffer) + (bytesRead - rvec.first.mBufferSize)),
+							n);
+				bytesRead += n;
+			}
+		}(), ...);
+
+		AdvanceReadPosition(bytesRead);
+
 		return true;
 	}
 
 	/// Reads a value from the @c RingBuffer and advances the read pointer.
 	/// @tparam T The type to read
 	/// @return A @c std::optional containing an instance of @c T if sufficient bytes were available for reading
-	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
-	std::optional<T> ReadValue() noexcept
+	template <typename T, typename = std::enable_if_t<std::is_default_constructible_v<T>>>
+	std::optional<T> ReadValue() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
 		if(!ReadValue(value))
@@ -135,18 +179,16 @@ public:
 	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 	bool PeekValue(T& value) const noexcept
 	{
-		auto size = static_cast<uint32_t>(sizeof(T));
-		auto bytesRead = Peek(static_cast<void *>(&value), size, false);
-		if(bytesRead != size)
-			return false;
-		return true;
+		const auto size = static_cast<uint32_t>(sizeof(T));
+		const auto bytesRead = Peek(static_cast<void *>(&value), size, false);
+		return bytesRead == size;
 	}
 
 	/// Reads a value from the @c RingBuffer without advancing the read pointer.
 	/// @tparam T The type to read
 	/// @return A @c std::optional containing an instance of @c T if sufficient bytes were available for reading
-	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
-	std::optional<T> PeekValue() const noexcept
+	template <typename T, typename = std::enable_if_t<std::is_default_constructible_v<T>>>
+	std::optional<T> PeekValue() const noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
 		if(!PeekValue(value))
@@ -155,16 +197,59 @@ public:
 	}
 
 	/// Writes a value to the @c RingBuffer and advances the write pointer.
-	/// @tparam T The type to read
+	/// @tparam T The type to write
 	/// @param value The value to write
 	/// @return @c true if @c value was successfully written
 	template <typename T, typename = std::enable_if_t<std::is_trivially_copyable_v<T>>>
 	bool WriteValue(const T& value) noexcept
 	{
-		auto size = static_cast<uint32_t>(sizeof(T));
-		auto bytesWritten = Write(static_cast<const void *>(&value), size, false);
-		if(bytesWritten != size)
+		const auto size = static_cast<uint32_t>(sizeof(T));
+		const auto bytesWritten = Write(static_cast<const void *>(&value), size, false);
+		return bytesWritten == size;
+	}
+
+	/// Writes values to the @c RingBuffer and advances the write pointer.
+	/// @tparam Args The types to write
+	/// @param args The values to write
+	/// @return @c true if the values were successfully written
+	template <typename... Args, typename = std::enable_if_t<std::conjunction_v<std::is_trivially_copyable<Args>...>>>
+	bool WriteValues(const Args&... args) noexcept
+	{
+		const auto totalSize = static_cast<uint32_t>((sizeof(args) + ...));
+
+		auto wvec = WriteVector();
+
+		// Don't write anything if there is insufficient space
+		if(wvec.first.mBufferCapacity + wvec.second.mBufferCapacity < totalSize)
 			return false;
+
+		uint32_t bytesWritten = 0;
+
+		([&]
+		 {
+			auto bytesRemaining = static_cast<uint32_t>(sizeof(args));
+
+			// Write to wvec.first if space is available
+			if(wvec.first.mBufferCapacity > bytesWritten) {
+				const auto n = std::min(bytesRemaining, wvec.first.mBufferCapacity - bytesWritten);
+				std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(wvec.first.mBuffer) + bytesWritten),
+							static_cast<const void *>(&args),
+							n);
+				bytesRemaining -= n;
+				bytesWritten += n;
+			}
+			// Write to wvec.second
+			if(bytesRemaining > 0){
+				const auto n = bytesRemaining;
+				std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(wvec.second.mBuffer) + (bytesWritten - wvec.first.mBufferCapacity)),
+							static_cast<const void *>(&args),
+							n);
+				bytesWritten += n;
+			}
+		}(), ...);
+
+		AdvanceWritePosition(bytesWritten);
+
 		return true;
 	}
 
@@ -180,9 +265,12 @@ public:
 	/// A read-only memory buffer
 	struct ReadBuffer {
 		/// The memory buffer location
-		const uint8_t * const _Nullable mBuffer = nullptr;
+		const void * const _Nullable mBuffer = nullptr;
 		/// The number of bytes of valid data in @c mBuffer
 		const uint32_t mBufferSize = 0;
+
+	private:
+		friend class RingBuffer;
 
 		/// Construct an empty @c ReadBuffer
 		ReadBuffer() noexcept = default;
@@ -190,7 +278,7 @@ public:
 		/// Construct a @c ReadBuffer for the specified location and size
 		/// @param buffer The memory buffer location
 		/// @param bufferSize The number of bytes of valid data in @c buffer
-		ReadBuffer(const uint8_t * const _Nullable buffer, uint32_t bufferSize) noexcept
+		ReadBuffer(const void * const _Nullable buffer, uint32_t bufferSize) noexcept
 		: mBuffer{buffer}, mBufferSize{bufferSize}
 		{}
 	};
@@ -205,9 +293,12 @@ public:
 	/// A write-only memory buffer
 	struct WriteBuffer {
 		/// The memory buffer location
-		uint8_t * const _Nullable mBuffer = nullptr;
+		void * const _Nullable mBuffer = nullptr;
 		/// The capacity of @c mBuffer in bytes
 		const uint32_t mBufferCapacity = 0;
+
+	private:
+		friend class RingBuffer;
 
 		/// Construct an empty @c WriteBuffer
 		WriteBuffer() noexcept = default;
@@ -215,7 +306,7 @@ public:
 		/// Construct a @c WriteBuffer for the specified location and capacity
 		/// @param buffer The memory buffer location
 		/// @param bufferCapacity The capacity of @c buffer in bytes
-		WriteBuffer(uint8_t * const _Nullable buffer, uint32_t bufferCapacity) noexcept
+		WriteBuffer(void * const _Nullable buffer, uint32_t bufferCapacity) noexcept
 		: mBuffer{buffer}, mBufferCapacity{bufferCapacity}
 		{}
 	};
@@ -229,20 +320,20 @@ public:
 private:
 
 	/// The memory buffer holding the data
-	uint8_t * _Nullable mBuffer = nullptr;
+	void * _Nullable mBuffer = nullptr;
 
 	/// The capacity of @c mBuffer in bytes
 	uint32_t mCapacityBytes = 0;
 	/// The capacity of @c mBuffer in bytes minus one
 	uint32_t mCapacityBytesMask = 0;
 
-	/// The offset into @c mBuffer of the read location
-	std::atomic_uint32_t mWritePosition = 0;
 	/// The offset into @c mBuffer of the write location
+	std::atomic_uint32_t mWritePosition = 0;
+	/// The offset into @c mBuffer of the read location
 	std::atomic_uint32_t mReadPosition = 0;
 
 	static_assert(std::atomic_uint32_t::is_always_lock_free, "Lock-free std::atomic_uint32_t required");
 
 };
 
-} // namespace SFB
+} /* namespace SFB */

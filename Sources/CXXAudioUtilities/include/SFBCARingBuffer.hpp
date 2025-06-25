@@ -1,5 +1,5 @@
 //
-// Copyright © 2013-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2013-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -29,10 +29,10 @@ public:
 	constexpr CARingBuffer() noexcept = default;
 
 	// This class is non-copyable
-	CARingBuffer(const CARingBuffer& rhs) = delete;
+	CARingBuffer(const CARingBuffer&) = delete;
 
 	// This class is non-assignable
-	CARingBuffer& operator=(const CARingBuffer& rhs) = delete;
+	CARingBuffer& operator=(const CARingBuffer&) = delete;
 
 	/// Destroys the @c CARingBuffer and release all associated resources.
 	~CARingBuffer()
@@ -41,10 +41,10 @@ public:
 	}
 
 	// This class is non-movable
-	CARingBuffer(CARingBuffer&& rhs) = delete;
+	CARingBuffer(CARingBuffer&&) = delete;
 
 	// This class is non-move assignable
-	CARingBuffer& operator=(CARingBuffer&& rhs) = delete;
+	CARingBuffer& operator=(CARingBuffer&&) = delete;
 
 #pragma mark Buffer management
 
@@ -137,7 +137,7 @@ private:
 	CAStreamBasicDescription mFormat = {};
 
 	/// The channel pointers and buffers allocated in one chunk of memory
-	uint8_t * _Nonnull * _Nullable mBuffers = nullptr;
+	void * _Nonnull * _Nullable mBuffers = nullptr;
 
 	/// The frame capacity per channel
 	uint32_t mCapacityFrames = 0;
@@ -172,4 +172,4 @@ private:
 
 };
 
-} // namespace SFB
+} /* namespace SFB */

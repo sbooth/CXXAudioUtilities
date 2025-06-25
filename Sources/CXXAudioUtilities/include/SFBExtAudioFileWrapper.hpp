@@ -1,5 +1,5 @@
 //
-// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -22,10 +22,10 @@ public:
 	constexpr ExtAudioFileWrapper() noexcept = default;
 
 	// This class is non-copyable
-	ExtAudioFileWrapper(const ExtAudioFileWrapper& rhs) = delete;
+	ExtAudioFileWrapper(const ExtAudioFileWrapper&) = delete;
 
 	// This class is non-assignable
-	ExtAudioFileWrapper& operator=(const ExtAudioFileWrapper& rhs) = delete;
+	ExtAudioFileWrapper& operator=(const ExtAudioFileWrapper&) = delete;
 
 	/// Calls @c ExtAudioFileDispose on the managed @c ExtAudioFile
 	~ExtAudioFileWrapper()
@@ -47,7 +47,7 @@ public:
 	}
 
 	/// Creates an @c ExtAudioFileWrapper managing @c extAudioFile
-	ExtAudioFileWrapper(ExtAudioFileRef extAudioFile) noexcept
+	ExtAudioFileWrapper(ExtAudioFileRef _Nullable extAudioFile) noexcept
 	: mExtAudioFile{extAudioFile}
 	{}
 
@@ -58,19 +58,19 @@ public:
 	}
 
 	/// Returns the managed @c ExtAudioFile
-	operator ExtAudioFileRef() const noexcept
+	operator ExtAudioFileRef _Nullable() const noexcept
 	{
 		return mExtAudioFile;
 	}
 
 	/// Returns the managed @c ExtAudioFile
-	ExtAudioFileRef get() const noexcept
+	ExtAudioFileRef _Nullable get() const noexcept
 	{
 		return mExtAudioFile;
 	}
 
 	/// Disposes of the managed @c ExtAudioFile and replaces it with @c extAudioFile
-	void reset(ExtAudioFileRef extAudioFile = nullptr) noexcept
+	void reset(ExtAudioFileRef _Nullable extAudioFile = nullptr) noexcept
 	{
 		if(auto oldExtAudioFile = std::exchange(mExtAudioFile, extAudioFile); oldExtAudioFile)
 			ExtAudioFileDispose(oldExtAudioFile);
@@ -83,7 +83,7 @@ public:
 	}
 
 	/// Releases ownership of the managed @c ExtAudioFile and returns it
-	ExtAudioFileRef release() noexcept
+	ExtAudioFileRef _Nullable release() noexcept
 	{
 		return std::exchange(mExtAudioFile, nullptr);
 	}
@@ -91,8 +91,8 @@ public:
 private:
 
 	/// The managed @c ExtAudioFile
-	ExtAudioFileRef mExtAudioFile = nullptr;
+	ExtAudioFileRef _Nullable mExtAudioFile = nullptr;
 
 };
 
-} // namespace SFB
+} /* namespace SFB */

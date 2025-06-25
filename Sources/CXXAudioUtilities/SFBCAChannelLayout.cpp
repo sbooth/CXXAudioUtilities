@@ -1,5 +1,5 @@
 //
-// Copyright © 2013-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2013-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -26,8 +26,8 @@ constexpr size_t ChannelLayoutSize(UInt32 numberChannelDescriptions) noexcept
 /// @throws @c std::bad_alloc
 AudioChannelLayout * CreateChannelLayout(UInt32 numberChannelDescriptions)
 {
-	size_t layoutSize = ChannelLayoutSize(numberChannelDescriptions);
-	AudioChannelLayout *channelLayout = static_cast<AudioChannelLayout *>(std::malloc(layoutSize));
+	const auto layoutSize = ChannelLayoutSize(numberChannelDescriptions);
+	auto channelLayout = static_cast<AudioChannelLayout *>(std::malloc(layoutSize));
 	if(!channelLayout)
 		throw std::bad_alloc();
 
@@ -47,8 +47,8 @@ AudioChannelLayout * CopyChannelLayout(const AudioChannelLayout * _Nullable rhs)
 	if(!rhs)
 		return nullptr;
 
-	size_t layoutSize = ChannelLayoutSize(rhs->mNumberChannelDescriptions);
-	AudioChannelLayout *channelLayout = static_cast<AudioChannelLayout *>(std::malloc(layoutSize));
+	const auto layoutSize = ChannelLayoutSize(rhs->mNumberChannelDescriptions);
+	auto channelLayout = static_cast<AudioChannelLayout *>(std::malloc(layoutSize));
 	if(!channelLayout)
 		throw std::bad_alloc();
 
@@ -213,8 +213,6 @@ struct cf_type_ref_deleter {
 template <typename T>
 using cf_type_ref_unique_ptr = std::unique_ptr<std::remove_pointer_t<T>, cf_type_ref_deleter>;
 
-/// A @c std::unique_ptr holding a @c CFArrayRef
-using cf_array_unique_ptr = cf_type_ref_unique_ptr<CFArrayRef>;
 /// A @c std::unique_ptr holding a @c CFStringRef
 using cf_string_unique_ptr = cf_type_ref_unique_ptr<CFStringRef>;
 
@@ -230,26 +228,6 @@ cf_string_unique_ptr CopyChannelLabelName(AudioChannelLabel channelLabel, bool s
 		return nullptr;
 
 	return cf_string_unique_ptr{channelName};
-}
-
-/// Returns an array of channel names for @c channelDescriptions
-cf_array_unique_ptr CreateChannelNameArrayForChannelDescriptions(const AudioChannelDescription *channelDescriptions, UInt32 count, bool shortNames) noexcept
-{
-	if(!channelDescriptions || count == 0)
-		return nullptr;
-
-	cf_type_ref_unique_ptr<CFMutableArrayRef> array{CFArrayCreateMutable(kCFAllocatorDefault, 0, &kCFTypeArrayCallBacks)};
-
-	const auto property = shortNames ? kAudioFormatProperty_ChannelShortName : kAudioFormatProperty_ChannelName;
-
-	for(UInt32 i = 0; i < count; ++i) {
-		if(auto channelName = CopyChannelLabelName(channelDescriptions[i].mChannelLabel, shortNames); channelName)
-			CFArrayAppendValue(array.get(), reinterpret_cast<const void *>(channelName.get()));
-		else
-			CFArrayAppendValue(array.get(), CFSTR("?"));
-	}
-
-	return array;
 }
 
 /// Joins strings from @c array separated by @c delimiter
@@ -274,7 +252,7 @@ cf_string_unique_ptr JoinStringArray(CFArrayRef array, CFStringRef delimiter) no
 	return result;
 }
 
-} // namespace
+} /* namespace */
 
 size_t SFB::AudioChannelLayoutSize(const AudioChannelLayout *channelLayout) noexcept
 {
@@ -302,16 +280,18 @@ CFStringRef SFB::CopyAudioChannelLayoutDescription(const AudioChannelLayout *cha
 	if(!channelLayout)
 		return nullptr;
 
+	CFMutableStringRef result = CFStringCreateMutable(kCFAllocatorDefault, 0);
+	if(!result)
+		return nullptr;
+
 	cf_string_unique_ptr layoutName{CopyAudioChannelLayoutName(channelLayout)};
 
 	if(channelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelDescriptions){
 		// kAudioFormatProperty_ChannelLayoutName returns '!fmt' for kAudioChannelLabel_UseCoordinates
-		if(layoutName)
-			return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("%u channel descriptions, %@"), channelLayout->mNumberChannelDescriptions, layoutName.get());
-
-		CFMutableStringRef result = CFStringCreateMutable(kCFAllocatorDefault, 0);
-		if(!result)
-			return nullptr;
+		if(layoutName) {
+			CFStringAppendFormat(result, nullptr, CFSTR("%u channel descriptions, %@"), channelLayout->mNumberChannelDescriptions, layoutName.get());
+			return result;
+		}
 
 		CFStringAppendFormat(result, nullptr, CFSTR("%u channel descriptions"), channelLayout->mNumberChannelDescriptions);
 
@@ -331,7 +311,7 @@ CFStringRef SFB::CopyAudioChannelLayoutDescription(const AudioChannelLayout *cha
 				CFArrayAppendValue(array.get(), reinterpret_cast<const void *>(coordinateString.get()));
 			}
 			else {
-				if(auto channelName = CopyChannelLabelName(desc->mChannelLabel, true); channelName)
+				if(const auto channelName = CopyChannelLabelName(desc->mChannelLabel, true); channelName)
 					CFArrayAppendValue(array.get(), reinterpret_cast<const void *>(channelName.get()));
 				else
 					CFArrayAppendValue(array.get(), CFSTR("?"));
@@ -340,13 +320,19 @@ CFStringRef SFB::CopyAudioChannelLayoutDescription(const AudioChannelLayout *cha
 
 		auto channelNamesString = JoinStringArray(array.get(), CFSTR(" "));
 		CFStringAppendFormat(result, nullptr, CFSTR(", %@"), channelNamesString.get());
-
-		return result;
 	}
-	else if(channelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap)
-		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("Bitmap %#x (%u ch), %@"), channelLayout->mChannelBitmap, __builtin_popcount(channelLayout->mChannelBitmap), layoutName.get());
-	else
-		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("%s (0x%x, %u ch), %@"), GetChannelLayoutTagName(channelLayout->mChannelLayoutTag), channelLayout->mChannelLayoutTag, channelLayout->mChannelLayoutTag & 0xffff, layoutName.get());
+	else if(channelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelBitmap) {
+		CFStringAppendFormat(result, nullptr, CFSTR("Bitmap %#x (%u ch)"), channelLayout->mChannelBitmap, __builtin_popcount(channelLayout->mChannelBitmap));
+		if(layoutName)
+			CFStringAppendFormat(result, nullptr, CFSTR(", %@"), layoutName.get());
+	}
+	else {
+		CFStringAppendFormat(result, nullptr, CFSTR("%s (0x%x, %u ch)"), GetChannelLayoutTagName(channelLayout->mChannelLayoutTag), channelLayout->mChannelLayoutTag, channelLayout->mChannelLayoutTag & 0xffff);
+		if(layoutName)
+			CFStringAppendFormat(result, nullptr, CFSTR(", %@"), layoutName.get());
+	}
+
+	return result;
 }
 
 // Constants
