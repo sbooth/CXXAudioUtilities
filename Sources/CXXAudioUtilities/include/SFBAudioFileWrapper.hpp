@@ -1,5 +1,5 @@
 //
-// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -22,10 +22,10 @@ public:
 	constexpr AudioFileWrapper() noexcept = default;
 
 	// This class is non-copyable
-	AudioFileWrapper(const AudioFileWrapper& rhs) = delete;
+	AudioFileWrapper(const AudioFileWrapper&) = delete;
 
 	// This class is non-assignable
-	AudioFileWrapper& operator=(const AudioFileWrapper& rhs) = delete;
+	AudioFileWrapper& operator=(const AudioFileWrapper&) = delete;
 
 	/// Calls @c AudioFileClose on the managed @c AudioFile
 	~AudioFileWrapper()
@@ -47,7 +47,7 @@ public:
 	}
 
 	/// Creates an @c AudioFileWrapper managing @c audioFile
-	AudioFileWrapper(AudioFileID audioFile) noexcept
+	AudioFileWrapper(AudioFileID _Nullable audioFile) noexcept
 	: mAudioFile{audioFile}
 	{}
 
@@ -58,19 +58,19 @@ public:
 	}
 
 	/// Returns the managed @c AudioFile
-	operator AudioFileID() const noexcept
+	operator AudioFileID _Nullable() const noexcept
 	{
 		return mAudioFile;
 	}
 
 	/// Returns the managed @c AudioFile
-	AudioFileID get() const noexcept
+	AudioFileID _Nullable get() const noexcept
 	{
 		return mAudioFile;
 	}
 
 	/// Closes the managed @c AudioFile and replaces it with @c audioFile
-	void reset(AudioFileID audioFile = nullptr) noexcept
+	void reset(AudioFileID _Nullable audioFile = nullptr) noexcept
 	{
 		if(auto old = std::exchange(mAudioFile, audioFile); old)
 			AudioFileClose(old);
@@ -83,7 +83,7 @@ public:
 	}
 
 	/// Releases ownership of the managed @c AudioFile and returns it
-	AudioFileID release() noexcept
+	AudioFileID _Nullable release() noexcept
 	{
 		return std::exchange(mAudioFile, nullptr);
 	}
@@ -91,8 +91,8 @@ public:
 private:
 
 	/// The managed @c AudioFile
-	AudioFileID mAudioFile = nullptr;
+	AudioFileID _Nullable mAudioFile = nullptr;
 
 };
 
-} // namespace SFB
+} /* namespace SFB */

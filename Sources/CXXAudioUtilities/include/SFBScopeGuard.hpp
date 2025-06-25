@@ -1,5 +1,5 @@
 //
-// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -38,10 +38,10 @@ public:
 	{}
 
 	// This class is non-copyable
-	ScopeGuard(const ScopeGuard& rhs) = delete;
+	ScopeGuard(const ScopeGuard&) = delete;
 
 	// This class is non-assignable
-	ScopeGuard& operator=(const ScopeGuard& rhs) = delete;
+	ScopeGuard& operator=(const ScopeGuard&) = delete;
 
 	/// Executes the cleanup function
 	~ScopeGuard()
@@ -50,10 +50,10 @@ public:
 	}
 
 	// This class is non-movable
-	ScopeGuard(const ScopeGuard&& rhs) = delete;
+	ScopeGuard(const ScopeGuard&&) = delete;
 
 	// This class is non-move assignable
-	ScopeGuard& operator=(const ScopeGuard&& rhs) = delete;
+	ScopeGuard& operator=(const ScopeGuard&&) = delete;
 
 private:
 
@@ -62,4 +62,4 @@ private:
 
 };
 
-} // namespace SFB
+} /* namespace SFB */

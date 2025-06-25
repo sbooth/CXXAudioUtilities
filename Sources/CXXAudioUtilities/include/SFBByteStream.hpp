@@ -1,5 +1,5 @@
 //
-// Copyright © 2020-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2020-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -99,7 +99,7 @@ public:
 	/// @return @c true if the objects are not equal, @c false otherwise
 	bool operator!=(const ByteStream& rhs) noexcept
 	{
-		return mBuffer != rhs.mBuffer || mBufferLength != rhs.mBufferLength || mReadPosition != rhs.mReadPosition;
+		return !operator==(rhs);
 	}
 
 
@@ -120,7 +120,7 @@ public:
 	/// Reads a value and advances the read position.
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
-	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_default_constructible_v<T>>>
 	std::optional<T> Read() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
@@ -160,7 +160,7 @@ public:
 	/// Reads a little endian value, converts it to host byte ordering, and advances the read position.
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
-	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_default_constructible_v<T>>>
 	std::optional<T> ReadLE() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
@@ -200,7 +200,7 @@ public:
 	/// Reads a big endian value, converts it to host byte ordering, and advances the read position.
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
-	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_default_constructible_v<T>>>
 	std::optional<T> ReadBE() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
@@ -240,7 +240,7 @@ public:
 	/// Reads a value, swaps its byte ordering, and advances the read position.
 	/// @tparam T The type to read
 	/// @return The value read or @c std::nullopt on failure
-	template <typename T, typename = std::enable_if_t<std::is_trivially_default_constructible_v<T>>>
+	template <typename T, typename = std::enable_if_t<std::is_default_constructible_v<T>>>
 	std::optional<T> ReadSwapped() noexcept(std::is_nothrow_default_constructible_v<T>)
 	{
 		T value{};
@@ -258,7 +258,7 @@ public:
 	{
 		auto bytesToCopy = std::min(count, mBufferLength - mReadPosition);
 		if(buf)
-			std::memcpy(buf, static_cast<const uint8_t *>(mBuffer) + mReadPosition, bytesToCopy);
+			std::memcpy(buf, reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(mBuffer) + mReadPosition), bytesToCopy);
 		mReadPosition += bytesToCopy;
 		return bytesToCopy;
 	}
@@ -323,4 +323,4 @@ private:
 
 };
 
-} // namespace SFB
+} /* namespace SFB */

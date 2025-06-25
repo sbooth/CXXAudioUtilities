@@ -1,5 +1,5 @@
 //
-// Copyright © 2013-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2013-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -30,10 +30,10 @@ public:
 	constexpr AudioRingBuffer() noexcept = default;
 
 	// This class is non-copyable
-	AudioRingBuffer(const AudioRingBuffer& rhs) = delete;
+	AudioRingBuffer(const AudioRingBuffer&) = delete;
 
 	// This class is non-assignable
-	AudioRingBuffer& operator=(const AudioRingBuffer& rhs) = delete;
+	AudioRingBuffer& operator=(const AudioRingBuffer&) = delete;
 
 	/// Destroys the @c AudioRingBuffer and releases all associated resources.
 	~AudioRingBuffer()
@@ -42,10 +42,10 @@ public:
 	}
 
 	// This class is non-movable
-	AudioRingBuffer(AudioRingBuffer&& rhs) = delete;
+	AudioRingBuffer(AudioRingBuffer&&) = delete;
 
 	// This class is non-move assignable
-	AudioRingBuffer& operator=(AudioRingBuffer&& rhs) = delete;
+	AudioRingBuffer& operator=(AudioRingBuffer&&) = delete;
 
 #pragma mark Buffer management
 
@@ -108,7 +108,7 @@ private:
 	CAStreamBasicDescription mFormat = {};
 
 	/// The channel pointers and buffers allocated in one chunk of memory
-	uint8_t * _Nonnull * _Nullable mBuffers = nullptr;
+	void * _Nonnull * _Nullable mBuffers = nullptr;
 
 	/// The frame capacity per channel
 	uint32_t mCapacityFrames = 0;
@@ -125,4 +125,4 @@ private:
 
 };
 
-} // namespace SFB
+} /* namespace SFB */

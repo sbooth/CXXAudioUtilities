@@ -1,5 +1,5 @@
 //
-// Copyright © 2014-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2014-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -79,7 +79,7 @@ CFStringRef _Nullable CreateFourCharCodeString(UInt32 fourcc) noexcept CF_RETURN
 		return CFStringCreateWithFormat(kCFAllocatorDefault, nullptr, CFSTR("0x%.02x%.02x%.02x%.02x"), u.str[0], u.str[1], u.str[2], u.str[3]);
 }
 
-} // namespace
+} /* namespace */
 
 std::optional<SFB::CommonPCMFormat> SFB::CAStreamBasicDescription::CommonFormat() const noexcept
 {
@@ -127,7 +127,7 @@ CFStringRef SFB::CAStreamBasicDescription::CopyFormatDescription() const noexcep
 	CFStringAppendFormat(result, nullptr, CFSTR("%u ch @ %g Hz, "), mChannelsPerFrame, mSampleRate);
 
 	// Shorter description for common formats
-	if(auto commonFormat = CommonFormat(); commonFormat.has_value()) {
+	if(const auto commonFormat = CommonFormat(); commonFormat.has_value()) {
 		switch(commonFormat.value()) {
 			case CommonPCMFormat::int16:
 				CFStringAppendCString(result, "Int16, ", kCFStringEncodingASCII);

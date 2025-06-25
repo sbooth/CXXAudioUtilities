@@ -1,5 +1,5 @@
 //
-// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -151,7 +151,7 @@ enum class CAAudioConverterErrorCode {
 #if TARGET_OS_IPHONE
 	hardwareInUse 						= kAudioConverterErr_HardwareInUse,
 	noHardwarePermission 				= kAudioConverterErr_NoHardwarePermission,
-#endif
+#endif /* TARGET_OS_IPHONE */
 };
 
 /// AudioFile error codes
@@ -198,7 +198,7 @@ enum class CAExtAudioFileErrorCode {
 #if TARGET_OS_IPHONE
 	codecUnavailableInputConsumed 		= kExtAudioFileError_CodecUnavailableInputConsumed,
 	codecUnavailableInputNotConsumed 	= kExtAudioFileError_CodecUnavailableInputNotConsumed,
-#endif
+#endif /* TARGET_OS_IPHONE */
 
 };
 
@@ -456,7 +456,7 @@ public:
 #if TARGET_OS_IPHONE
 			case CAAudioConverterErrorCode::hardwareInUse: 						return "kAudioConverterErr_HardwareInUse";
 			case CAAudioConverterErrorCode::noHardwarePermission: 				return "kAudioConverterErr_NoHardwarePermission";
-#endif
+#endif /* TARGET_OS_IPHONE */
 
 			default:
 				switch(static_cast<CAGeneralErrorCode>(condition)) {
@@ -553,7 +553,7 @@ public:
 #if TARGET_OS_IPHONE
 			case CAExtAudioFileErrorCode::codecUnavailableInputConsumed:		return "iOS only. Returned when ExtAudioFileWrite was interrupted. You must stop calling ExtAudioFileWrite. If the underlying audio converter can resume after an interruption (see kAudioConverterPropertyCanResumeFromInterruption), you must wait for an EndInterruption notification from AudioSession, and call AudioSessionSetActive(true) before resuming. In this situation, the buffer you provided to ExtAudioFileWrite was successfully consumed and you may proceed to the next buffer";
 			case CAExtAudioFileErrorCode::codecUnavailableInputNotConsumed: 	return "iOS only. Returned when ExtAudioFileWrite was interrupted. You must stop calling ExtAudioFileWrite. If the underlying audio converter can resume after an interruption (see kAudioConverterPropertyCanResumeFromInterruption), you must wait for an EndInterruption notification from AudioSession, and call AudioSessionSetActive(true) before resuming. In this situation, the buffer you provided to ExtAudioFileWrite was not successfully consumed and you must try to write it again";
-#endif
+#endif /* TARGET_OS_IPHONE */
 
 			default:
 				switch(static_cast<CAGeneralErrorCode>(condition)) {
@@ -573,7 +573,7 @@ public:
 	}
 };
 
-} // namespace detail
+} /* namespace detail */
 
 #if TARGET_OS_OSX
 extern inline const detail::CAAudioObjectErrorCategory& CAAudioObjectErrorCategory()
@@ -667,7 +667,7 @@ inline std::error_code make_error_code(CAExtAudioFileErrorCode e)
 	return { static_cast<int>(e), CAExtAudioFileErrorCategory() };
 }
 
-} // namespace SFB
+} /* namespace SFB */
 
 namespace std {
 
@@ -682,7 +682,7 @@ template <> struct is_error_code_enum<SFB::CAAudioConverterErrorCode> : true_typ
 template <> struct is_error_code_enum<SFB::CAAudioFileErrorCode> : true_type {};
 template <> struct is_error_code_enum<SFB::CAExtAudioFileErrorCode> : true_type {};
 
-} // namespace std
+} /* namespace std */
 
 namespace SFB {
 
@@ -776,7 +776,7 @@ inline void ThrowIfCAExtAudioFileError(OSStatus result, const char * const opera
 		throw std::system_error(result, CAExtAudioFileErrorCategory(), operation);
 }
 
-#if 0
+#if false
 class FourCCString
 {
 
@@ -806,6 +806,6 @@ private:
 	char mString [16];
 
 };
-#endif
+#endif /* false */
 
-} // namespace SFB
+} /* namespace SFB */

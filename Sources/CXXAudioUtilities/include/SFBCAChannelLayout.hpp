@@ -1,5 +1,5 @@
 //
-// Copyright © 2013-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2013-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -183,12 +183,6 @@ public:
 		return mChannelLayout != nullptr;
 	}
 
-	/// Returns @c true if this object's internal @c AudioChannelLayout is @c nullptr
-	bool operator!() const noexcept
-	{
-		return !operator bool();
-	}
-
 
 	/// Retrieve a const pointer to this object's internal @c AudioChannelLayout
 	const AudioChannelLayout * _Nullable operator->() const noexcept
@@ -249,4 +243,4 @@ private:
 
 };
 
-} // namespace SFB
+} /* namespace SFB */

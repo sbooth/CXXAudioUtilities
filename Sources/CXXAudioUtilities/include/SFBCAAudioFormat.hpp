@@ -1,5 +1,5 @@
 //
-// Copyright © 2021-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2021-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -67,6 +67,6 @@ inline std::vector<AudioFormatID> DecodeFormatIDs()
 }
 
 } // namespace CAAudioFormat
-} // namespace SFB
+} /* namespace SFB */
 
 CF_ASSUME_NONNULL_END

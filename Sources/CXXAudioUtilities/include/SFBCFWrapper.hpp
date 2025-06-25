@@ -1,5 +1,5 @@
 //
-// Copyright © 2012-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2012-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -16,7 +16,7 @@
 
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
-#endif
+#endif /* __OBJC__ */
 
 namespace SFB {
 
@@ -169,12 +169,6 @@ public:
 		return mObject != nullptr;
 	}
 
-	/// Returns @c true if the wrapped object is @c nullptr
-	bool operator!() const noexcept
-	{
-		return !operator bool();
-	}
-
 	/// Returns the wrapped object
 	operator T() const noexcept
 	{
@@ -294,7 +288,7 @@ public:
 		return (__bridge ::NSDictionary *)mObject;
 	}
 
-#endif
+#endif /* __OBJC__ */
 
 private:
 
@@ -390,6 +384,6 @@ using CMSDecoder = CFWrapper<CMSDecoderRef>;
 using SecKeychainItem = CFWrapper<SecKeychainItemRef>;
 /// A wrapped @c SecTransformRef
 using SecTransform = CFWrapper<SecTransformRef>;
-#endif
+#endif /* !TARGET_OS_IPHONE */
 
-} // namespace SFB
+} /* namespace SFB */

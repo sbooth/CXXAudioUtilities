@@ -1,5 +1,5 @@
 //
-// Copyright © 2013-2024 Stephen F. Booth <me@sbooth.org>
+// Copyright © 2013-2025 Stephen F. Booth <me@sbooth.org>
 // Part of https://github.com/sbooth/CXXAudioUtilities
 // MIT license
 //
@@ -34,10 +34,10 @@ public:
 	constexpr CABufferList() noexcept = default;
 
 	// This class is non-copyable
-	CABufferList(const CABufferList& rhs) = delete;
+	CABufferList(const CABufferList&) = delete;
 
 	// This class is non-assignable
-	CABufferList& operator=(const CABufferList& rhs) = delete;
+	CABufferList& operator=(const CABufferList&) = delete;
 
 	/// Destroys the @c CABufferList and release all associated resources.
 	~CABufferList()
@@ -105,23 +105,25 @@ public:
 	/// @throws @c std::logic_error if the @c mDataByteSize values are inconsistent
 	bool InferFrameLengthFromABL();
 
+	/// Returns @c true if the frame length is zero
 	bool IsEmpty() const noexcept
 	{
 		return mFrameLength == 0;
 	}
 
+	/// Returns @c true if the frame length is equal to the audio frame capacity
 	bool IsFull() const noexcept
 	{
 		return mFrameLength == mFrameCapacity;
 	}
 
-	/// Returns the audio frame capacity of this @c CABufferList
+	/// Returns the audio frame capacity
 	UInt32 FrameCapacity() const noexcept
 	{
 		return mFrameCapacity;
 	}
 
-	/// Returns the format of this @c CABufferList
+	/// Returns the audio format of the buffer list
 	const CAStreamBasicDescription& Format() const noexcept
 	{
 		return mFormat;
@@ -292,12 +294,6 @@ public:
 		return mBufferList != nullptr;
 	}
 
-	/// Returns @c true if this object's internal @c AudioBufferList is @c nullptr
-	bool operator!() const noexcept
-	{
-		return !operator bool();
-	}
-
 
 	/// Returns a pointer to this object's internal @c AudioBufferList
 	AudioBufferList * _Nullable operator->() noexcept
@@ -325,7 +321,7 @@ public:
 
 private:
 
-	/// The underlying @c AudioChannelLayout struct
+	/// The underlying @c AudioBufferList struct
 	AudioBufferList * _Nullable mBufferList = nullptr;
 	/// The format of @c mBufferList
 	CAStreamBasicDescription mFormat = {};
@@ -336,4 +332,4 @@ private:
 
 };
 
-} // namespace SFB
+} /* namespace SFB */
