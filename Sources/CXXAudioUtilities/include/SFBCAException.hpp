@@ -776,36 +776,4 @@ inline void ThrowIfCAExtAudioFileError(OSStatus result, const char * const opera
 		throw std::system_error(result, CAExtAudioFileErrorCategory(), operation);
 }
 
-#if false
-class FourCCString
-{
-
-public:
-
-	FourCCString(OSStatus errorCode)
-	{
-		auto err = CFSwapInt32HostToBig(errorCode);
-		std::memcpy(&mString[0] + 1, &err, 4);
-		if(std::isprint(mString[1]) && std::isprint(mString[2]) && std::isprint(mString[3]) && std::isprint(mString[4])) {
-			mString[0] = mString[5] = '\'';
-			mString[6] = '\0';
-		}
-		else if(errorCode > -200000 && errorCode < 200000)
-			snprintf(mString, sizeof(mString), "%d", static_cast<int>(errorCode));
-		else
-			snprintf(mString, sizeof(mString), "0x%x", static_cast<int>(errorCode));
-	}
-
-	operator const char * const () const
-	{
-		return mString;
-	}
-
-private:
-
-	char mString [16];
-
-};
-#endif /* false */
-
 } /* namespace SFB */
