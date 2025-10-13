@@ -146,7 +146,7 @@ public:
 				bytesRead += n;
 			}
 			// Read from rvec.second
-			if(bytesRemaining > 0){
+			if(bytesRemaining > 0) {
 				const auto n = bytesRemaining;
 				std::memcpy(static_cast<void *>(&args),
 							reinterpret_cast<const void *>(reinterpret_cast<uintptr_t>(rvec.second.mBuffer) + (bytesRead - rvec.first.mBufferSize)),
@@ -239,7 +239,7 @@ public:
 				bytesWritten += n;
 			}
 			// Write to wvec.second
-			if(bytesRemaining > 0){
+			if(bytesRemaining > 0) {
 				const auto n = bytesRemaining;
 				std::memcpy(reinterpret_cast<void *>(reinterpret_cast<uintptr_t>(wvec.second.mBuffer) + (bytesWritten - wvec.first.mBufferCapacity)),
 							static_cast<const void *>(&args),
