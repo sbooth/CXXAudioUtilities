@@ -286,7 +286,7 @@ CFStringRef SFB::CopyAudioChannelLayoutDescription(const AudioChannelLayout *cha
 
 	cf_string_unique_ptr layoutName{CopyAudioChannelLayoutName(channelLayout)};
 
-	if(channelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelDescriptions){
+	if(channelLayout->mChannelLayoutTag == kAudioChannelLayoutTag_UseChannelDescriptions) {
 		// kAudioFormatProperty_ChannelLayoutName returns '!fmt' for kAudioChannelLabel_UseCoordinates
 		if(layoutName) {
 			CFStringAppendFormat(result, nullptr, CFSTR("%u channel descriptions, %@"), channelLayout->mNumberChannelDescriptions, layoutName.get());
