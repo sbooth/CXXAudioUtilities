@@ -2,12 +2,12 @@
 
 Assorted C++ classes simplifying common operations in Core Audio and Audio Toolbox.
 
-> [!NOTE]
-> C++17 is required.
+Portions of this repository have been split into separate packages:
 
-> [!IMPORTANT]
-> [SFB::RingBuffer](https://github.com/sbooth/CXXRingBuffer/Sources/CXXRingBuffer/include/SFBRingBuffer.hpp) has been moved to the [CXXRingBuffer](https://github.com/sbooth/CXXRingBuffer) repository.
-> [SFB::UnfairLock](https://github.com/sbooth/CXXUnfairLock/Sources/CXXUnfairLock/include/SFBUnfairLock.hpp) has been moved to the [CXXUnfairLock](https://github.com/sbooth/CXXUnfairLock) repository.
+| C++ Class | Repository |
+| --- | --- |
+| [SFB::RingBuffer](https://github.com/sbooth/CXXRingBuffer/Sources/CXXRingBuffer/include/SFBRingBuffer.hpp) | [CXXRingBuffer](https://github.com/sbooth/CXXRingBuffer) |
+| [SFB::UnfairLock](https://github.com/sbooth/CXXUnfairLock/Sources/CXXUnfairLock/include/SFBUnfairLock.hpp) | [CXXUnfairLock](https://github.com/sbooth/CXXUnfairLock) |
 
 ## Installation
 
