@@ -7,6 +7,7 @@ Assorted C++ classes simplifying common operations in Core Audio and Audio Toolb
 
 > [!IMPORTANT]
 > [SFB::RingBuffer](https://github.com/sbooth/CXXRingBuffer/Sources/CXXRingBuffer/include/SFBRingBuffer.hpp) has been moved to the [CXXRingBuffer](https://github.com/sbooth/CXXRingBuffer) repository.
+> [SFB::UnfairLock](https://github.com/sbooth/CXXUnfairLock/Sources/CXXUnfairLock/include/SFBUnfairLock.hpp) has been moved to the [CXXUnfairLock](https://github.com/sbooth/CXXUnfairLock) repository.
 
 ## Installation
 
@@ -68,7 +69,6 @@ Add a package dependency to https://github.com/sbooth/CXXAudioUtilities in Xcode
 | [SFB::CFWrapper](Sources/CXXAudioUtilities/include/SFBCFWrapper.hpp) | A wrapper around a Core Foundation object |
 | [SFB::DispatchSemaphore](Sources/CXXAudioUtilities/include/SFBDispatchSemaphore.hpp) | A wrapper around `dispatch_semaphore_t` |
 | [SFB::ScopeGuard](Sources/CXXAudioUtilities/include/SFBScopeGuard.hpp) | A class that calls a function upon destruction |
-| [SFB::UnfairLock](Sources/CXXAudioUtilities/include/SFBUnfairLock.hpp) | A wrapper around `os_unfair_lock` implementing C++ `Lockable` |
 
 | C++ Class | Description |
 | --- | --- |

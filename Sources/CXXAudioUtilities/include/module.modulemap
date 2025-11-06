@@ -25,7 +25,6 @@ module CXXAudioUtilities {
 	header "SFBDispatchSemaphore.hpp"
 	header "SFBExtAudioFileWrapper.hpp"
 	header "SFBScopeGuard.hpp"
-	header "SFBUnfairLock.hpp"
 
 	export *
 }
