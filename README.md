@@ -5,7 +5,7 @@ Assorted C++ classes simplifying common operations in Core Audio and Audio Toolb
 Portions of this repository have been split into separate packages:
 
 | C++ Class | Repository | Description |
-| --- | --- |
+| --- | --- | --- |
 | [SFB::RingBuffer](https://github.com/sbooth/CXXRingBuffer/Sources/CXXRingBuffer/include/SFBRingBuffer.hpp) | [CXXRingBuffer](https://github.com/sbooth/CXXRingBuffer) | A lock-free SPSC ring buffer |
 | [SFB::UnfairLock](https://github.com/sbooth/CXXUnfairLock/Sources/CXXUnfairLock/include/SFBUnfairLock.hpp) | [CXXUnfairLock](https://github.com/sbooth/CXXUnfairLock) | [`os_unfair_lock`](https://developer.apple.com/documentation/os/1646466-os_unfair_lock_lock) wrapper satisfying the C++ [`Lockable`](https://en.cppreference.com/w/cpp/named_req/Lockable) requirements |
 
