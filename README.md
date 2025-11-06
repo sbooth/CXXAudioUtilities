@@ -2,10 +2,11 @@
 
 Assorted C++ classes simplifying common operations in Core Audio and Audio Toolbox.
 
-[SFB::RingBuffer](https://github.com/sbooth/CXXRingBuffer/Sources/CXXRingBuffer/include/SFBRingBuffer.hpp) has been moved to the [CXXRingBuffer](https://github.com/sbooth/CXXRingBuffer) repository.
-
 > [!NOTE]
 > C++17 is required.
+
+> [!IMPORTANT]
+> [SFB::RingBuffer](https://github.com/sbooth/CXXRingBuffer/Sources/CXXRingBuffer/include/SFBRingBuffer.hpp) has been moved to the [CXXRingBuffer](https://github.com/sbooth/CXXRingBuffer) repository.
 
 ## Installation
 
