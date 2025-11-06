@@ -2,6 +2,8 @@
 
 Assorted C++ classes simplifying common operations in Core Audio and Audio Toolbox.
 
+[SFB::RingBuffer](https://github.com/sbooth/CXXRingBuffer/Sources/CXXRingBuffer/include/SFBRingBuffer.hpp) has been moved to the [CXXRingBuffer](https://github.com/sbooth/CXXRingBuffer) repository.
+
 > [!NOTE]
 > C++17 is required.
 
@@ -54,7 +56,6 @@ Add a package dependency to https://github.com/sbooth/CXXAudioUtilities in Xcode
 
 | C++ Class | Description |
 | --- | --- |
-| [SFB::RingBuffer](Sources/CXXAudioUtilities/include/SFBRingBuffer.hpp) | A generic ring buffer |
 | [SFB::AudioRingBuffer](Sources/CXXAudioUtilities/include/SFBAudioRingBuffer.hpp) | A ring buffer supporting non-interleaved audio |
 | [SFB::CARingBuffer](Sources/CXXAudioUtilities/include/SFBCARingBuffer.hpp) | A ring buffer supporting timestamped non-interleaved audio |
 
