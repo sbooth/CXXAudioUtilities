@@ -7,7 +7,7 @@ Portions of this repository have been split into separate packages:
 | Repository | Description |
 | --- | --- |
 | [CXXRingBuffer](https://github.com/sbooth/CXXRingBuffer) | A lock-free SPSC ring buffer |
-| [CXXUnfairLock](https://github.com/sbooth/CXXUnfairLock) | [`os_unfair_lock`](https://developer.apple.com/documentation/os/1646466-os_unfair_lock_lock) wrapper satisfying the C++ [`Lockable`](https://en.cppreference.com/w/cpp/named_req/Lockable) requirements |
+| [CXXOSUnfairLock](https://github.com/sbooth/CXXOSUnfairLock) | [`os_unfair_lock`](https://developer.apple.com/documentation/os/1646466-os_unfair_lock_lock) wrapper satisfying the C++ [`Lockable`](https://en.cppreference.com/w/cpp/named_req/Lockable) requirements |
 
 ## Installation
 
