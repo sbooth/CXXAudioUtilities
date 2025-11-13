@@ -6,8 +6,10 @@ Portions of this repository have been split into separate packages:
 
 | Repository | Description |
 | --- | --- |
-| [CXXRingBuffer](https://github.com/sbooth/CXXRingBuffer) | A lock-free SPSC ring buffer |
-| [CXXOSUnfairLock](https://github.com/sbooth/CXXOSUnfairLock) | [`os_unfair_lock`](https://developer.apple.com/documentation/os/1646466-os_unfair_lock_lock) wrapper satisfying the C++ [`Lockable`](https://en.cppreference.com/w/cpp/named_req/Lockable) requirements |
+| [CXXCoreAudio](https://github.com/sbooth/CXXCoreAudio) | C++ helper classes for Core Audio basic types. |
+| [CXXDispatchSemaphore](https://github.com/sbooth/CXXDispatchSemaphore) | A [`dispatch_semaphore_t`](https://developer.apple.com/documentation/dispatch/dispatch-semaphore?language=objc) wrapper. |
+| [CXXOSUnfairLock](https://github.com/sbooth/CXXOSUnfairLock) | An [`os_unfair_lock`](https://developer.apple.com/documentation/os/1646466-os_unfair_lock_lock) wrapper satisfying the [`Lockable`](https://en.cppreference.com/w/cpp/named_req/Lockable) requirements. |
+| [CXXRingBuffer](https://github.com/sbooth/CXXRingBuffer) | A lock-free SPSC ring buffer. |
 
 ## Installation
 
@@ -28,8 +30,6 @@ Add a package dependency to https://github.com/sbooth/CXXAudioUtilities in Xcode
 | --- | --- |
 | [SFB::CABufferList](Sources/CXXAudioUtilities/include/SFBCABufferList.hpp) | A class wrapping a Core Audio `AudioBufferList` with a specific format, frame capacity, and frame length |
 | [SFB::CAChannelLayout](Sources/CXXAudioUtilities/include/SFBCAChannelLayout.hpp) | A class wrapping a Core Audio `AudioChannelLayout` |
-| [SFB::CAStreamBasicDescription](Sources/CXXAudioUtilities/include/SFBCAStreamBasicDescription.hpp) | A class extending the functionality of a Core Audio `AudioStreamBasicDescription` |
-| [SFB::CATimeStamp](Sources/CXXAudioUtilities/include/SFBCATimeStamp.hpp) | A class extending the functionality of a Core Audio `AudioTimeStamp` |
 | [SFB::CAException](Sources/CXXAudioUtilities/include/SFBCAException.hpp) | `std::error_category` for handling Core Audio errors as exceptions |
 
 ### AudioHardware Wrappers
@@ -67,7 +67,6 @@ Add a package dependency to https://github.com/sbooth/CXXAudioUtilities in Xcode
 | --- | --- |
 | [SFB::ByteStream](Sources/CXXAudioUtilities/include/SFBByteStream.hpp) | A `ByteStream` provides heterogeneous typed access to an untyped buffer |
 | [SFB::CFWrapper](Sources/CXXAudioUtilities/include/SFBCFWrapper.hpp) | A wrapper around a Core Foundation object |
-| [SFB::DispatchSemaphore](Sources/CXXAudioUtilities/include/SFBDispatchSemaphore.hpp) | A wrapper around `dispatch_semaphore_t` |
 | [SFB::ScopeGuard](Sources/CXXAudioUtilities/include/SFBScopeGuard.hpp) | A class that calls a function upon destruction |
 
 | C++ Class | Description |

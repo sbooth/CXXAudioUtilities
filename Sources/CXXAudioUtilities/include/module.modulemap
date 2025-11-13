@@ -19,10 +19,7 @@ module CXXAudioUtilities {
 	header "SFBCAExtAudioFile.hpp"
 	header "SFBCAPropertyAddress.hpp"
 	header "SFBCARingBuffer.hpp"
-	header "SFBCAStreamBasicDescription.hpp"
-	header "SFBCATimeStamp.hpp"
 	header "SFBCFWrapper.hpp"
-	header "SFBDispatchSemaphore.hpp"
 	header "SFBExtAudioFileWrapper.hpp"
 	header "SFBScopeGuard.hpp"
 
