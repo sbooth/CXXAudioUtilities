@@ -6,10 +6,10 @@ Portions of this repository have been split into separate packages:
 
 | Repository | Description |
 | --- | --- |
-| [CXXCoreAudio](https://github.com/sbooth/CXXCoreAudio) | C++ helper classes for Core Audio basic types. |
+| [CXXCoreAudio](https://github.com/sbooth/CXXCoreAudio) | Assorted C++ classes simplifying common operations in Core Audio. |
+| [CXXRingBuffer](https://github.com/sbooth/CXXRingBuffer) | A lock-free SPSC ring buffer. |
 | [CXXDispatchSemaphore](https://github.com/sbooth/CXXDispatchSemaphore) | A [`dispatch_semaphore_t`](https://developer.apple.com/documentation/dispatch/dispatch-semaphore?language=objc) wrapper. |
 | [CXXOSUnfairLock](https://github.com/sbooth/CXXOSUnfairLock) | An [`os_unfair_lock`](https://developer.apple.com/documentation/os/1646466-os_unfair_lock_lock) wrapper satisfying the [`Lockable`](https://en.cppreference.com/w/cpp/named_req/Lockable) requirements. |
-| [CXXRingBuffer](https://github.com/sbooth/CXXRingBuffer) | A lock-free SPSC ring buffer. |
 
 ## Installation
 
@@ -28,8 +28,6 @@ Add a package dependency to https://github.com/sbooth/CXXAudioUtilities in Xcode
 
 | C++ Class | Description |
 | --- | --- |
-| [SFB::CABufferList](Sources/CXXAudioUtilities/include/SFBCABufferList.hpp) | A class wrapping a Core Audio `AudioBufferList` with a specific format, frame capacity, and frame length |
-| [SFB::CAChannelLayout](Sources/CXXAudioUtilities/include/SFBCAChannelLayout.hpp) | A class wrapping a Core Audio `AudioChannelLayout` |
 | [SFB::CAException](Sources/CXXAudioUtilities/include/SFBCAException.hpp) | `std::error_category` for handling Core Audio errors as exceptions |
 
 ### AudioHardware Wrappers
@@ -58,7 +56,6 @@ Add a package dependency to https://github.com/sbooth/CXXAudioUtilities in Xcode
 
 | C++ Class | Description |
 | --- | --- |
-| [SFB::AudioRingBuffer](Sources/CXXAudioUtilities/include/SFBAudioRingBuffer.hpp) | A ring buffer supporting non-interleaved audio |
 | [SFB::CARingBuffer](Sources/CXXAudioUtilities/include/SFBCARingBuffer.hpp) | A ring buffer supporting timestamped non-interleaved audio |
 
 ### Utility Classes
