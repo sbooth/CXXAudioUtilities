@@ -8,6 +8,7 @@ Portions of this repository have been split into separate packages:
 | --- | --- |
 | [CXXCoreAudio](https://github.com/sbooth/CXXCoreAudio) | Assorted C++ classes simplifying common operations in Core Audio. |
 | [CXXAudioToolbox](https://github.com/sbooth/CXXAudioToolbox) | Assorted C++ classes simplifying the use of Audio Toolbox. |
+| [CXXAudioHardware](https://github.com/sbooth/CXXAudioHardware) | Assorted C++ classes simplifying the use of Audio Hardware. |
 | [CXXRingBuffer](https://github.com/sbooth/CXXRingBuffer) | A lock-free SPSC ring buffer. |
 | [CXXDispatchSemaphore](https://github.com/sbooth/CXXDispatchSemaphore) | A [`dispatch_semaphore_t`](https://developer.apple.com/documentation/dispatch/dispatch-semaphore?language=objc) wrapper. |
 | [CXXOSUnfairLock](https://github.com/sbooth/CXXOSUnfairLock) | An [`os_unfair_lock`](https://developer.apple.com/documentation/os/1646466-os_unfair_lock_lock) wrapper satisfying the [`Lockable`](https://en.cppreference.com/w/cpp/named_req/Lockable) requirements. |
@@ -24,16 +25,6 @@ Add a package dependency to https://github.com/sbooth/CXXAudioUtilities in Xcode
 2. `swift build`.
 
 ## CXXAudioUtilities
-
-### AudioHardware Wrappers
-
-| Class | Description |
-| --- | --- |
-| [SFB::CAPropertyAddress](Sources/CXXAudioUtilities/include/SFBCAPropertyAddress.hpp) | A class extending the functionality of a Core Audio `AudioObjectPropertyAddress` |
-| [SFB::CAAudioObject](Sources/CXXAudioUtilities/include/SFBCAAudioObject.hpp) | A wrapper around a HAL audio object |
-| [SFB::CAAudioDevice](Sources/CXXAudioUtilities/include/SFBCAAudioDevice.hpp) | A wrapper around a HAL audio device |
-| [SFB::CAAudioStream](Sources/CXXAudioUtilities/include/SFBCAAudioStream.hpp) | A wrapper around a HAL audio stream |
-| [SFB::CAAudioSystemObject](Sources/CXXAudioUtilities/include/SFBCAAudioSystemObject.hpp) | A wrapper around `kAudioObjectSystemObject` |
 
 ### Utility Classes
 
