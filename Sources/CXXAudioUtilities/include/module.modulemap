@@ -9,7 +9,6 @@ module CXXAudioUtilities {
 	header "SFBCAAudioSystemObject.hpp"
 	header "SFBCAException.hpp"
 	header "SFBCAPropertyAddress.hpp"
-	header "SFBCARingBuffer.hpp"
 	header "SFBCFWrapper.hpp"
 	header "SFBScopeGuard.hpp"
 

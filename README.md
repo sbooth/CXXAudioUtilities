@@ -35,12 +35,6 @@ Add a package dependency to https://github.com/sbooth/CXXAudioUtilities in Xcode
 | [SFB::CAAudioStream](Sources/CXXAudioUtilities/include/SFBCAAudioStream.hpp) | A wrapper around a HAL audio stream |
 | [SFB::CAAudioSystemObject](Sources/CXXAudioUtilities/include/SFBCAAudioSystemObject.hpp) | A wrapper around `kAudioObjectSystemObject` |
 
-### Ring Buffers
-
-| Class | Description |
-| --- | --- |
-| [SFB::CARingBuffer](Sources/CXXAudioUtilities/include/SFBCARingBuffer.hpp) | A ring buffer supporting timestamped non-interleaved audio |
-
 ### Utility Classes
 
 | Class | Description |
