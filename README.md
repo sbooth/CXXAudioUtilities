@@ -9,7 +9,7 @@ Portions of this repository have been split into separate packages:
 | [CXXAudioHardware](https://github.com/sbooth/CXXAudioHardware) | Assorted C++ classes simplifying the use of Audio Hardware. |
 | [CXXRingBuffer](https://github.com/sbooth/CXXRingBuffer) | A lock-free SPSC ring buffer. |
 | [CXXDispatchSemaphore](https://github.com/sbooth/CXXDispatchSemaphore) | A [`dispatch_semaphore_t`](https://developer.apple.com/documentation/dispatch/dispatch-semaphore?language=objc) wrapper. |
-| [CXXOSUnfairLock](https://github.com/sbooth/CXXOSUnfairLock) | An [`os_unfair_lock`](https://developer.apple.com/documentation/os/1646466-os_unfair_lock_lock) wrapper satisfying the [`Lockable`](https://en.cppreference.com/w/cpp/named_req/Lockable) requirements. |
+| [CXXUnfairLock](https://github.com/sbooth/CXXUnfairLock) | An [`os_unfair_lock`](https://developer.apple.com/documentation/os/1646466-os_unfair_lock_lock) wrapper satisfying the [`Lockable`](https://en.cppreference.com/w/cpp/named_req/Lockable) requirements. |
 
 Assorted C++ classes simplifying common operations in Core Audio and Audio Toolbox.
 
